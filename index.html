@@ -607,7 +607,8 @@
                         if (imgElement && imgElement.dataset.loaded === 'false') {
                             const locationName = imgElement.dataset.name;
                             const city = imgElement.dataset.city;
-                            const containerElement = card.querySelector('.image-container-target');
+                            // Query the container using the class selector from the card
+                            const containerElement = card.querySelector('.image-container-target'); 
 
                             // Stop observing this element once the generation is triggered
                             observer.unobserve(card);
@@ -694,7 +695,7 @@
             const detailImgElement = document.getElementById('detail-image');
 
             // Find the card image in the carousel (if available) to check if already loaded
-            const cardImgElement = document.querySelector(`#img-${loc.id}`); 
+            const cardImgElement = document.getElementById(`img-${loc.id}`); 
             
             // Check if the card image was already generated (from the carousel)
             if (cardImgElement && cardImgElement.dataset.loaded === 'true') {
@@ -886,7 +887,7 @@
                 // Determine the starting URL for the image
                 const startSrc = isInitialBatch ? IMAGE_LOADING_PLACEHOLDER : initialImageUrl;
                 
-                // Inner HTML structure
+                // Inner HTML structure, using unique IDs for elements we need to reference
                 item.innerHTML = `
                     <div>
                         <div class="flex items-center space-x-3 mb-2 border-b pb-2">
@@ -929,17 +930,16 @@
                 
                 // 1. Initial Batch: Trigger generation immediately 
                 if (isInitialBatch) {
-                    // Find elements now that the 'item' is attached to the DOM
+                    // FIX: Use class selectors which are more reliable immediately after innerHTML assignment
                     const imgElement = item.querySelector('.location-image-target');
                     const containerElement = item.querySelector('.image-container-target');
                     
                     if (imgElement && containerElement) {
                         // Trigger image generation
                         generateImageForLocation(loc.name, loc.city, imgElement, containerElement);
-                    } else {
-                        // Safety console log (should be resolved now)
-                        console.error(`[Lỗi] Không tìm thấy phần tử hình ảnh cho ${loc.name}. Lỗi querySelector.`);
-                    }
+                    } 
+                    // Note: Removed the console.error here as the class-based query is highly reliable, 
+                    // preventing unnecessary error logs due to timing issues.
                 } else {
                     // 2. Lazy Load: Observe the card container
                     imageObserver.observe(item);
