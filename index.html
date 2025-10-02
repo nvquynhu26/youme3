@@ -16,33 +16,31 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Map specific styles: Đảm bảo bản đồ chiếm đúng 50% chiều cao viewport */
+        /* Map specific styles: Ensure the map occupies 50% of the viewport height */
         #vietnam-map {
-            height: 50vh; /* Chiều cao cố định */
+            height: 50vh; /* Fixed height */
             width: 100%;
             border-radius: 0.5rem; /* rounded-lg */
-            overflow: hidden; /* FIX: Ngăn chặn bất kỳ nội dung nào bên trong bản đồ tràn ra */
+            overflow: hidden; /* Prevent content overflow */
         }
         
-        /* FIX: Ensure the entire page respects bounding boxes */
         body {
             box-sizing: border-box;
-            /* Đã loại bỏ min-height: 100vh để tránh xung đột layout */
             overflow-x: hidden; /* Prevent horizontal overflow */
         }
 
-        /* Styles cho danh sách cuộn ngang (Carousel/Slider) */
+        /* Styles for the horizontal scroll list (Carousel/Slider) */
         .horizontal-scroll-list {
             display: flex;
-            overflow-x: scroll; /* Bật cuộn ngang */
+            overflow-x: scroll; /* Enable horizontal scrolling */
             scroll-snap-type: x mandatory;
             padding-bottom: 1rem;
             scroll-behavior: smooth;
         }
         
         .horizontal-scroll-list > div {
-            flex: 0 0 auto; /* Đảm bảo các item không co lại */
-            width: 280px; /* Chiều rộng cố định của card */
+            flex: 0 0 auto; /* Ensure items do not shrink */
+            width: 280px; /* Fixed card width */
             scroll-snap-align: start;
             margin-right: 1rem;
         }
@@ -53,17 +51,69 @@
             justify-content: center;
             align-items: center;
         }
+        
+        /* Loading spinner for API call */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border-left-color: #4f46e5;
+            animation: spin 1s ease infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Image loading container styles */
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 150px; /* Fixed height for image */
+            background-color: #e5e7eb; /* Gray-200 for background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s;
+        }
+
+        .image-container.loading img {
+            opacity: 0.1;
+        }
+
+        .image-loading-overlay {
+            position: absolute;
+            z-index: 10;
+            color: #4f46e5;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans p-4 sm:p-8">
 
-    <!-- Giới hạn chiều rộng tổng thể của ứng dụng và căn giữa -->
+    <!-- Overall application width limit and centering -->
     <div id="app" class="mx-auto max-w-7xl"> 
         <header class="text-center mb-8">
             <h1 class="text-4xl font-extrabold text-indigo-700 mb-2">
                 Vietnam Travel Treasury
             </h1>
-            <p class="text-gray-600 text-lg">Khám phá, tìm kiếm và lọc các điểm check-in "sống ảo" nổi tiếng nhất Việt Nam.</p>
+            <p class="text-gray-600 text-lg">Explore, search, and filter the most famous "check-in" spots in Vietnam.</p>
         </header>
 
         <!-- Search bar and filter -->
@@ -72,7 +122,7 @@
             <input 
                 type="text" 
                 id="search-input" 
-                placeholder="Tìm kiếm theo tên địa điểm..."
+                placeholder="Search by location name..."
                 class="w-full md:flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
             >
             <!-- City Filter -->
@@ -82,16 +132,15 @@
                 class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg bg-white appearance-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
                 onchange="filterLocations()"
             >
-                <option value="">-- Lọc theo Tỉnh/Thành phố --</option>
+                <option value="">-- Filter by Province/City --</option>
             </select>
         </div>
 
         <!-- MAP WRAPPER CARD (Fixed container) -->
-        <!-- Đã sửa lỗi: Thêm ID và loại bỏ template literal -->
         <h2 id="map-title" class="text-2xl font-bold text-gray-800 mb-4 text-center">
-             📍 Bản đồ Địa điểm Check-in Việt Nam 🇻🇳
+             📍 Vietnam Check-in Spots Map 🇻🇳
         </h2>
-        <!-- Card chứa bản đồ. Layout đã được fix để không tràn -->
+        <!-- Card containing the map. Layout is fixed not to overflow -->
         <div class="map-card-wrapper bg-white p-4 sm:p-6 rounded-2xl shadow-xl mx-auto max-w-6xl w-full mb-10 border-4 border-indigo-200">
             <!-- MAP CONTAINER INSIDE CARD (Fixed Height) -->
             <div id="vietnam-map"></div>
@@ -100,29 +149,28 @@
 
         <!-- Container for the list of locations (Horizontal Slider/Carousel) -->
         <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-4 border-b pb-2">
-             Danh sách Địa điểm Check-in Gợi ý Hàng đầu 📋
+             Top Suggested Check-in Locations (AI Images) 📋
         </h2>
         <div 
             id="location-list" 
             class="horizontal-scroll-list mx-auto max-w-6xl"
         >
             <!-- Locations will be rendered here -->
-            <p id="loading-message" class="text-center text-gray-500 p-8">Đang tải dữ liệu...</p>
+            <p id="loading-message" class="text-center text-gray-500 p-8">Loading data...</p>
         </div>
 
         <footer class="mt-10 text-center text-gray-500 text-sm border-t pt-4">
-            &copy; 2025 Tourism Data. Map powered by Leaflet.
+            &copy; 2025 Tourism Data. Map powered by Leaflet. Image generation powered by Gemini.
         </footer>
     </div>
 
     <!-- DETAIL PANEL (MODAL/SIDEBAR) -->
-    <!-- Sử dụng fixed position và translate-x-full để ẩn/hiện mượt mà -->
     <div 
         id="detail-panel" 
         class="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto p-6 space-y-6"
     >
         <div class="flex justify-between items-center border-b pb-3">
-            <h3 class="text-xl font-extrabold text-indigo-700">Thông tin chi tiết</h3>
+            <h3 class="text-xl font-extrabold text-indigo-700">Details</h3>
             <button onclick="closeDetailPanel()" class="text-gray-500 hover:text-red-500 transition">
                 <!-- Close icon from Lucide -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -130,7 +178,7 @@
         </div>
 
         <div id="detail-content" class="space-y-4">
-            <!-- Nội dung chi tiết sẽ được điền vào đây -->
+            <!-- Detail content will be populated here -->
             <h4 class="text-2xl font-bold text-gray-800" id="detail-name"></h4>
             <p class="text-sm font-semibold text-gray-600">
                 <span class="font-normal text-indigo-500 text-base" id="detail-city"></span> (<span id="detail-region"></span>)
@@ -138,29 +186,41 @@
             <div class="space-y-2">
                 <p class="font-medium text-gray-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mr-2 text-red-500"><path d="M12 21.7C17.3 17 20 14.4 20 10.2C20 6.6 16.4 4 12 4C7.6 4 4 6.6 4 10.2C4 14.4 6.7 17 12 21.7Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Địa chỉ: <span class="ml-2 font-normal text-gray-600" id="detail-address"></span>
+                    Address: <span class="ml-2 font-normal text-gray-600" id="detail-address"></span>
                 </p>
                 <p class="font-medium text-gray-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-compass mr-2 text-teal-500"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-                    Tọa độ ước tính: <span class="ml-2 font-normal text-gray-600" id="detail-coords"></span>
+                    Estimated Coordinates: <span class="ml-2 font-normal text-gray-600" id="detail-coords"></span>
                 </p>
             </div>
             
-            <img src="" alt="Hình ảnh gợi ý" id="detail-image" class="w-full h-auto object-cover rounded-lg shadow-md mt-4">
+            <!-- Dynamic Image Container for Detail Panel -->
+            <div class="image-container h-48" id="detail-image-container">
+                 <img src="" alt="Suggested image" id="detail-image" class="w-full h-full object-cover rounded-lg shadow-md mt-4">
+                 <div class="image-loading-overlay hidden" id="detail-image-loading-overlay">
+                    <div class="spinner mb-2"></div>
+                    <span>Generating AI Image...</span>
+                </div>
+            </div>
 
-            <p class="font-bold text-lg text-gray-800 mt-4">Giới thiệu:</p>
-            <p class="text-gray-600 italic" id="detail-intro"></p>
+            <p class="font-bold text-lg text-gray-800 mt-4">Suggested Image Description (AI generated):</p>
+            <div id="detail-intro-container" class="space-y-2">
+                 <p class="text-gray-600 italic" id="detail-intro">
+                    <!-- Loading spinner or generated text will go here -->
+                </p>
+            </div>
+           
         </div>
     </div>
     <!-- END DETAIL PANEL -->
     
-    <!-- CÁC THƯ VIỆN LEAFLET JS -->
+    <!-- LEAFLET JS LIBRARIES -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <!-- KẾT THÚC CÁC THƯ VIỆN LEAFLET JS -->
+    <!-- END LEAFLET JS LIBRARIES -->
 
     <script>
-        // Data provided by the user (78 locations)
+        // Data provided by the user (78 locations) - unchanged
         const userProvidedLocations = [
             {"name": "Old Quarter", "address": "Hoan Kiem District, Hanoi"},
             {"name": "Ta Hien Street", "address": "Hoan Kiem District, Hanoi"},
@@ -279,62 +339,70 @@
         const searchInputElement = document.getElementById('search-input');
         const cityFilterElement = document.getElementById('city-filter');
         const detailPanel = document.getElementById('detail-panel');
+        const detailIntroElement = document.getElementById('detail-intro');
+        const detailImageElement = document.getElementById('detail-image');
+        const detailImageContainer = document.getElementById('detail-image-container');
+        const detailImageLoadingOverlay = document.getElementById('detail-image-loading-overlay');
 
+        const INITIAL_IMAGE_BATCH = 5; // Increase the number of images generated immediately
+        
         let autoScrollInterval; 
         
         // Map variables
         let vietnamMap;
         let markerClusterGroup;
+        let imageObserver; // Intersection Observer for lazy loading
 
-        // Map of cities/regions to approximate coordinates (for plotting/clustering)
+        // API Setup
+        const apiKey = ""; 
+        const textApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+        const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+
+        // Map of cities/regions to approximate coordinates (for plotting/clustering) - unchanged
         const cityCoordinates = {
             // North
-            "Hanoi": { lat: 21.0285, lng: 105.8542, region: 'Bắc' },
-            "Hai Phong": { lat: 20.8449, lng: 106.6881, region: 'Bắc' },
-            "Quang Ninh": { lat: 20.9572, lng: 107.0350, region: 'Bắc' },
-            "Lao Cai": { lat: 22.3390, lng: 103.8500, region: 'Bắc' },
-            "Phu Tho": { lat: 21.3204, lng: 105.4055, region: 'Bắc' },
-            "Tuyen Quang": { lat: 21.7825, lng: 105.2104, region: 'Bắc' },
-            "Bac Ninh": { lat: 21.1894, lng: 106.0711, region: 'Bắc' },
-            "Thai Nguyen": { lat: 21.5975, lng: 105.8456, region: 'Bắc' },
-            "Ninh Binh": { lat: 20.2500, lng: 105.9000, region: 'Bắc' },
-            "Nghe An": { lat: 18.6750, lng: 105.6880, region: 'Bắc' }, // Gần như Trung nhưng về hành chính địa lý là Bắc Trung Bộ
+            "Hanoi": { lat: 21.0285, lng: 105.8542, region: 'North' },
+            "Hai Phong": { lat: 20.8449, lng: 106.6881, region: 'North' },
+            "Quang Ninh": { lat: 20.9572, lng: 107.0350, region: 'North' },
+            "Lao Cai": { lat: 22.3390, lng: 103.8500, region: 'North' },
+            "Phu Tho": { lat: 21.3204, lng: 105.4055, region: 'North' },
+            "Tuyen Quang": { lat: 21.7825, lng: 105.2104, region: 'North' },
+            "Bac Ninh": { lat: 21.1894, lng: 106.0711, region: 'North' },
+            "Thai Nguyen": { lat: 21.5975, lng: 105.8456, region: 'North' },
+            "Ninh Binh": { lat: 20.2500, lng: 105.9000, region: 'North' },
+            "Nghe An": { lat: 18.6750, lng: 105.6880, region: 'North' },
             
             // Central
-            "Quang Binh": { lat: 17.4764, lng: 106.6006, region: 'Trung' },
-            "Quang Tri": { lat: 16.8208, lng: 107.0855, region: 'Trung' },
-            "Hue": { lat: 16.4680, lng: 107.5707, region: 'Trung' },
-            "Da Nang": { lat: 16.0544, lng: 108.2022, region: 'Trung' },
-            "Quang Nam": { lat: 15.8794, lng: 108.3360, region: 'Trung' },
-            "Quang Ngai": { lat: 15.1167, lng: 108.8000, region: 'Trung' },
-            "Ninh Thuan": { lat: 11.5833, lng: 108.9667, region: 'Trung' },
-            "Khanh Hoa": { lat: 12.2458, lng: 109.1947, region: 'Trung' },
+            "Quang Binh": { lat: 17.4764, lng: 106.6006, region: 'Central' },
+            "Quang Tri": { lat: 16.8208, lng: 107.0855, region: 'Central' },
+            "Hue": { lat: 16.4680, lng: 107.5707, region: 'Central' },
+            "Da Nang": { lat: 16.0544, lng: 108.2022, region: 'Central' },
+            "Quang Nam": { lat: 15.8794, lng: 108.3360, region: 'Central' },
+            "Quang Ngai": { lat: 15.1167, lng: 108.8000, region: 'Central' },
+            "Ninh Thuan": { lat: 11.5833, lng: 108.9667, region: 'Central' },
+            "Khanh Hoa": { lat: 12.2458, lng: 109.1947, region: 'Central' },
 
             // South
-            "Binh Thuan": { lat: 10.9344, lng: 108.2711, region: 'Nam' },
-            "Ho Chi Minh City": { lat: 10.7758, lng: 106.7013, region: 'Nam' },
-            "Ba Ria - Vung Tau": { lat: 10.5519, lng: 107.4190, region: 'Nam' },
-            "Dong Nai": { lat: 10.9500, lng: 107.0500, region: 'Nam' },
-            "Binh Duong": { lat: 11.0000, lng: 106.6750, region: 'Nam' },
-            "Tay Ninh": { lat: 11.3167, lng: 106.1167, region: 'Nam' },
-            "Kien Giang": { lat: 10.2241, lng: 103.9577, region: 'Nam' }, // Phu Quoc
-            "Lam Dong": { lat: 11.9400, lng: 108.4420, region: 'Nam' }, // Da Lat
-            "Can Tho": { lat: 10.0333, lng: 105.7833, region: 'Nam' },
-            "Other": { lat: 16.0, lng: 107.8, region: 'Trung' }
+            "Binh Thuan": { lat: 10.9344, lng: 108.2711, region: 'South' },
+            "Ho Chi Minh City": { lat: 10.7758, lng: 106.7013, region: 'South' },
+            "Ba Ria - Vung Tau": { lat: 10.5519, lng: 107.4190, region: 'South' },
+            "Dong Nai": { lat: 10.9500, lng: 107.0500, region: 'South' },
+            "Binh Duong": { lat: 11.0000, lng: 106.6750, region: 'South' },
+            "Tay Ninh": { lat: 11.3167, lng: 106.1167, region: 'South' },
+            "Kien Giang": { lat: 10.2241, lng: 103.9577, region: 'South' }, // Phu Quoc
+            "Lam Dong": { lat: 11.9400, lng: 108.4420, region: 'South' }, // Da Lat
+            "Can Tho": { lat: 10.0333, lng: 105.7833, region: 'South' },
+            "Other": { lat: 16.0, lng: 107.8, region: 'Central' }
         };
 
-
-        /**
-         * Extracts the city/province name from the address string.
-         */
+        // Utility functions (extractCity, processLocations, populateCityFilter)
         function extractCity(address) {
             if (!address) return "Other";
             
-            // Regex to find common Vietnamese provinces or major city names
             const cityMatch = address.match(/(Hanoi|Ha Noi|Ho Chi Minh City|Hồ Chí Minh|Đà Nẵng|Da Nang|Quang Nam|Quảng Nam|Huế|Hue|Ninh Binh|Ninh Bình|Lao Cai|Lào Cai|Quang Ninh|Quảng Ninh|Kien Giang|Kiên Giang|Phu Quoc|Phú Quốc|Lam Dong|Lâm Đồng|Đà Lạt|Da Lat|Can Tho|Cần Thơ|Hai Phong|Hải Phòng|Phu Tho|Phú Thọ|Tuyen Quang|Tuyên Quang|Bac Ninh|Bắc Ninh|Thai Nguyen|Thái Nguyên|Nghe An|Nghệ An|Quang Binh|Quảng Bình|Quang Tri|Quảng Trị|Quang Ngai|Quảng Ngãi|Ninh Thuan|Ninh Thuận|Khanh Hoa|Khánh Hòa|Nha Trang|Binh Thuan|Bình Thuận|Ba Ria - Vung Tau|Bà Rịa|Vung Tau|Vũng Tàu|Dong Nai|Đồng Nai|Binh Duong|Bình Dương|Tay Ninh|Tây Ninh)/i);
 
             if (cityMatch) {
-                // Standardize city name (e.g., "Hồ Chí Minh" -> "Ho Chi Minh City")
                 const city = cityMatch[0];
                 if (city.includes("Hồ Chí Minh") || city.includes("Ho Chi Minh City")) return "Ho Chi Minh City";
                 if (city.includes("Hanoi") || city.includes("Ha Noi")) return "Hanoi";
@@ -349,23 +417,19 @@
             return "Other";
         }
 
-        /**
-         * Processes the user data, assigns estimated coordinates, and determines the region.
-         */
         function processLocations(raw) {
-            // Using a smaller jitter for closer grouping
             const JITTER = 0.015; 
             
-            return raw.map(loc => {
+            return raw.map((loc, index) => {
                 const city = extractCity(loc.address);
                 const coords = cityCoordinates[city] || cityCoordinates["Other"];
                 
-                // Add small random offset for clustering visual effect
                 const latOffset = (Math.random() - 0.5) * JITTER; 
                 const lngOffset = (Math.random() - 0.5) * JITTER; 
                 
                 return {
                     ...loc,
+                    id: `loc-${index}`, // Add ID for easy image reference
                     city: city,
                     region: coords.region,
                     lat: parseFloat((coords.lat + latOffset).toFixed(4)),
@@ -398,43 +462,241 @@
             });
         }
 
+
+        // --- GENERIC API CALL UTILITY (TEXT & IMAGE) ---
+
+        /**
+         * Generic fetch utility with exponential backoff for API robustness.
+         */
+        async function fetchWithRetry(url, options, maxRetries = 3) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response;
+                    } else if (response.status === 429 && i < maxRetries - 1) {
+                        // Implement exponential backoff
+                        const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue; // Retry
+                    } else {
+                        throw new Error(`API returned status ${response.status}`);
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                         throw new Error(`Fetch failed after ${maxRetries} attempts: ${error.message}`);
+                    }
+                    // Will retry on network error/timeout
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw new Error("Maximum retry attempts reached.");
+        }
+
+
+        // --- GEMINI IMAGE GENERATION & LAZY LOADING LOGIC ---
+        
+        const IMAGE_LOADING_PLACEHOLDER = 'https://placehold.co/260x150/f3f4f6/374151?text=AI+Image+Loading...';
+        const IMAGE_ERROR_PLACEHOLDER = 'https://placehold.co/260x150/fecaca/991b1b?text=Image+Generation+Error';
+
+        /**
+         * Calls the Imagen API to generate an image and update the specified DOM element.
+         * @param {string} locationName - The name of the location.
+         * @param {string} city - The city of the location.
+         * @param {HTMLElement} imgElement - The <img> element to update.
+         * @param {HTMLElement} containerElement - The container element to show/hide loading state.
+         */
+        async function generateImageForLocation(locationName, city, imgElement, containerElement) {
+            // Check if generation is already done or in progress via data-loaded attribute
+            if (imgElement.dataset.loaded === 'true' || containerElement.classList.contains('loading')) {
+                return; 
+            }
+            
+            // Set loading state
+            containerElement.classList.add('loading');
+            const loadingOverlay = containerElement.querySelector('.image-loading-overlay');
+            if(loadingOverlay) {
+                loadingOverlay.classList.remove('hidden');
+                loadingOverlay.innerHTML = `<div class="spinner mb-2"></div><span>Generating AI Image...</span>`;
+            }
+
+            const prompt = `A cinematic, highly detailed photograph of ${locationName}, ${city}, Vietnam. Focus on vibrant colors, professional travel photography style, wide-angle shot.`;
+            
+            const payload = { 
+                instances: { prompt: prompt }, 
+                parameters: { 
+                    "sampleCount": 1,
+                    "aspectRatio": "4:3" // Optimized for card size
+                } 
+            };
+
+            try {
+                const response = await fetchWithRetry(imageApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                const base64Data = result?.predictions?.[0]?.bytesBase64Encoded;
+                
+                if (base64Data) {
+                    const imageUrl = `data:image/png;base64,${base64Data}`;
+                    imgElement.src = imageUrl;
+                    imgElement.dataset.loaded = 'true';
+                } else {
+                    imgElement.src = IMAGE_ERROR_PLACEHOLDER;
+                    console.error("Image generation failed: No base64 data received.");
+                }
+
+            } catch (error) {
+                console.error("Imagen API Error:", error.message);
+                imgElement.src = IMAGE_ERROR_PLACEHOLDER;
+            } finally {
+                // Remove loading state
+                containerElement.classList.remove('loading');
+                if(loadingOverlay) {
+                    loadingOverlay.classList.add('hidden');
+                }
+            }
+        }
+        
+        /**
+         * Sets up the Intersection Observer for lazy loading images into the carousel.
+         */
+        function setupImageLazyLoading() {
+            if (imageObserver) {
+                imageObserver.disconnect();
+            }
+
+            // Load image when 50% of the element is visible in the scroll list
+            const options = {
+                root: locationListElement, 
+                rootMargin: '0px',
+                threshold: 0.5 
+            };
+
+            imageObserver = new IntersectionObserver(async (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+                        // Find the image element that is marked for lazy loading
+                        const imgElement = card.querySelector('img[data-lazy-load="true"]');
+                        
+                        if (imgElement && imgElement.dataset.loaded === 'false') {
+                            const locationName = imgElement.dataset.name;
+                            const city = imgElement.dataset.city;
+                            const containerElement = card.querySelector('.image-container');
+
+                            // Stop observing this element once the generation is triggered
+                            observer.unobserve(card);
+                            
+                            // Trigger image generation
+                            generateImageForLocation(locationName, city, imgElement, containerElement);
+                        }
+                    }
+                });
+            }, options);
+        }
+
+
+        // --- GEMINI TEXT GENERATION (Image Description) ---
+        
+        /**
+         * Calls the Gemini API to generate a vivid, image-inspired description in English.
+         */
+        async function generateImageDescription(locationName, city) {
+            // Updated System Prompt and User Query to ensure English output
+            const systemPrompt = "Act as a professional travel photographer and writer. Your task is to generate a concise, beautiful, and evocative description of what a stunning photograph of this Vietnamese location would look like. Focus on colors, light, atmosphere, and key elements. The output must be a single, flowing paragraph in **English** (no bolding, no lists, no headings).";
+            const userQuery = `Describe a beautiful, high-quality, professional-style photograph of the location "${locationName}" in ${city}.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+            };
+
+            try {
+                const response = await fetchWithRetry(textApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (text) {
+                    return text;
+                } else {
+                    return "Could not generate image description. Please try again.";
+                }
+
+            } catch (error) {
+                console.error("Gemini API Error:", error.message);
+                return "API connection error. Could not generate image description.";
+            }
+        }
+
+
         // --- DETAIL PANEL LOGIC ---
 
         function getMarkerColor(region) {
-             if (region === 'Bắc') return '#1d4ed8'; // Blue
-             if (region === 'Trung') return '#059669'; // Green
-             return '#dc2626'; // Red
+             if (region === 'North') return '#1e40af'; 
+             if (region === 'Central') return '#047857'; 
+             return '#b91c1c'; 
         }
 
         /**
          * Populates the detail panel with location info and shows it.
          * @param {Object} loc - The location object.
          */
-        function showLocationDetails(loc) {
+        async function showLocationDetails(loc) {
+            // 1. Reset and Show Panel Structure
             document.getElementById('detail-name').textContent = loc.name;
             document.getElementById('detail-city').textContent = loc.city;
             document.getElementById('detail-region').textContent = loc.region;
             document.getElementById('detail-address').textContent = loc.address;
             document.getElementById('detail-coords').textContent = `${loc.lat}, ${loc.lng}`;
-            document.getElementById('detail-intro').textContent = getPlaceholderIntro(loc);
             
-            const detailImage = document.getElementById('detail-image');
-            detailImage.src = getImageUrl(loc);
-            detailImage.onerror = function() { 
-                this.src = 'https://placehold.co/400x200/d1d5db/374151?text=Image+Unavailable';
-            };
-
-            // Slide in the panel (remove translate-x-full)
+            // Slide in the panel
             detailPanel.classList.remove('translate-x-full');
 
             // Zoom map to the clicked marker
             if (vietnamMap) {
                  vietnamMap.setView([loc.lat, loc.lng], 14, { animate: true });
             }
+
+            // 2. Dynamic Image Generation for Detail Panel
+            // Check if the card image was already generated (from the carousel)
+            const cardImgElement = document.getElementById(`img-${loc.id}`);
+            if (cardImgElement && cardImgElement.dataset.loaded === 'true') {
+                 detailImageElement.src = cardImgElement.src;
+                 detailImageElement.dataset.loaded = 'true';
+                 detailImageContainer.classList.remove('loading');
+                 detailImageLoadingOverlay.classList.add('hidden');
+            } else {
+                 // Reset placeholder and trigger generation specifically for the detail panel
+                 detailImageElement.src = IMAGE_LOADING_PLACEHOLDER;
+                 detailImageElement.dataset.loaded = 'false';
+                 await generateImageForLocation(loc.name, loc.city, detailImageElement, detailImageContainer);
+            }
+            
+            // 3. Dynamic Text Content Generation
+            // Set loading state for the description
+            detailIntroElement.innerHTML = `<div class="flex items-center space-x-2 text-indigo-600">
+                <div class="spinner"></div>
+                <span>Generating image description...</span>
+            </div>`;
+            
+            const description = await generateImageDescription(loc.name, loc.city);
+            detailIntroElement.innerHTML = description;
         }
 
         function closeDetailPanel() {
-            // Slide out the panel (add translate-x-full)
             detailPanel.classList.add('translate-x-full');
         }
 
@@ -468,15 +730,40 @@
             });
             vietnamMap.addLayer(markerClusterGroup);
 
-            // FIX: Force map size recalculation after a short delay
-            setTimeout(() => {
-                vietnamMap.invalidateSize();
-                const bounds = locations.map(loc => [loc.lat, loc.lng]);
-                if (bounds.length > 0) {
-                     vietnamMap.fitBounds(bounds, { padding: [20, 20] });
-                }
-            }, 500); // 500ms delay helps with container size issues
+            vietnamMap.invalidateSize();
+            const bounds = locations.map(loc => [loc.lat, loc.lng]);
+            if (bounds.length > 0) {
+                 vietnamMap.fitBounds(bounds, { padding: [20, 20], maxZoom: 6 });
+            }
         }
+
+        /**
+         * Creates a custom, large, high-contrast circle marker icon.
+         */
+        function createCustomMarkerIcon(region) {
+            let markerColor = getMarkerColor(region);
+            const iconSize = 30; 
+            
+            const htmlContent = `
+                <div style="background-color: ${markerColor}; 
+                            width: ${iconSize}px; 
+                            height: ${iconSize}px; 
+                            border-radius: 50%; 
+                            border: 4px solid #f9fafb; /* White border */
+                            box-shadow: 0 6px 12px rgba(0,0,0,0.4); /* Strong shadow */
+                            opacity: 0.95; 
+                            cursor: pointer;">
+                </div>
+            `;
+            
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: htmlContent,
+                iconSize: [iconSize + 8, iconSize + 8], 
+                iconAnchor: [(iconSize + 8) / 2, (iconSize + 8) / 2]
+            });
+        }
+
 
         function updateMapMarkers(filteredList) {
             if (typeof L === 'undefined' || !markerClusterGroup) return; 
@@ -485,22 +772,10 @@
 
             filteredList.forEach(loc => {
                 if (loc.lat && loc.lng) {
-                    let markerColor = getMarkerColor(loc.region);
+                    const customIcon = createCustomMarkerIcon(loc.region);
 
-                    // CẬP NHẬT: Tăng kích thước marker để dễ nhìn hơn (20px thay vì 10px)
-                    const iconSize = 20;
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        // Sử dụng border #f9fafb (gần trắng) cho viền ngoài và đổ bóng rõ rệt hơn
-                        html: `<div style="background-color: ${markerColor}; width: ${iconSize}px; height: ${iconSize}px; border-radius: 50%; border: 3px solid #f9fafb; box-shadow: 0 4px 8px rgba(0,0,0,0.3); opacity: 0.9; cursor: pointer;"></div>`,
-                        iconSize: [iconSize + 6, iconSize + 6], // Kích thước tổng thể của divIcon
-                        iconAnchor: [(iconSize + 6) / 2, (iconSize + 6) / 2] // Đặt anchor vào giữa
-                    });
-
-                    // Marker uses click event to show detail panel
                     const marker = L.marker([loc.lat, loc.lng], { icon: customIcon });
                     
-                    // Add a simple tooltip for hover behavior
                     marker.bindTooltip(loc.name, { permanent: false, direction: 'top', offset: [0, -10] });
 
                     // Add click handler to show the detail panel
@@ -512,7 +787,7 @@
         }
 
 
-        // --- AUTO-SCROLL LOGIC ---
+        // --- AUTO-SCROLL LOGIC (unchanged) ---
 
         function startAutoScroll() {
             stopAutoScroll(); 
@@ -529,7 +804,7 @@
                 } else {
                     listElement.scrollTo({ left: nextScrollLeft, behavior: 'smooth' });
                 }
-            }, 5000); // 5 giây
+            }, 5000); // 5 seconds
         }
 
         function stopAutoScroll() {
@@ -542,51 +817,36 @@
 
         // --- RENDER & FILTER LOGIC ---
         
-        function getImageUrl(loc) {
-            const keywords = loc.name.split('(')[0].trim().replace(/\s/g, '+');
-            let color;
-            if (loc.region === 'Bắc') color = '5c7399'; 
-            else if (loc.region === 'Trung') color = '419188'; 
-            else color = 'a8464a'; 
+        function getInitialImageUrl(loc) {
+            // Placeholder for quick loading until AI image is generated
+            const color = loc.region === 'North' ? '5c7399' : 
+                          loc.region === 'Central' ? '419188' : 'a8464a'; 
             
-            return `https://placehold.co/260x150/${color}/ffffff?text=${encodeURIComponent(keywords)}&font=roboto`;
+            // This is the default text placeholder used for lazy loading cards
+            return `https://placehold.co/260x150/${color}/ffffff?text=${encodeURIComponent(loc.name.split('(')[0].trim())}&font=roboto`;
         }
-
-        function getPlaceholderIntro(loc) {
-             const lowerCity = loc.city.toLowerCase();
-
-            if (lowerCity.includes("hanoi") || lowerCity.includes("ho chi minh city")) {
-                return "Là trung tâm văn hóa, kinh tế và du lịch lớn nhất của Việt Nam. Nơi đây tập trung nhiều di tích lịch sử, kiến trúc cổ kính và khu phố hiện đại sôi động.";
-            } else if (lowerCity.includes("đà lạt") || lowerCity.includes("sapa")) {
-                 return "Vùng đất của sương mù, khí hậu mát mẻ quanh năm, nổi tiếng với kiến trúc độc đáo, thác nước hùng vĩ và cảnh quan núi rừng thơ mộng.";
-            } else if (loc.region === 'Bắc') {
-                 return "Vùng đất giàu truyền thống lịch sử, nổi bật với vẻ đẹp hùng vĩ của núi rừng, các di sản thế giới như Vịnh Hạ Long, và văn hóa dân tộc độc đáo.";
-            } else if (lowerCity.includes("kiên giang") || lowerCity.includes("phú quốc")) {
-                 return "Thiên đường biển đảo phía Nam, thu hút du khách bởi những bãi biển hoang sơ, cát trắng, nước biển trong xanh và các khu nghỉ dưỡng cao cấp.";
-            } else if (lowerCity.includes("cần thơ")) {
-                 return "Thủ phủ của miền Tây Nam Bộ, nổi tiếng với văn hóa sông nước, chợ nổi Cái Răng và những miệt vườn trái cây trù phú.";
-            } else if (loc.region === 'Trung') {
-                 return "Vùng đất di sản, nơi giao thoa giữa lịch sử cổ kính (Huế, Hội An) và sự phát triển năng động (Đà Nẵng), cùng nhiều bãi biển đẹp và đèo Hải Vân nổi tiếng.";
-            }
-            return "Địa điểm du lịch độc đáo, đang chờ bạn khám phá và check-in!";
-        }
+        
 
         function renderLocations(filteredList) {
             locationListElement.innerHTML = '';
             
             if (filteredList.length === 0) {
-                locationListElement.innerHTML = '<p class="text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner mx-auto w-full">Không tìm thấy địa điểm nào phù hợp với tiêu chí tìm kiếm/lọc.</p>';
+                locationListElement.innerHTML = '<p class="text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner mx-auto w-full">No locations found matching the search/filter criteria.</p>';
                 stopAutoScroll();
                 return;
             }
 
-            const listToShow = filteredList.slice(0, 10);
-
-            listToShow.forEach(loc => {
+            // Show a maximum of 10 locations in the scroll list
+            const listToShow = filteredList.slice(0, 10); 
+            
+            // Setup Intersection Observer before rendering the list
+            setupImageLazyLoading();
+            
+            listToShow.forEach((loc, index) => {
                 const item = document.createElement('div');
                 item.className = 'loc-card bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border border-gray-100 cursor-pointer flex flex-col justify-between';
                 
-                // Khi click vào card, hiển thị detail panel và zoom map
+                // When card is clicked, show detail panel and zoom map
                 item.addEventListener('click', () => {
                     showLocationDetails(loc);
                 });
@@ -597,32 +857,58 @@
                              loc.city.includes("Kien Giang") ? '🏝️' :
                              loc.city.includes("Lam Dong") || loc.city.includes("Lao Cai") ? '⛰️' : '🇻🇳';
 
-                const shortIntro = getPlaceholderIntro(loc);
-                const imageUrl = getImageUrl(loc); 
+                const isInitialBatch = index < INITIAL_IMAGE_BATCH;
+                const initialImageUrl = getInitialImageUrl(loc); 
                 
+                // Inner HTML structure
                 item.innerHTML = `
                     <div>
                         <div class="flex items-center space-x-3 mb-2 border-b pb-2">
                             <span class="text-2xl">${icon}</span>
                             <h2 class="text-lg font-bold text-indigo-600 leading-tight">${loc.name}</h2>
                         </div>
-                        <img 
-                            src="${imageUrl}" 
-                            alt="Hình ảnh gợi ý cho ${loc.name}" 
-                            class="w-full h-auto object-cover rounded-lg mb-3 shadow-inner"
-                            onerror="this.onerror=null;this.src='https://placehold.co/260x150/d1d5db/374151?text=Image+Unavailable';"
-                        >
-                        <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full mb-3">
+
+                        <!-- Image Container with Loading Overlay -->
+                        <div class="image-container" id="container-${loc.id}">
+                            <img 
+                                src="${isInitialBatch ? IMAGE_LOADING_PLACEHOLDER : initialImageUrl}" 
+                                alt="Suggested image for ${loc.name}" 
+                                id="img-${loc.id}"
+                                data-loaded="false"
+                                data-lazy-load="${!isInitialBatch}" 
+                                data-name="${loc.name}" 
+                                data-city="${loc.city}"  
+                                class="w-full h-full object-cover rounded-lg mb-3 shadow-inner"
+                            >
+                            <div class="image-loading-overlay ${isInitialBatch ? '' : 'hidden'}" id="overlay-${loc.id}">
+                                <div class="spinner mb-2"></div>
+                                <span>Generating AI Image...</span>
+                            </div>
+                        </div>
+                        <!-- End Image Container -->
+
+                        <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full my-3">
                             ${loc.city} (${loc.region})
                         </p>
-                        <p class="text-sm text-gray-800 mb-2 font-semibold">Giới thiệu:</p>
+                        <p class="text-sm text-gray-800 mb-2 font-semibold">Address:</p>
                         <p class="text-sm text-gray-600 italic leading-snug">
-                            ${shortIntro}
+                            ${loc.address}
                         </p>
                     </div>
                     <div class="h-10"></div> 
                 `;
                 locationListElement.appendChild(item);
+                
+                // 1. Initial Batch: Trigger generation immediately 
+                if (isInitialBatch) {
+                    const imgElement = document.getElementById(`img-${loc.id}`);
+                    const containerElement = document.getElementById(`container-${loc.id}`);
+                    // Note: generateImageForLocation handles setting and removing loading state
+                    generateImageForLocation(loc.name, loc.city, imgElement, containerElement);
+                } else {
+                    // 2. Lazy Load: Observe the card container
+                    imageObserver.observe(item);
+                }
             });
             
             updateMapMarkers(filteredList);
@@ -656,15 +942,15 @@
         searchInputElement.addEventListener('input', filterLocations);
         cityFilterElement.addEventListener('change', filterLocations); 
 
-        // Hàm khởi tạo chính
+        // Main initialization function
         function initializeApp() {
             const loadingMessage = document.getElementById('loading-message');
             if (loadingMessage) loadingMessage.style.display = 'none';
 
-            // FIX: Cập nhật tiêu đề bản đồ với số lượng địa điểm chính xác
+            // Update map title with the exact number of locations
             const mapTitleElement = document.getElementById('map-title');
             if (mapTitleElement) {
-                mapTitleElement.innerHTML = `📍 Bản đồ ${locations.length} Địa điểm Check-in Việt Nam 🇻🇳`;
+                mapTitleElement.innerHTML = `📍 Vietnam Check-in Spots Map (${locations.length}) 🇻🇳`;
             }
 
             try {
