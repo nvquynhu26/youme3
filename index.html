@@ -27,6 +27,7 @@
         body {
             box-sizing: border-box;
             overflow-x: hidden; /* Prevent horizontal overflow */
+            font-family: 'Inter', sans-serif;
         }
 
         /* Styles for the horizontal scroll list (Carousel/Slider) */
@@ -111,9 +112,9 @@
     <div id="app" class="mx-auto max-w-7xl"> 
         <header class="text-center mb-8">
             <h1 class="text-4xl font-extrabold text-indigo-700 mb-2">
-                Vietnam Travel Treasury
+                Kho Tàng Du Lịch Việt Nam
             </h1>
-            <p class="text-gray-600 text-lg">Explore, search, and filter the most famous "check-in" spots in Vietnam.</p>
+            <p class="text-gray-600 text-lg">Khám phá, tìm kiếm và lọc các địa điểm "check-in" nổi tiếng nhất Việt Nam.</p>
         </header>
 
         <!-- Search bar and filter -->
@@ -122,7 +123,7 @@
             <input 
                 type="text" 
                 id="search-input" 
-                placeholder="Search by location name..."
+                placeholder="Tìm kiếm theo tên địa điểm..."
                 class="w-full md:flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
             >
             <!-- City Filter -->
@@ -132,13 +133,13 @@
                 class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg bg-white appearance-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
                 onchange="filterLocations()"
             >
-                <option value="">-- Filter by Province/City --</option>
+                <option value="">-- Lọc theo Tỉnh/Thành phố --</option>
             </select>
         </div>
 
         <!-- MAP WRAPPER CARD (Fixed container) -->
         <h2 id="map-title" class="text-2xl font-bold text-gray-800 mb-4 text-center">
-             📍 Vietnam Check-in Spots Map 🇻🇳
+             📍 Bản Đồ Các Điểm Check-in Việt Nam 🇻🇳
         </h2>
         <!-- Card containing the map. Layout is fixed not to overflow -->
         <div class="map-card-wrapper bg-white p-4 sm:p-6 rounded-2xl shadow-xl mx-auto max-w-6xl w-full mb-10 border-4 border-indigo-200">
@@ -149,18 +150,18 @@
 
         <!-- Container for the list of locations (Horizontal Slider/Carousel) -->
         <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-4 border-b pb-2">
-             Top Suggested Check-in Locations (AI Images) 📋
+             Các Địa Điểm Được Đề Xuất Hàng Đầu (Ảnh AI) 📋
         </h2>
         <div 
             id="location-list" 
             class="horizontal-scroll-list mx-auto max-w-6xl"
         >
             <!-- Locations will be rendered here -->
-            <p id="loading-message" class="text-center text-gray-500 p-8">Loading data...</p>
+            <p id="loading-message" class="text-center text-gray-500 p-8">Đang tải dữ liệu...</p>
         </div>
 
         <footer class="mt-10 text-center text-gray-500 text-sm border-t pt-4">
-            &copy; 2025 Tourism Data. Map powered by Leaflet. Image generation powered by Gemini.
+            &copy; 2025 Dữ liệu Du lịch. Bản đồ được cung cấp bởi Leaflet. Tạo ảnh được cung cấp bởi Gemini.
         </footer>
     </div>
 
@@ -170,7 +171,7 @@
         class="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 overflow-y-auto p-6 space-y-6"
     >
         <div class="flex justify-between items-center border-b pb-3">
-            <h3 class="text-xl font-extrabold text-indigo-700">Details</h3>
+            <h3 class="text-xl font-extrabold text-indigo-700">Chi Tiết</h3>
             <button onclick="closeDetailPanel()" class="text-gray-500 hover:text-red-500 transition">
                 <!-- Close icon from Lucide -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -186,11 +187,11 @@
             <div class="space-y-2">
                 <p class="font-medium text-gray-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mr-2 text-red-500"><path d="M12 21.7C17.3 17 20 14.4 20 10.2C20 6.6 16.4 4 12 4C7.6 4 4 6.6 4 10.2C4 14.4 6.7 17 12 21.7Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Address: <span class="ml-2 font-normal text-gray-600" id="detail-address"></span>
+                    Địa chỉ: <span class="ml-2 font-normal text-gray-600" id="detail-address"></span>
                 </p>
                 <p class="font-medium text-gray-700 flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-compass mr-2 text-teal-500"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-                    Estimated Coordinates: <span class="ml-2 font-normal text-gray-600" id="detail-coords"></span>
+                    Tọa độ ước tính: <span class="ml-2 font-normal text-gray-600" id="detail-coords"></span>
                 </p>
             </div>
             
@@ -199,11 +200,11 @@
                  <img src="" alt="Suggested image" id="detail-image" class="w-full h-full object-cover rounded-lg shadow-md mt-4">
                  <div class="image-loading-overlay hidden" id="detail-image-loading-overlay">
                     <div class="spinner mb-2"></div>
-                    <span>Generating AI Image...</span>
+                    <span>Đang tạo ảnh AI...</span>
                 </div>
             </div>
 
-            <p class="font-bold text-lg text-gray-800 mt-4">Suggested Image Description (AI generated):</p>
+            <p class="font-bold text-lg text-gray-800 mt-4">Mô tả Hình ảnh Đề xuất (AI tạo):</p>
             <div id="detail-intro-container" class="space-y-2">
                  <p class="text-gray-600 italic" id="detail-intro">
                     <!-- Loading spinner or generated text will go here -->
@@ -220,117 +221,117 @@
     <!-- END LEAFLET JS LIBRARIES -->
 
     <script>
-        // Data provided by the user (78 locations) - unchanged
+        // Dữ liệu vị trí do người dùng cung cấp (78 địa điểm)
         const userProvidedLocations = [
-            {"name": "Old Quarter", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "Ta Hien Street", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "Tong Duy Tan Street", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "St. Joseph's Cathedral", "address": "40 Nha Chung Street, Hoan Kiem District, Hanoi"},
-            {"name": "Train Street, Tran Phu", "address": "Ba Dinh District, Hanoi"},
-            {"name": "Ho Chi Minh Mausoleum", "address": "2 Hung Vuong Street, Ba Dinh District, Hanoi"},
-            {"name": "Hoan Kiem Lake", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "Long Bien Bridge", "address": "Connecting Long Bien and Ba Dinh Districts, Hanoi"},
-            {"name": "One Pillar Pagoda", "address": "Dien Bien Ward, Ba Dinh District, Hanoi"},
-            {"name": "Temple of Literature", "address": "58 Quoc Tu Giam Street, Dong Da District, Hanoi"},
+            {"name": "Phố Cổ", "address": "Quận Hoàn Kiếm, Hà Nội"},
+            {"name": "Phố Tạ Hiện", "address": "Quận Hoàn Kiếm, Hà Nội"},
+            {"name": "Phố Tống Duy Tân", "address": "Quận Hoàn Kiếm, Hà Nội"},
+            {"name": "Nhà Thờ Lớn Hà Nội", "address": "40 Phố Nhà Chung, Quận Hoàn Kiếm, Hà Nội"},
+            {"name": "Phố Đường Tàu, Trần Phú", "address": "Quận Ba Đình, Hà Nội"},
+            {"name": "Lăng Chủ tịch Hồ Chí Minh", "address": "2 Hùng Vương, Quận Ba Đình, Hà Nội"},
+            {"name": "Hồ Hoàn Kiếm", "address": "Quận Hoàn Kiếm, Hà Nội"},
+            {"name": "Cầu Long Biên", "address": "Nối liền Quận Long Biên và Ba Đình, Hà Nội"},
+            {"name": "Chùa Một Cột", "address": "Phường Điện Biên, Quận Ba Đình, Hà Nội"},
+            {"name": "Văn Miếu - Quốc Tử Giám", "address": "58 Phố Quốc Tử Giám, Quận Đống Đa, Hà Nội"},
             
-            {"name": "Notre-Dame Cathedral Basilica of Saigon", "address": "1 Cong xa Paris, District 1, Ho Chi Minh City"},
-            {"name": "Saigon Central Post Office", "address": "2 Cong xa Paris, District 1, Ho Chi Minh City"},
-            {"name": "Ben Thanh Market", "address": "45 Le Loi, District 1, Ho Chi Minh City"},
-            {"name": "Bitexco Financial Tower", "address": "2 Hai Trieu, District 1, Ho Chi Minh City"},
-            {"name": "Tan Dinh Church (Pink Church)", "address": "289 Hai Ba Trung, District 1, Ho Chi Minh City"},
-            {"name": "Cafe Apartment", "address": "42-44 Nguyen Hue Street, District 1, Ho Chi Minh City"},
-            {"name": "Suoi Tien Theme Park", "address": "120 Xa Lo Ha Noi, District 9, Ho Chi Minh City"},
-            {"name": "Nguyen Van Binh Book Street", "address": "9 Nguyen Van Binh, District 1, Ho Chi Minh City"},
-            {"name": "23/9 Park", "address": "District 1, Ho Chi Minh City"},
-            {"name": "Bui Vien Street", "address": "District 1, Ho Chi Minh City"},
+            {"name": "Nhà Thờ Đức Bà Sài Gòn", "address": "1 Công xã Paris, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Bưu điện Trung tâm Sài Gòn", "address": "2 Công xã Paris, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Chợ Bến Thành", "address": "45 Lê Lợi, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Tòa nhà Bitexco Financial Tower", "address": "2 Hải Triều, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Nhà Thờ Tân Định (Nhà Thờ Hồng)", "address": "289 Hai Bà Trưng, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Chung cư Cà phê", "address": "42-44 Phố Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Khu Du lịch Suối Tiên", "address": "120 Xa Lộ Hà Nội, Quận 9, TP. Hồ Chí Minh"},
+            {"name": "Đường Sách Nguyễn Văn Bình", "address": "9 Nguyễn Văn Bình, Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Công viên 23/9", "address": "Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Phố đi bộ Bùi Viện", "address": "Quận 1, TP. Hồ Chí Minh"},
             
-            {"name": "Hoi An Ancient Town", "address": "Minh An Ward, Hoi An City, Quang Nam"},
-            {"name": "Japanese Covered Bridge", "address": "Hoi An Ancient Town, Quang Nam"},
-            {"name": "Cau Pagoda", "address": "Hoi An Ancient Town, Quang Nam"},
-            {"name": "Cam Thanh Coconut Forest", "address": "Cam Thanh Commune, Hoi An, Quang Nam"},
-            {"name": "An Bang Beach", "address": "Cam An Commune, Hoi An, Quang Nam"},
-            {"name": "Thanh Ha Pottery Village", "address": "Thanh Ha Ward, Hoi An, Quang Nam"},
-            {"name": "Hoi An History Museum", "address": "Hoi An Ancient Town, Quang Nam"},
+            {"name": "Phố cổ Hội An", "address": "Phường Minh An, TP. Hội An, Quảng Nam"},
+            {"name": "Chùa Cầu Nhật Bản", "address": "Phố cổ Hội An, Quảng Nam"},
+            {"name": "Chùa Cầu", "address": "Phố cổ Hội An, Quảng Nam"},
+            {"name": "Rừng dừa Bảy Mẫu Cẩm Thanh", "address": "Xã Cẩm Thanh, Hội An, Quảng Nam"},
+            {"name": "Biển An Bàng", "address": "Xã Cẩm An, Hội An, Quảng Nam"},
+            {"name": "Làng gốm Thanh Hà", "address": "Phường Thanh Hà, Hội An, Quảng Nam"},
+            {"name": "Bảo tàng Lịch sử Hội An", "address": "Phố cổ Hội An, Quảng Nam"},
             
-            {"name": "Golden Bridge, Ba Na Hills", "address": "An Son Hamlet, Hoa Ninh Commune, Hoa Vang District, Da Nang"},
-            {"name": "Dragon Bridge", "address": "Hai Chau District, Da Nang"},
-            {"name": "My Khe Beach", "address": "Son Tra District, Da Nang"},
-            {"name": "Marble Mountains", "address": "Ngu Hanh Son District, Da Nang"},
-            {"name": "Cham Museum", "address": "2 Phan Chau Trinh, Hai Chau District, Da Nang"},
-            {"name": "Han River Bridge", "address": "Hai Chau District, Da Nang"},
+            {"name": "Cầu Vàng, Bà Nà Hills", "address": "Thôn An Sơn, Xã Hòa Ninh, Huyện Hòa Vang, Đà Nẵng"},
+            {"name": "Cầu Rồng", "address": "Quận Hải Châu, Đà Nẵng"},
+            {"name": "Bãi biển Mỹ Khê", "address": "Quận Sơn Trà, Đà Nẵng"},
+            {"name": "Ngũ Hành Sơn", "address": "Quận Ngũ Hành Sơn, Đà Nẵng"},
+            {"name": "Bảo tàng Chăm", "address": "2 Phan Châu Trinh, Quận Hải Châu, Đà Nẵng"},
+            {"name": "Cầu Sông Hàn", "address": "Quận Hải Châu, Đà Nẵng"},
             
-            {"name": "Ha Long Bay", "address": "Ha Long City, Quang Ninh"},
-            {"name": "Bai Chay Bridge", "address": "Ha Long City, Quang Ninh"},
-            {"name": "Bai Chay Resort", "address": "Ha Long City, Quang Ninh"},
+            {"name": "Vịnh Hạ Long", "address": "TP. Hạ Long, Quảng Ninh"},
+            {"name": "Cầu Bãi Cháy", "address": "TP. Hạ Long, Quảng Ninh"},
+            {"name": "Khu nghỉ dưỡng Bãi Cháy", "address": "TP. Hạ Long, Quảng Ninh"},
             
-            {"name": "Rong May Glass Bridge", "address": "Sapa, Lao Cai"},
-            {"name": "Ham Rong Mountain", "address": "Sapa Town, Lao Cai"},
-            {"name": "Silver Waterfall", "address": "Sapa, Lao Cai"},
-            {"name": "Muong Hoa Terraces", "address": "Sapa, Lao Cai"},
-            {"name": "Sapa Market", "address": "Sapa Town, Lao Cai"},
+            {"name": "Cầu kính Rồng Mây", "address": "Sapa, Lào Cai"},
+            {"name": "Núi Hàm Rồng", "address": "Thị trấn Sapa, Lào Cai"},
+            {"name": "Thác Bạc", "address": "Sapa, Lào Cai"},
+            {"name": "Ruộng bậc thang Mường Hoa", "address": "Sapa, Lào Cai"},
+            {"name": "Chợ Sapa", "address": "Thị trấn Sapa, Lào Cai"},
             
-            {"name": "Trang An Ecotourism Complex", "address": "Gia Vien District, Ninh Binh"},
-            {"name": "Tam Coc - Bich Dong", "address": "Ninh Hai Commune, Ninh Binh"},
-            {"name": "Hang Mua", "address": "Ninh Hai Commune, Ninh Binh"},
-            {"name": "Bai Dinh Pagoda", "address": "Gia Vien District, Ninh Binh"},
-            {"name": "Phat Diem Stone Cathedral", "address": "Kim Son District, Ninh Binh"},
+            {"name": "Quần thể danh thắng Tràng An", "address": "Huyện Gia Viễn, Ninh Bình"},
+            {"name": "Tam Cốc - Bích Động", "address": "Xã Ninh Hải, Ninh Bình"},
+            {"name": "Hang Múa", "address": "Xã Ninh Hải, Ninh Bình"},
+            {"name": "Chùa Bái Đính", "address": "Huyện Gia Viễn, Ninh Bình"},
+            {"name": "Nhà thờ đá Phát Diệm", "address": "Huyện Kim Sơn, Ninh Bình"},
             
-            {"name": "Bai Sao Beach", "address": "Phu Quoc Island, Kien Giang"},
-            {"name": "Vinpearl Land Phu Quoc", "address": "Ganh Dau, Phu Quoc, Kien Giang"},
-            {"name": "Phu Quoc Fish Sauce Factory", "address": "An Thoi, Phu Quoc, Kien Giang"},
-            {"name": "Dinh Cau Night Market", "address": "Duong Dong Town, Phu Quoc, Kien Giang"},
+            {"name": "Bãi Sao", "address": "Đảo Phú Quốc, Kiên Giang"},
+            {"name": "Vinpearl Land Phú Quốc", "address": "Gành Dầu, Phú Quốc, Kiên Giang"},
+            {"name": "Nhà thùng nước mắm Phú Quốc", "address": "An Thới, Phú Quốc, Kiên Giang"},
+            {"name": "Chợ đêm Dinh Cậu", "address": "Thị trấn Dương Đông, Phú Quốc, Kiên Giang"},
             
-            {"name": "Xuan Huong Lake", "address": "City Center, Da Lat, Lam Dong"},
-            {"name": "Valley of Love", "address": "Ward 8, Da Lat, Lam Dong"},
-            {"name": "Domain De Marie Church", "address": "1 Tran Phu Street, Da Lat"},
-            {"name": "Tuyen Lam Lake", "address": "Ward 3, Da Lat"},
-            {"name": "Pongour Waterfall", "address": "Duc Trong District, Lam Dong"},
-            {"name": "Crazy House", "address": "3 Huynh Thuc Khang, Da Lat"},
+            {"name": "Hồ Xuân Hương", "address": "Trung tâm TP. Đà Lạt, Lâm Đồng"},
+            {"name": "Thung lũng Tình Yêu", "address": "Phường 8, Đà Lạt, Lâm Đồng"},
+            {"name": "Nhà thờ Domain De Marie", "address": "1 Đường Trần Phú, Đà Lạt"},
+            {"name": "Hồ Tuyền Lâm", "address": "Phường 3, Đà Lạt"},
+            {"name": "Thác Pongour", "address": "Huyện Đức Trọng, Lâm Đồng"},
+            {"name": "Biệt thự Hằng Nga (Crazy House)", "address": "3 Huỳnh Thúc Khang, Đà Lạt"},
             
-            {"name": "Cu Lao Cham", "address": "Hoi An, Quang Nam"},
-            {"name": "Nguyen Hue Walking Street", "address": "District 1, Ho Chi Minh City"},
-            {"name": "Duong Lam Ancient Village", "address": "Son Tay Town, Hanoi"},
-            {"name": "Hung Kings Temple", "address": "Phu Tho"},
-            {"name": "West Lake", "address": "Tay Ho District, Hanoi"},
-            {"name": "Suoi Ca Than Hot Spring", "address": "Cẩm Lương, Quang Nam"},
-            {"name": "Bai Da Trung", "address": "Quang Binh"},
-            {"name": "Cuc Phuong National Park", "address": "Ninh Binh"},
-            {"name": "Ly Son Island", "address": "Quang Ngai"},
-            {"name": "Hai Van Pass", "address": "Border of Hue and Da Nang"},
-            {"name": "Quang Tri Citadel", "address": "Quang Tri"},
-            {"name": "Thien Mu Pagoda", "address": "Hue"},
-            {"name": "My Khe Beach", "address": "Da Nang"},
-            {"name": "Phu My Hung Urban Area", "address": "District 7, Ho Chi Minh City"},
-            {"name": "An Thoi Diving Site", "address": "Phu Quoc, Kien Giang"},
-            {"name": "Tan Trao Banyan Tree", "address": "Tuyen Quang"},
-            {"name": "Can Gio Mangrove Forest", "address": "Ho Chi Minh City"},
-            {"name": "Mui Ne Beach", "address": "Binh Thuan"},
-            {"name": "Nguyen Hue Flower Street", "address": "District 1, Ho Chi Minh City"},
-            {"name": "Vietnam Museum of Ethnology", "address": "Nguyen Văn Huyen, Cau Giay, Hanoi"},
-            {"name": "Dong Xuan Market", "address": "Hoan Kiem, Hanoi"},
-            {"name": "Tu Duc Tomb", "address": "Hue"},
-            {"name": "Poshanu Cham Towers", "address": "Ninh Thuan"},
-            {"name": "Hue Ancient Town", "address": "Hue"},
-            {"name": "Phat Diem Stone Church", "address": "Kim Son, Ninh Binh"},
-            {"name": "Ba Vi National Park", "address": "Ba Vi, Hanoi"},
-            {"name": "Thap Ba Hot Spring", "address": "Nha Trang, Khanh Hoa"},
-            {"name": "Ba Den Mountain", "address": "Tay Ninh"},
-            {"name": "Ancient Village Communal House", "address": "Bac Ninh"},
-            {"name": "Dai Nam Tourism Complex", "address": "Binh Duong"},
-            {"name": "Suoi Mo Waterfall", "address": "Dong Nai"},
-            {"name": "Long Bien Bridge", "address": "Hanoi"},
-            {"name": "Cua Lo Beach", "address": "Nghe An"},
-            {"name": "Thien Son-Hoan Nga Ecotourism", "address": "Ba Vi, Hanoi"},
-            {"name": "Nui Coc Lake Tourist Area", "address": "Thai Nguyen"},
-            {"name": "Hung Kings Temple", "address": "Phu Tho"},
-            {"name": "Cai Rang Floating Market", "address": "Can Tho"},
-            {"name": "Cat Ba Island", "address": "Hai Phong"},
-            {"name": "Hai Phong Cathedral", "address": "Hai Phong"},
-            {"name": "Quan Lan Island", "address": "Quang Ninh"},
-            {"name": "Cua Lo Fishing Port", "address": "Nghe An"},
-            {"name": "Luy Lau Ancient Citadel", "address": "Bac Ninh"},
-            {"name": "Ho Tram Beach", "address": "Ba Ria - Vung Tau"},
-            {"name": "Ba Dinh Square", "address": "Hanoi"}
+            {"name": "Cù Lao Chàm", "address": "Hội An, Quảng Nam"},
+            {"name": "Phố đi bộ Nguyễn Huệ", "address": "Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Làng cổ Đường Lâm", "address": "Thị xã Sơn Tây, Hà Nội"},
+            {"name": "Đền Hùng", "address": "Phú Thọ"},
+            {"name": "Hồ Tây", "address": "Quận Tây Hồ, Hà Nội"},
+            {"name": "Suối khoáng nóng Suối Cá Thần", "address": "Cẩm Lương, Quảng Nam"},
+            {"name": "Bãi Đá Trứng", "address": "Quảng Bình"},
+            {"name": "Vườn quốc gia Cúc Phương", "address": "Ninh Bình"},
+            {"name": "Đảo Lý Sơn", "address": "Quảng Ngãi"},
+            {"name": "Đèo Hải Vân", "address": "Ranh giới Huế và Đà Nẵng"},
+            {"name": "Thành cổ Quảng Trị", "address": "Quảng Trị"},
+            {"name": "Chùa Thiên Mụ", "address": "Huế"},
+            {"name": "Bãi biển Mỹ Khê (Đà Nẵng)", "address": "Đà Nẵng"},
+            {"name": "Khu đô thị Phú Mỹ Hưng", "address": "Quận 7, TP. Hồ Chí Minh"},
+            {"name": "Khu lặn An Thới", "address": "Phú Quốc, Kiên Giang"},
+            {"name": "Cây đa Tân Trào", "address": "Tuyên Quang"},
+            {"name": "Rừng ngập mặn Cần Giờ", "address": "TP. Hồ Chí Minh"},
+            {"name": "Bãi biển Mũi Né", "address": "Bình Thuận"},
+            {"name": "Đường hoa Nguyễn Huệ", "address": "Quận 1, TP. Hồ Chí Minh"},
+            {"name": "Bảo tàng Dân tộc học Việt Nam", "address": "Nguyễn Văn Huyên, Cầu Giấy, Hà Nội"},
+            {"name": "Chợ Đồng Xuân", "address": "Hoàn Kiếm, Hà Nội"},
+            {"name": "Lăng Tự Đức", "address": "Huế"},
+            {"name": "Tháp Chăm Poshanu", "address": "Ninh Thuận"},
+            {"name": "Kinh thành Huế", "address": "Huế"},
+            {"name": "Nhà thờ đá Phát Diệm", "address": "Kim Sơn, Ninh Bình"},
+            {"name": "Vườn quốc gia Ba Vì", "address": "Ba Vì, Hà Nội"},
+            {"name": "Suối khoáng nóng Tháp Bà", "address": "Nha Trang, Khánh Hòa"},
+            {"name": "Núi Bà Đen", "address": "Tây Ninh"},
+            {"name": "Đình làng cổ", "address": "Bắc Ninh"},
+            {"name": "Khu du lịch Đại Nam", "address": "Bình Dương"},
+            {"name": "Thác Suối Mơ", "address": "Đồng Nai"},
+            {"name": "Cầu Long Biên (Hà Nội)", "address": "Hà Nội"},
+            {"name": "Bãi biển Cửa Lò", "address": "Nghệ An"},
+            {"name": "Khu du lịch sinh thái Thiên Sơn-Suối Ngà", "address": "Ba Vì, Hà Nội"},
+            {"name": "Khu du lịch Hồ Núi Cốc", "address": "Thái Nguyên"},
+            {"name": "Đền Hùng (Phú Thọ)", "address": "Phú Thọ"},
+            {"name": "Chợ nổi Cái Răng", "address": "Cần Thơ"},
+            {"name": "Đảo Cát Bà", "address": "Hải Phòng"},
+            {"name": "Nhà thờ lớn Hải Phòng", "address": "Hải Phòng"},
+            {"name": "Đảo Quan Lạn", "address": "Quảng Ninh"},
+            {"name": "Cảng cá Cửa Lò", "address": "Nghệ An"},
+            {"name": "Thành cổ Luy Lâu", "address": "Bắc Ninh"},
+            {"name": "Bãi biển Hồ Tràm", "address": "Bà Rịa - Vũng Tàu"},
+            {"name": "Quảng trường Ba Đình", "address": "Hà Nội"}
         ];
         
         // --- JAVASCRIPT LOGIC AREA ---
@@ -344,7 +345,7 @@
         const detailImageContainer = document.getElementById('detail-image-container');
         const detailImageLoadingOverlay = document.getElementById('detail-image-loading-overlay');
 
-        const INITIAL_IMAGE_BATCH = 5; // Increase the number of images generated immediately
+        const INITIAL_IMAGE_BATCH = 5; 
         
         let autoScrollInterval; 
         
@@ -359,41 +360,41 @@
         const imageApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
 
 
-        // Map of cities/regions to approximate coordinates (for plotting/clustering) - unchanged
+        // Map of cities/regions to approximate coordinates (for plotting/clustering)
         const cityCoordinates = {
             // North
-            "Hanoi": { lat: 21.0285, lng: 105.8542, region: 'North' },
-            "Hai Phong": { lat: 20.8449, lng: 106.6881, region: 'North' },
-            "Quang Ninh": { lat: 20.9572, lng: 107.0350, region: 'North' },
-            "Lao Cai": { lat: 22.3390, lng: 103.8500, region: 'North' },
-            "Phu Tho": { lat: 21.3204, lng: 105.4055, region: 'North' },
-            "Tuyen Quang": { lat: 21.7825, lng: 105.2104, region: 'North' },
-            "Bac Ninh": { lat: 21.1894, lng: 106.0711, region: 'North' },
-            "Thai Nguyen": { lat: 21.5975, lng: 105.8456, region: 'North' },
-            "Ninh Binh": { lat: 20.2500, lng: 105.9000, region: 'North' },
-            "Nghe An": { lat: 18.6750, lng: 105.6880, region: 'North' },
+            "Hanoi": { lat: 21.0285, lng: 105.8542, region: 'Miền Bắc' },
+            "Hai Phong": { lat: 20.8449, lng: 106.6881, region: 'Miền Bắc' },
+            "Quang Ninh": { lat: 20.9572, lng: 107.0350, region: 'Miền Bắc' },
+            "Lao Cai": { lat: 22.3390, lng: 103.8500, region: 'Miền Bắc' },
+            "Phu Tho": { lat: 21.3204, lng: 105.4055, region: 'Miền Bắc' },
+            "Tuyen Quang": { lat: 21.7825, lng: 105.2104, region: 'Miền Bắc' },
+            "Bac Ninh": { lat: 21.1894, lng: 106.0711, region: 'Miền Bắc' },
+            "Thai Nguyen": { lat: 21.5975, lng: 105.8456, region: 'Miền Bắc' },
+            "Ninh Binh": { lat: 20.2500, lng: 105.9000, region: 'Miền Bắc' },
+            "Nghe An": { lat: 18.6750, lng: 105.6880, region: 'Miền Bắc' },
             
             // Central
-            "Quang Binh": { lat: 17.4764, lng: 106.6006, region: 'Central' },
-            "Quang Tri": { lat: 16.8208, lng: 107.0855, region: 'Central' },
-            "Hue": { lat: 16.4680, lng: 107.5707, region: 'Central' },
-            "Da Nang": { lat: 16.0544, lng: 108.2022, region: 'Central' },
-            "Quang Nam": { lat: 15.8794, lng: 108.3360, region: 'Central' },
-            "Quang Ngai": { lat: 15.1167, lng: 108.8000, region: 'Central' },
-            "Ninh Thuan": { lat: 11.5833, lng: 108.9667, region: 'Central' },
-            "Khanh Hoa": { lat: 12.2458, lng: 109.1947, region: 'Central' },
+            "Quang Binh": { lat: 17.4764, lng: 106.6006, region: 'Miền Trung' },
+            "Quang Tri": { lat: 16.8208, lng: 107.0855, region: 'Miền Trung' },
+            "Hue": { lat: 16.4680, lng: 107.5707, region: 'Miền Trung' },
+            "Da Nang": { lat: 16.0544, lng: 108.2022, region: 'Miền Trung' },
+            "Quang Nam": { lat: 15.8794, lng: 108.3360, region: 'Miền Trung' },
+            "Quang Ngai": { lat: 15.1167, lng: 108.8000, region: 'Miền Trung' },
+            "Ninh Thuan": { lat: 11.5833, lng: 108.9667, region: 'Miền Trung' },
+            "Khanh Hoa": { lat: 12.2458, lng: 109.1947, region: 'Miền Trung' },
 
             // South
-            "Binh Thuan": { lat: 10.9344, lng: 108.2711, region: 'South' },
-            "Ho Chi Minh City": { lat: 10.7758, lng: 106.7013, region: 'South' },
-            "Ba Ria - Vung Tau": { lat: 10.5519, lng: 107.4190, region: 'South' },
-            "Dong Nai": { lat: 10.9500, lng: 107.0500, region: 'South' },
-            "Binh Duong": { lat: 11.0000, lng: 106.6750, region: 'South' },
-            "Tay Ninh": { lat: 11.3167, lng: 106.1167, region: 'South' },
-            "Kien Giang": { lat: 10.2241, lng: 103.9577, region: 'South' }, // Phu Quoc
-            "Lam Dong": { lat: 11.9400, lng: 108.4420, region: 'South' }, // Da Lat
-            "Can Tho": { lat: 10.0333, lng: 105.7833, region: 'South' },
-            "Other": { lat: 16.0, lng: 107.8, region: 'Central' }
+            "Binh Thuan": { lat: 10.9344, lng: 108.2711, region: 'Miền Nam' },
+            "Ho Chi Minh City": { lat: 10.7758, lng: 106.7013, region: 'Miền Nam' },
+            "Ba Ria - Vung Tau": { lat: 10.5519, lng: 107.4190, region: 'Miền Nam' },
+            "Dong Nai": { lat: 10.9500, lng: 107.0500, region: 'Miền Nam' },
+            "Binh Duong": { lat: 11.0000, lng: 106.6750, region: 'Miền Nam' },
+            "Tay Ninh": { lat: 11.3167, lng: 106.1167, region: 'Miền Nam' },
+            "Kien Giang": { lat: 10.2241, lng: 103.9577, region: 'Miền Nam' }, // Phu Quoc
+            "Lam Dong": { lat: 11.9400, lng: 108.4420, region: 'Miền Nam' }, // Da Lat
+            "Can Tho": { lat: 10.0333, lng: 105.7833, region: 'Miền Nam' },
+            "Other": { lat: 16.0, lng: 107.8, region: 'Miền Trung' }
         };
 
         // Utility functions (extractCity, processLocations, populateCityFilter)
@@ -497,8 +498,10 @@
 
         // --- GEMINI IMAGE GENERATION & LAZY LOADING LOGIC ---
         
-        const IMAGE_LOADING_PLACEHOLDER = 'https://placehold.co/260x150/f3f4f6/374151?text=AI+Image+Loading...';
-        const IMAGE_ERROR_PLACEHOLDER = 'https://placehold.co/260x150/fecaca/991b1b?text=Image+Generation+Error';
+        // Cập nhật văn bản giữ chỗ (placeholder) bằng tiếng Việt
+        const IMAGE_LOADING_PLACEHOLDER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="260" height="150" viewBox="0 0 260 150"><rect width="260" height="150" fill="%23f3f4f6"/><text x="130" y="75" font-family="Inter, sans-serif" font-size="16" fill="%239ca3af" text-anchor="middle" alignment-baseline="middle">Đang tải ảnh AI...</text></svg>';
+        const IMAGE_ERROR_PLACEHOLDER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="260" height="150" viewBox="0 0 260 150"><rect width="260" height="150" fill="%23fee2e2"/><text x="130" y="75" font-family="Inter, sans-serif" font-size="16" fill="%23ef4444" text-anchor="middle" alignment-baseline="middle">Lỗi Tạo Ảnh</text></svg>';
+
 
         /**
          * Calls the Imagen API to generate an image and update the specified DOM element.
@@ -508,7 +511,13 @@
          * @param {HTMLElement} containerElement - The container element to show/hide loading state.
          */
         async function generateImageForLocation(locationName, city, imgElement, containerElement) {
-            // Check if generation is already done or in progress via data-loaded attribute
+            // Kiểm tra null lần cuối (Phòng trường hợp lỗi không mong muốn)
+            if (!imgElement || !containerElement) {
+                console.error("Thiếu phần tử hình ảnh hoặc container.");
+                return;
+            }
+
+            // Check if generation is already done or in progress
             if (imgElement.dataset.loaded === 'true' || containerElement.classList.contains('loading')) {
                 return; 
             }
@@ -518,8 +527,9 @@
             const loadingOverlay = containerElement.querySelector('.image-loading-overlay');
             if(loadingOverlay) {
                 loadingOverlay.classList.remove('hidden');
-                loadingOverlay.innerHTML = `<div class="spinner mb-2"></div><span>Generating AI Image...</span>`;
+                loadingOverlay.innerHTML = `<div class="spinner mb-2"></div><span>Đang tạo ảnh AI...</span>`;
             }
+            imgElement.src = IMAGE_LOADING_PLACEHOLDER; // Ensure loading placeholder is visible
 
             const prompt = `A cinematic, highly detailed photograph of ${locationName}, ${city}, Vietnam. Focus on vibrant colors, professional travel photography style, wide-angle shot.`;
             
@@ -547,18 +557,26 @@
                     imgElement.src = imageUrl;
                     imgElement.dataset.loaded = 'true';
                 } else {
+                    console.error("Image generation failed: No base64 data received from API result.");
                     imgElement.src = IMAGE_ERROR_PLACEHOLDER;
-                    console.error("Image generation failed: No base64 data received.");
+                    if(loadingOverlay) loadingOverlay.innerHTML = `<span>Tạo Ảnh Thất Bại.</span>`;
                 }
 
             } catch (error) {
                 console.error("Imagen API Error:", error.message);
                 imgElement.src = IMAGE_ERROR_PLACEHOLDER;
+                if(loadingOverlay) loadingOverlay.innerHTML = `<span>Lỗi: Gọi API Thất Bại.</span>`;
             } finally {
                 // Remove loading state
                 containerElement.classList.remove('loading');
-                if(loadingOverlay) {
+                // The overlay should remain visible only on error, otherwise hide it.
+                if(imgElement.dataset.loaded === 'true' && loadingOverlay) {
                     loadingOverlay.classList.add('hidden');
+                } else if (loadingOverlay) {
+                     // Keep the error message visible for a few seconds before hiding
+                     setTimeout(() => {
+                         loadingOverlay.classList.add('hidden');
+                     }, 5000);
                 }
             }
         }
@@ -583,12 +601,13 @@
                     if (entry.isIntersecting) {
                         const card = entry.target;
                         // Find the image element that is marked for lazy loading
-                        const imgElement = card.querySelector('img[data-lazy-load="true"]');
+                        // NOTE: Use the new class selector for reliability
+                        const imgElement = card.querySelector('.location-image-target[data-lazy-load="true"]');
                         
                         if (imgElement && imgElement.dataset.loaded === 'false') {
                             const locationName = imgElement.dataset.name;
                             const city = imgElement.dataset.city;
-                            const containerElement = card.querySelector('.image-container');
+                            const containerElement = card.querySelector('.image-container-target');
 
                             // Stop observing this element once the generation is triggered
                             observer.unobserve(card);
@@ -608,8 +627,8 @@
          * Calls the Gemini API to generate a vivid, image-inspired description in English.
          */
         async function generateImageDescription(locationName, city) {
-            // Updated System Prompt and User Query to ensure English output
-            const systemPrompt = "Act as a professional travel photographer and writer. Your task is to generate a concise, beautiful, and evocative description of what a stunning photograph of this Vietnamese location would look like. Focus on colors, light, atmosphere, and key elements. The output must be a single, flowing paragraph in **English** (no bolding, no lists, no headings).";
+            // Updated System Prompt and User Query to ensure Vietnamese output
+            const systemPrompt = "Act as a professional travel photographer and writer. Your task is to generate a concise, beautiful, and evocative description of what a stunning photograph of this Vietnamese location would look like. Focus on colors, light, atmosphere, and key elements. The output must be a single, flowing paragraph in **Vietnamese** (no bolding, no lists, no headings).";
             const userQuery = `Describe a beautiful, high-quality, professional-style photograph of the location "${locationName}" in ${city}.`;
 
             const payload = {
@@ -632,12 +651,12 @@
                 if (text) {
                     return text;
                 } else {
-                    return "Could not generate image description. Please try again.";
+                    return "Không thể tạo mô tả hình ảnh. Vui lòng thử lại.";
                 }
 
             } catch (error) {
                 console.error("Gemini API Error:", error.message);
-                return "API connection error. Could not generate image description.";
+                return "Lỗi kết nối API. Không thể tạo mô tả hình ảnh.";
             }
         }
 
@@ -645,8 +664,8 @@
         // --- DETAIL PANEL LOGIC ---
 
         function getMarkerColor(region) {
-             if (region === 'North') return '#1e40af'; 
-             if (region === 'Central') return '#047857'; 
+             if (region === 'Miền Bắc') return '#1e40af'; 
+             if (region === 'Miền Trung') return '#047857'; 
              return '#b91c1c'; 
         }
 
@@ -671,25 +690,30 @@
             }
 
             // 2. Dynamic Image Generation for Detail Panel
+            // NOTE: Use the dedicated image element in the detail panel
+            const detailImgElement = document.getElementById('detail-image');
+
+            // Find the card image in the carousel (if available) to check if already loaded
+            const cardImgElement = document.querySelector(`#img-${loc.id}`); 
+            
             // Check if the card image was already generated (from the carousel)
-            const cardImgElement = document.getElementById(`img-${loc.id}`);
             if (cardImgElement && cardImgElement.dataset.loaded === 'true') {
-                 detailImageElement.src = cardImgElement.src;
-                 detailImageElement.dataset.loaded = 'true';
+                 detailImgElement.src = cardImgElement.src;
+                 detailImgElement.dataset.loaded = 'true';
                  detailImageContainer.classList.remove('loading');
                  detailImageLoadingOverlay.classList.add('hidden');
             } else {
                  // Reset placeholder and trigger generation specifically for the detail panel
-                 detailImageElement.src = IMAGE_LOADING_PLACEHOLDER;
-                 detailImageElement.dataset.loaded = 'false';
-                 await generateImageForLocation(loc.name, loc.city, detailImageElement, detailImageContainer);
+                 detailImgElement.src = IMAGE_LOADING_PLACEHOLDER;
+                 detailImgElement.dataset.loaded = 'false';
+                 await generateImageForLocation(loc.name, loc.city, detailImgElement, detailImageContainer);
             }
             
             // 3. Dynamic Text Content Generation
             // Set loading state for the description
             detailIntroElement.innerHTML = `<div class="flex items-center space-x-2 text-indigo-600">
                 <div class="spinner"></div>
-                <span>Generating image description...</span>
+                <span>Đang tạo mô tả hình ảnh...</span>
             </div>`;
             
             const description = await generateImageDescription(loc.name, loc.city);
@@ -819,10 +843,9 @@
         
         function getInitialImageUrl(loc) {
             // Placeholder for quick loading until AI image is generated
-            const color = loc.region === 'North' ? '5c7399' : 
-                          loc.region === 'Central' ? '419188' : 'a8464a'; 
+            const color = loc.region === 'Miền Bắc' ? '5c7399' : 
+                          loc.region === 'Miền Trung' ? '419188' : 'a8464a'; 
             
-            // This is the default text placeholder used for lazy loading cards
             return `https://placehold.co/260x150/${color}/ffffff?text=${encodeURIComponent(loc.name.split('(')[0].trim())}&font=roboto`;
         }
         
@@ -831,7 +854,7 @@
             locationListElement.innerHTML = '';
             
             if (filteredList.length === 0) {
-                locationListElement.innerHTML = '<p class="text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner mx-auto w-full">No locations found matching the search/filter criteria.</p>';
+                locationListElement.innerHTML = '<p class="text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner mx-auto w-full">Không tìm thấy địa điểm nào phù hợp với tiêu chí tìm kiếm/lọc.</p>';
                 stopAutoScroll();
                 return;
             }
@@ -860,6 +883,9 @@
                 const isInitialBatch = index < INITIAL_IMAGE_BATCH;
                 const initialImageUrl = getInitialImageUrl(loc); 
                 
+                // Determine the starting URL for the image
+                const startSrc = isInitialBatch ? IMAGE_LOADING_PLACEHOLDER : initialImageUrl;
+                
                 // Inner HTML structure
                 item.innerHTML = `
                     <div>
@@ -869,20 +895,20 @@
                         </div>
 
                         <!-- Image Container with Loading Overlay -->
-                        <div class="image-container" id="container-${loc.id}">
+                        <div class="image-container image-container-target" id="container-${loc.id}">
                             <img 
-                                src="${isInitialBatch ? IMAGE_LOADING_PLACEHOLDER : initialImageUrl}" 
-                                alt="Suggested image for ${loc.name}" 
+                                src="${startSrc}" 
+                                alt="Ảnh đề xuất cho ${loc.name}" 
                                 id="img-${loc.id}"
                                 data-loaded="false"
                                 data-lazy-load="${!isInitialBatch}" 
                                 data-name="${loc.name}" 
                                 data-city="${loc.city}"  
-                                class="w-full h-full object-cover rounded-lg mb-3 shadow-inner"
+                                class="w-full h-full object-cover rounded-lg mb-3 shadow-inner location-image-target"
                             >
-                            <div class="image-loading-overlay ${isInitialBatch ? '' : 'hidden'}" id="overlay-${loc.id}">
+                            <div class="image-loading-overlay ${!isInitialBatch ? 'hidden' : ''}" id="overlay-${loc.id}">
                                 <div class="spinner mb-2"></div>
-                                <span>Generating AI Image...</span>
+                                <span>Đang tạo ảnh AI...</span>
                             </div>
                         </div>
                         <!-- End Image Container -->
@@ -890,21 +916,30 @@
                         <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full my-3">
                             ${loc.city} (${loc.region})
                         </p>
-                        <p class="text-sm text-gray-800 mb-2 font-semibold">Address:</p>
+                        <p class="text-sm text-gray-800 mb-2 font-semibold">Địa chỉ:</p>
                         <p class="text-sm text-gray-600 italic leading-snug">
                             ${loc.address}
                         </p>
                     </div>
                     <div class="h-10"></div> 
                 `;
-                locationListElement.appendChild(item);
+
+                // CRITICAL FIX: Append item to the DOM *before* querying its children
+                locationListElement.appendChild(item); 
                 
                 // 1. Initial Batch: Trigger generation immediately 
                 if (isInitialBatch) {
-                    const imgElement = document.getElementById(`img-${loc.id}`);
-                    const containerElement = document.getElementById(`container-${loc.id}`);
-                    // Note: generateImageForLocation handles setting and removing loading state
-                    generateImageForLocation(loc.name, loc.city, imgElement, containerElement);
+                    // Find elements now that the 'item' is attached to the DOM
+                    const imgElement = item.querySelector('.location-image-target');
+                    const containerElement = item.querySelector('.image-container-target');
+                    
+                    if (imgElement && containerElement) {
+                        // Trigger image generation
+                        generateImageForLocation(loc.name, loc.city, imgElement, containerElement);
+                    } else {
+                        // Safety console log (should be resolved now)
+                        console.error(`[Lỗi] Không tìm thấy phần tử hình ảnh cho ${loc.name}. Lỗi querySelector.`);
+                    }
                 } else {
                     // 2. Lazy Load: Observe the card container
                     imageObserver.observe(item);
@@ -950,7 +985,7 @@
             // Update map title with the exact number of locations
             const mapTitleElement = document.getElementById('map-title');
             if (mapTitleElement) {
-                mapTitleElement.innerHTML = `📍 Vietnam Check-in Spots Map (${locations.length}) 🇻🇳`;
+                mapTitleElement.innerHTML = `📍 Bản Đồ Các Điểm Check-in Việt Nam (${locations.length}) 🇻🇳`;
             }
 
             try {
@@ -958,7 +993,7 @@
                 populateCityFilter();
                 renderLocations(locations); 
             } catch (e) {
-                console.error("Error during app initialization:", e);
+                console.error("Lỗi trong quá trình khởi tạo ứng dụng:", e);
             }
         }
 
