@@ -1,41 +1,306 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trang Web Đơn Giản</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điểm Du Lịch Việt Nam - Tìm kiếm & Lọc</title>
+    <!-- Tải Tailwind CSS cho styling hiện đại và responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f9f9f9;
-            color: #333;
+        /* Custom scrollbar for a nicer look */
+        .list-container::-webkit-scrollbar {
+            width: 6px;
         }
-        header {
-            text-align: center;
-            margin-bottom: 20px;
+        .list-container::-webkit-scrollbar-thumb {
+            background-color: #a8a29e;
+            border-radius: 3px;
         }
-        main {
-            max-width: 800px;
-            margin: auto;
-        }
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #777;
-            font-size: 0.9rem;
+        .list-container::-webkit-scrollbar-track {
+            background-color: #f5f5f5;
         }
     </style>
 </head>
-<body>
-    <header>
-        <h1>Chào mừng đến với trang web của tôi</h1>
-    </header>
-    <main>
-        <p>Đây là trang web đơn giản được tạo ra để dán vào GitHub Pages hoặc làm trang tĩnh.</p>
-    </main>
-    <footer>
-        &copy; 2025 Bản quyền của tôi.
-    </footer>
+<body class="bg-gray-50 font-sans p-4 sm:p-8">
+
+    <div id="app" class="max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-indigo-700 mb-2">
+                Kho Tàng Du Lịch Việt Nam
+            </h1>
+            <p class="text-gray-600 text-lg">Tìm kiếm và khám phá các địa điểm nổi tiếng.</p>
+        </header>
+
+        <!-- Thanh tìm kiếm và bộ lọc -->
+        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg mb-8 space-y-4 md:flex md:space-y-0 md:space-x-4">
+            <!-- Ô tìm kiếm -->
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Tìm kiếm theo tên địa điểm..."
+                class="w-full md:flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+            >
+            <!-- Bộ lọc thành phố -->
+            <select 
+                id="city-filter" 
+                class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg bg-white appearance-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                onchange="filterLocations()"
+            >
+                <option value="">-- Lọc theo Thành phố/Tỉnh --</option>
+            </select>
+        </div>
+
+        <!-- Container chứa danh sách địa điểm -->
+        <div 
+            id="location-list" 
+            class="list-container grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-h-[70vh] overflow-y-auto pr-2"
+        >
+            <!-- Địa điểm sẽ được render tại đây -->
+            <p id="loading-message" class="col-span-full text-center text-gray-500 p-8">Đang tải dữ liệu...</p>
+        </div>
+
+        <footer class="mt-10 text-center text-gray-500 text-sm border-t pt-4">
+            &copy; 2025 Danh sách địa điểm du lịch. Phát triển bằng HTML & JavaScript.
+        </footer>
+    </div>
+
+    <script>
+        // Dữ liệu ban đầu của bạn
+        const rawLocations = [
+            {"name": "Old Quarter", "address": "Hoan Kiem District, Hanoi"},
+            {"name": "Ta Hien Street", "address": "Hoan Kiem District, Hanoi"},
+            {"name": "Tong Duy Tan Street", "address": "Hoan Kiem District, Hanoi"},
+            {"name": "St. Joseph's Cathedral", "address": "40 Nha Chung Street, Hoan Kiem District, Hanoi"},
+            {"name": "Train Street, Tran Phu", "address": "Ba Dinh District, Hanoi"},
+            {"name": "Ho Chi Minh Mausoleum", "address": "2 Hung Vuong Street, Ba Dinh District, Hanoi"},
+            {"name": "Hoan Kiem Lake", "address": "Hoan Kiem District, Hanoi"},
+            {"name": "Long Bien Bridge", "address": "Connecting Long Bien and Ba Dinh Districts, Hanoi"},
+            {"name": "One Pillar Pagoda", "address": "Dien Bien Ward, Ba Dinh District, Hanoi"},
+            {"name": "Temple of Literature", "address": "58 Quoc Tu Giam Street, Dong Da District, Hanoi"},
+            
+            {"name": "Notre-Dame Cathedral Basilica of Saigon", "address": "1 Cong xa Paris, District 1, Ho Chi Minh City"},
+            {"name": "Saigon Central Post Office", "address": "2 Cong xa Paris, District 1, Ho Chi Minh City"},
+            {"name": "Ben Thanh Market", "address": "45 Le Loi, District 1, Ho Chi Minh City"},
+            {"name": "Bitexco Financial Tower", "address": "2 Hai Trieu, District 1, Ho Chi Minh City"},
+            {"name": "Tan Dinh Church (Pink Church)", "address": "289 Hai Ba Trung, District 1, Ho Chi Minh City"},
+            {"name": "Cafe Apartment", "address": "42-44 Nguyen Hue Street, District 1, Ho Chi Minh City"},
+            {"name": "Suoi Tien Theme Park", "address": "120 Xa Lo Ha Noi, District 9, Ho Chi Minh City"},
+            {"name": "Nguyen Van Binh Book Street", "address": "9 Nguyen Van Binh, District 1, Ho Chi Minh City"},
+            {"name": "23/9 Park", "address": "District 1, Ho Chi Minh City"},
+            {"name": "Bui Vien Street", "address": "District 1, Ho Chi Minh City"},
+            
+            {"name": "Hoi An Ancient Town", "address": "Minh An Ward, Hoi An City, Quang Nam"},
+            {"name": "Japanese Covered Bridge", "address": "Hoi An Ancient Town, Quang Nam"},
+            {"name": "Cau Pagoda", "address": "Hoi An Ancient Town, Quang Nam"},
+            {"name": "Cam Thanh Coconut Forest", "address": "Cam Thanh Commune, Hoi An, Quang Nam"},
+            {"name": "An Bang Beach", "address": "Cam An Commune, Hoi An, Quang Nam"},
+            {"name": "Thanh Ha Pottery Village", "address": "Thanh Ha Ward, Hoi An, Quang Nam"},
+            {"name": "Hoi An History Museum", "address": "Hoi An Ancient Town, Quang Nam"},
+            
+            {"name": "Golden Bridge, Ba Na Hills", "address": "An Son Hamlet, Hoa Ninh Commune, Hoa Vang District, Da Nang"},
+            {"name": "Dragon Bridge", "address": "Hai Chau District, Da Nang"},
+            {"name": "My Khe Beach", "address": "Son Tra District, Da Nang"},
+            {"name": "Marble Mountains", "address": "Ngu Hanh Son District, Da Nang"},
+            {"name": "Cham Museum", "address": "2 Phan Chau Trinh, Hai Chau District, Da Nang"},
+            {"name": "Han River Bridge", "address": "Hai Chau District, Da Nang"},
+            
+            {"name": "Ha Long Bay", "address": "Ha Long City, Quang Ninh"},
+            {"name": "Bai Chay Bridge", "address": "Ha Long City, Quang Ninh"},
+            {"name": "Bai Chay Resort", "address": "Ha Long City, Quang Ninh"},
+            
+            {"name": "Rong May Glass Bridge", "address": "Sapa, Lao Cai"},
+            {"name": "Ham Rong Mountain", "address": "Sapa Town, Lao Cai"},
+            {"name": "Silver Waterfall", "address": "Sapa, Lao Cai"},
+            {"name": "Muong Hoa Terraces", "address": "Sapa, Lao Cai"},
+            {"name": "Sapa Market", "address": "Sapa Town, Lao Cai"},
+            
+            {"name": "Trang An Ecotourism Complex", "address": "Gia Vien District, Ninh Binh"},
+            {"name": "Tam Coc - Bich Dong", "address": "Ninh Hai Commune, Ninh Binh"},
+            {"name": "Hang Mua", "address": "Ninh Hai Commune, Ninh Binh"},
+            {"name": "Bai Dinh Pagoda", "address": "Gia Vien District, Ninh Binh"},
+            {"name": "Phat Diem Stone Cathedral", "address": "Kim Son District, Ninh Binh"},
+            
+            {"name": "Bai Sao Beach", "address": "Phu Quoc Island, Kien Giang"},
+            {"name": "Vinpearl Land Phu Quoc", "address": "Ganh Dau, Phu Quoc, Kien Giang"},
+            {"name": "Phu Quoc Fish Sauce Factory", "address": "An Thoi, Phu Quoc, Kien Giang"},
+            {"name": "Dinh Cau Night Market", "address": "Duong Dong Town, Phu Quoc, Kien Giang"},
+            
+            {"name": "Xuan Huong Lake", "address": "City Center, Da Lat, Lam Dong"},
+            {"name": "Valley of Love", "address": "Ward 8, Da Lat, Lam Dong"},
+            {"name": "Domain De Marie Church", "address": "1 Tran Phu Street, Da Lat"},
+            {"name": "Tuyen Lam Lake", "address": "Ward 3, Da Lat"},
+            {"name": "Pongour Waterfall", "address": "Duc Trong District, Lam Dong"},
+            {"name": "Crazy House", "address": "3 Huynh Thuc Khang, Da Lat"},
+            
+            {"name": "Cu Lao Cham", "address": "Hoi An, Quang Nam"},
+            {"name": "Nguyen Hue Walking Street", "address": "District 1, Ho Chi Minh City"},
+            {"name": "Duong Lam Ancient Village", "address": "Son Tay Town, Hanoi"},
+            {"name": "Hung Kings Temple", "address": "Phu Tho"},
+            {"name": "West Lake", "address": "Tay Ho District, Hanoi"},
+            {"name": "Suoi Ca Than Hot Spring", "address": "Cẩm Lương, Quang Nam"},
+            {"name": "Bai Da Trung", "address": "Quang Binh"},
+            {"name": "Cuc Phuong National Park", "address": "Ninh Binh"},
+            {"name": "Ly Son Island", "address": "Quang Ngai"},
+            {"name": "Hai Van Pass", "address": "Border of Hue and Da Nang"},
+            {"name": "Quang Tri Citadel", "address": "Quang Tri"},
+            {"name": "Thien Mu Pagoda", "address": "Hue"},
+            {"name": "My Khe Beach", "address": "Da Nang"},
+            {"name": "Phu My Hung Urban Area", "address": "District 7, Ho Chi Minh City"},
+            {"name": "An Thoi Diving Site", "address": "Phu Quoc, Kien Giang"},
+            {"name": "Tan Trao Banyan Tree", "address": "Tuyen Quang"},
+            {"name": "Can Gio Mangrove Forest", "address": "Ho Chi Minh City"},
+            {"name": "Mui Ne Beach", "address": "Binh Thuan"},
+            {"name": "Nguyen Hue Flower Street", "address": "District 1, Ho Chi Minh City"},
+            {"name": "Vietnam Museum of Ethnology", "address": "Nguyen Văn Huyen, Cau Giay, Hanoi"},
+            {"name": "Dong Xuan Market", "address": "Hoan Kiem, Hanoi"},
+            {"name": "Tu Duc Tomb", "address": "Hue"},
+            {"name": "Poshanu Cham Towers", "address": "Ninh Thuan"},
+            {"name": "Hue Ancient Town", "address": "Hue"},
+            {"name": "Phat Diem Stone Church", "address": "Kim Son, Ninh Binh"},
+            {"name": "Ba Vi National Park", "address": "Ba Vi, Hanoi"},
+            {"name": "Thap Ba Hot Spring", "address": "Nha Trang, Khanh Hoa"},
+            {"name": "Ba Den Mountain", "address": "Tay Ninh"},
+            {"name": "Ancient Village Communal House", "address": "Bac Ninh"},
+            {"name": "Dai Nam Tourism Complex", "address": "Binh Duong"},
+            {"name": "Suoi Mo Waterfall", "address": "Dong Nai"},
+            {"name": "Long Bien Bridge", "address": "Hanoi"},
+            {"name": "Cua Lo Beach", "address": "Nghe An"},
+            {"name": "Thien Son-Hoan Nga Ecotourism", "address": "Ba Vi, Hanoi"},
+            {"name": "Nui Coc Lake Tourist Area", "address": "Thai Nguyen"},
+            {"name": "Hung Kings Temple", "address": "Phu Tho"},
+            {"name": "Cai Rang Floating Market", "address": "Can Tho"},
+            {"name": "Cat Ba Island", "address": "Hai Phong"},
+            {"name": "Hai Phong Cathedral", "address": "Hai Phong"},
+            {"name": "Quan Lan Island", "address": "Quang Ninh"},
+            {"name": "Cua Lo Fishing Port", "address": "Nghe An"},
+            {"name": "Luy Lau Ancient Citadel", "address": "Bac Ninh"},
+            {"name": "Ho Tram Beach", "address": "Ba Ria - Vung Tau"},
+            {"name": "Ba Dinh Square", "address": "Hanoi"}
+        ];
+
+        // Hàm trích xuất thành phố/tỉnh từ địa chỉ (Logic đơn giản)
+        function extractCity(address) {
+            if (!address) return "Khác";
+            
+            // Xử lý các trường hợp phổ biến và đặc biệt
+            if (address.includes("Ho Chi Minh City") || address.includes("HCM")) return "TP Hồ Chí Minh";
+            if (address.includes("Hanoi") || address.includes("Hà Nội")) return "Hà Nội";
+            if (address.includes("Quang Nam")) return "Quảng Nam";
+            if (address.includes("Da Nang") || address.includes("Đà Nẵng")) return "Đà Nẵng";
+            if (address.includes("Quang Ninh")) return "Quảng Ninh";
+            if (address.includes("Lao Cai") || address.includes("Lào Cai")) return "Lào Cai";
+            if (address.includes("Ninh Binh") || address.includes("Ninh Bình")) return "Ninh Bình";
+            if (address.includes("Kien Giang") || address.includes("Kiên Giang")) return "Kiên Giang (Phú Quốc)";
+            if (address.includes("Lam Dong") || address.includes("Lâm Đồng") || address.includes("Da Lat")) return "Lâm Đồng (Đà Lạt)";
+            if (address.includes("Hue") || address.includes("Huế")) return "Thừa Thiên Huế";
+            
+            // Trích xuất từ phần cuối của chuỗi
+            const parts = address.split(',').map(p => p.trim());
+            return parts[parts.length - 1] || "Khác";
+        }
+
+        // Thêm trường 'city' vào dữ liệu
+        const locations = rawLocations.map(loc => ({
+            ...loc,
+            city: extractCity(loc.address)
+        }));
+
+        const locationListElement = document.getElementById('location-list');
+        const searchInputElement = document.getElementById('search-input');
+        const cityFilterElement = document.getElementById('city-filter');
+
+        // 1. Khởi tạo bộ lọc thành phố
+        function populateCityFilter() {
+            const cities = new Set(locations.map(loc => loc.city).filter(c => c)); // Lấy danh sách duy nhất các thành phố
+            
+            // Sắp xếp theo thứ tự ưu tiên
+            const priorityCities = ["Hà Nội", "TP Hồ Chí Minh", "Quảng Nam", "Đà Nẵng", "Lâm Đồng (Đà Lạt)", "Kiên Giang (Phú Quốc)", "Quảng Ninh", "Ninh Bình", "Thừa Thiên Huế"];
+            
+            const sortedCities = Array.from(cities).sort((a, b) => {
+                const aIndex = priorityCities.indexOf(a);
+                const bIndex = priorityCities.indexOf(b);
+
+                if (aIndex === -1 && bIndex === -1) return a.localeCompare(b); // Cả hai đều không ưu tiên, sắp xếp ABC
+                if (aIndex !== -1 && bIndex === -1) return -1; // a ưu tiên hơn b
+                if (aIndex === -1 && bIndex !== -1) return 1; // b ưu tiên hơn a
+                return aIndex - bIndex; // Cả hai đều ưu tiên, sắp xếp theo thứ tự ưu tiên
+            });
+            
+            sortedCities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                cityFilterElement.appendChild(option);
+            });
+        }
+
+        // 2. Hàm render danh sách
+        function renderLocations(filteredList) {
+            locationListElement.innerHTML = '';
+            
+            if (filteredList.length === 0) {
+                locationListElement.innerHTML = '<p class="col-span-full text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner">Không tìm thấy địa điểm nào phù hợp với tiêu chí tìm kiếm/lọc.</p>';
+                return;
+            }
+
+            filteredList.forEach(loc => {
+                const item = document.createElement('div');
+                item.className = 'bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border border-gray-100';
+                
+                // Sử dụng icon cho card
+                const icon = loc.city.includes("Hà Nội") || loc.city.includes("Huế") ? '🏛️' : 
+                             loc.city.includes("TP Hồ Chí Minh") ? '🏙️' : 
+                             loc.city.includes("Đà Nẵng") || loc.city.includes("Quảng Nam") ? '⛱️' :
+                             loc.city.includes("Phú Quốc") ? '🏝️' :
+                             loc.city.includes("Đà Lạt") ? '⛰️' : '🇻🇳';
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3 mb-2">
+                        <span class="text-2xl">${icon}</span>
+                        <h2 class="text-lg font-semibold text-indigo-600 leading-tight">${loc.name}</h2>
+                    </div>
+                    <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full mb-2">
+                        ${loc.city}
+                    </p>
+                    <p class="text-sm text-gray-700 mt-1">
+                        <span class="font-medium text-gray-500">Địa chỉ:</span> ${loc.address}
+                    </p>
+                `;
+                locationListElement.appendChild(item);
+            });
+        }
+
+        // 3. Hàm lọc chính
+        function filterLocations() {
+            const searchTerm = searchInputElement.value.toLowerCase().trim();
+            const selectedCity = cityFilterElement.value;
+
+            const filtered = locations.filter(loc => {
+                const matchesSearch = loc.name.toLowerCase().includes(searchTerm) || 
+                                      loc.address.toLowerCase().includes(searchTerm);
+                
+                const matchesCity = !selectedCity || loc.city === selectedCity;
+
+                return matchesSearch && matchesCity;
+            });
+
+            renderLocations(filtered);
+        }
+
+        // Gắn sự kiện lắng nghe
+        searchInputElement.addEventListener('input', filterLocations);
+
+        // Khởi chạy khi trang tải xong
+        window.onload = () => {
+            // Xóa thông báo tải
+            document.getElementById('loading-message').style.display = 'none'; 
+            
+            // 1. Khởi tạo bộ lọc
+            populateCityFilter();
+            
+            // 2. Render lần đầu
+            renderLocations(locations);
+        };
+
+    </script>
 </body>
 </html>
