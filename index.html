@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vietnam Travel Treasury - Quick Summary</title>
-    <!-- Load Tailwind CSS for modern and responsive styling -->
+    <title>Vietnam Check-in Map Treasury</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/SVRQLyT37WHaWfG08=" crossorigin=""/>
+    <!-- Load Leaflet Marker Cluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
     <style>
-        /* Custom scrollbar for a nicer look */
-        .list-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .list-container::-webkit-scrollbar-thumb {
-            background-color: #a8a29e;
-            border-radius: 3px;
-        }
-        .list-container::-webkit-scrollbar-track {
-            background-color: #f5f5f5;
-        }
+        /* Custom styles */
+        .list-container::-webkit-scrollbar { width: 6px; }
+        .list-container::-webkit-scrollbar-thumb { background-color: #a8a29e; border-radius: 3px; }
+        .list-container::-webkit-scrollbar-track { background-color: #f5f5f5; }
 
         /* Define style for the preview card (Tooltip) */
         #preview-card {
@@ -26,15 +26,22 @@
             left: 0;
             width: 320px; /* Fixed width */
             z-index: 100;
-            pointer-events: none; /* Do not block mouse clicks on elements below */
+            pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
+        /* Map specific styles */
+        #vietnam-map {
+            height: 400px; /* Map height */
+            width: 100%;
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            margin-bottom: 2rem;
+            z-index: 1; /* Keep map layer below preview card if needed */
+        }
+
         @media (max-width: 768px) {
-            #preview-card {
-                /* Completely hide on mobile devices to prevent screen obstruction */
-                display: none !important; 
-            }
+            #preview-card { display: none !important; }
         }
     </style>
 </head>
@@ -48,7 +55,14 @@
             <p class="text-gray-600 text-lg">Hover over a location to see a quick summary.</p>
         </header>
 
-        <!-- Search bar and filter -->
+        <!-- MAP CONTAINER (New requirement) -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-3 text-center">
+             📍 Bản đồ Địa điểm Check-in "Sống Ảo" tại Việt Nam 🇻🇳
+        </h2>
+        <div id="vietnam-map"></div>
+        <!-- End Map Container -->
+
+        <!-- Search bar and filter (Existing functionalities) -->
         <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg mb-8 space-y-4 md:flex md:space-y-0 md:space-x-4">
             <!-- Search Input -->
             <input 
@@ -67,7 +81,7 @@
             </select>
         </div>
 
-        <!-- Container for the list of locations -->
+        <!-- Container for the list of locations (Existing functionalities) -->
         <div 
             id="location-list" 
             class="list-container grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-h-[70vh] overflow-y-auto pr-2"
@@ -77,11 +91,11 @@
         </div>
 
         <footer class="mt-10 text-center text-gray-500 text-sm border-t pt-4">
-            &copy; 2025 Tourism Data. Summarized data provided by Gemini API & Google Search.
+            &copy; 2025 Tourism Data. Summarized data provided by Gemini API & Google Search. Map powered by Leaflet.
         </footer>
     </div>
     
-    <!-- PREVIEW CARD -->
+    <!-- PREVIEW CARD (Existing functionalities) -->
     <div id="preview-card" class="hidden bg-white rounded-xl shadow-2xl p-4 border-t-4 border-indigo-500 transition-all duration-300">
         <div class="text-sm font-bold text-indigo-600 mb-2" id="preview-title"></div>
         <div id="preview-content" class="text-gray-700 text-sm leading-snug"></div>
@@ -95,118 +109,43 @@
         </div>
     </div>
 
+    <!-- Load Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20n6n+ByMhPIeZnhL6oYJbL1P5S3V3sB3t1Q2v5G5+0=" crossorigin=""></script>
+    <!-- Load Leaflet Marker Cluster JS -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
     <script>
-        // Initial Data (Names and addresses remain the same for searching)
+        // Initial Data (Added Lat/Lng for map integration)
         const rawLocations = [
-            {"name": "Old Quarter", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "Ta Hien Street", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "Tong Duy Tan Street", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "St. Joseph's Cathedral", "address": "40 Nha Chung Street, Hoan Kiem District, Hanoi"},
-            {"name": "Train Street, Tran Phu", "address": "Ba Dinh District, Hanoi"},
-            {"name": "Ho Chi Minh Mausoleum", "address": "2 Hung Vuong Street, Ba Dinh District, Hanoi"},
-            {"name": "Hoan Kiem Lake", "address": "Hoan Kiem District, Hanoi"},
-            {"name": "Long Bien Bridge", "address": "Connecting Long Bien and Ba Dinh Districts, Hanoi"},
-            {"name": "One Pillar Pagoda", "address": "Dien Bien Ward, Ba Dinh District, Hanoi"},
-            {"name": "Temple of Literature", "address": "58 Quoc Tu Giam Street, Dong Da District, Hanoi"},
+            {"name": "Old Quarter (Phố Cổ)", "address": "Hoan Kiem District, Hanoi", "lat": 21.0313, "lng": 105.8516},
+            {"name": "Hoan Kiem Lake (Hồ Gươm)", "address": "Hoan Kiem District, Hanoi", "lat": 21.0287, "lng": 105.8522},
+            {"name": "Long Bien Bridge (Cầu Long Biên)", "address": "Connecting Long Bien and Ba Dinh Districts, Hanoi", "lat": 21.0500, "lng": 105.8620},
+            {"name": "Train Street (Phố Đường Tàu)", "address": "Ba Dinh District, Hanoi", "lat": 21.0260, "lng": 105.8450},
+            {"name": "Ha Long Bay (Vịnh Hạ Long)", "address": "Ha Long City, Quang Ninh", "lat": 20.8710, "lng": 107.0350},
+            {"name": "Trang An Ecotourism (Khu du lịch Tràng An)", "address": "Gia Vien District, Ninh Binh", "lat": 20.2642, "lng": 105.9031},
+            {"name": "Sapa Terraces (Ruộng bậc thang Sa Pa)", "address": "Sapa, Lao Cai", "lat": 22.3390, "lng": 103.8500},
+            {"name": "Ba Vi National Park (Vườn Quốc gia Ba Vì)", "address": "Ba Vi, Hanoi", "lat": 21.0350, "lng": 105.3700},
             
-            {"name": "Notre-Dame Cathedral Basilica of Saigon", "address": "1 Cong xa Paris, District 1, Ho Chi Minh City"},
-            {"name": "Saigon Central Post Office", "address": "2 Cong xa Paris, District 1, Ho Chi Minh City"},
-            {"name": "Ben Thanh Market", "address": "45 Le Loi, District 1, Ho Chi Minh City"},
-            {"name": "Bitexco Financial Tower", "address": "2 Hai Trieu, District 1, Ho Chi Minh City"},
-            {"name": "Tan Dinh Church (Pink Church)", "address": "289 Hai Ba Trung, District 1, Ho Chi Minh City"},
-            {"name": "Cafe Apartment", "address": "42-44 Nguyen Hue Street, District 1, Ho Chi Minh City"},
-            {"name": "Suoi Tien Theme Park", "address": "120 Xa Lo Ha Noi, District 9, Ho Chi Minh City"},
-            {"name": "Nguyen Van Binh Book Street", "address": "9 Nguyen Van Binh, District 1, Ho Chi Minh City"},
-            {"name": "23/9 Park", "address": "District 1, Ho Chi Minh City"},
-            {"name": "Bui Vien Street", "address": "District 1, Ho Chi Minh City"},
-            
-            {"name": "Hoi An Ancient Town", "address": "Minh An Ward, Hoi An City, Quang Nam"},
-            {"name": "Japanese Covered Bridge", "address": "Hoi An Ancient Town, Quang Nam"},
-            {"name": "Cau Pagoda", "address": "Hoi An Ancient Town, Quang Nam"},
-            {"name": "Cam Thanh Coconut Forest", "address": "Cam Thanh Commune, Hoi An, Quang Nam"},
-            {"name": "An Bang Beach", "address": "Cam An Commune, Hoi An, Quang Nam"},
-            {"name": "Thanh Ha Pottery Village", "address": "Thanh Ha Ward, Hoi An, Quang Nam"},
-            {"name": "Hoi An History Museum", "address": "Hoi An Ancient Town, Quang Nam"},
-            
-            {"name": "Golden Bridge, Ba Na Hills", "address": "An Son Hamlet, Hoa Ninh Commune, Hoa Vang District, Da Nang"},
-            {"name": "Dragon Bridge", "address": "Hai Chau District, Da Nang"},
-            {"name": "My Khe Beach", "address": "Son Tra District, Da Nang"},
-            {"name": "Marble Mountains", "address": "Ngu Hanh Son District, Da Nang"},
-            {"name": "Cham Museum", "address": "2 Phan Chau Trinh, Hai Chau District, Da Nang"},
-            {"name": "Han River Bridge", "address": "Hai Chau District, Da Nang"},
-            
-            {"name": "Ha Long Bay", "address": "Ha Long City, Quang Ninh"},
-            {"name": "Bai Chay Bridge", "address": "Ha Long City, Quang Ninh"},
-            {"name": "Bai Chay Resort", "address": "Ha Long City, Quang Ninh"},
-            
-            {"name": "Rong May Glass Bridge", "address": "Sapa, Lao Cai"},
-            {"name": "Ham Rong Mountain", "address": "Sapa Town, Lao Cai"},
-            {"name": "Silver Waterfall", "address": "Sapa, Lao Cai"},
-            {"name": "Muong Hoa Terraces", "address": "Sapa, Lao Cai"},
-            {"name": "Sapa Market", "address": "Sapa Town, Lao Cai"},
-            
-            {"name": "Trang An Ecotourism Complex", "address": "Gia Vien District, Ninh Binh"},
-            {"name": "Tam Coc - Bich Dong", "address": "Ninh Hai Commune, Ninh Binh"},
-            {"name": "Hang Mua", "address": "Ninh Hai Commune, Ninh Binh"},
-            {"name": "Bai Dinh Pagoda", "address": "Gia Vien District, Ninh Binh"},
-            {"name": "Phat Diem Stone Cathedral", "address": "Kim Son District, Ninh Binh"},
-            
-            {"name": "Bai Sao Beach", "address": "Phu Quoc Island, Kien Giang"},
-            {"name": "Vinpearl Land Phu Quoc", "address": "Ganh Dau, Phu Quoc, Kien Giang"},
-            {"name": "Phu Quoc Fish Sauce Factory", "address": "An Thoi, Phu Quoc, Kien Giang"},
-            {"name": "Dinh Cau Night Market", "address": "Duong Dong Town, Phu Quoc, Kien Giang"},
-            
-            {"name": "Xuan Huong Lake", "address": "City Center, Da Lat, Lam Dong"},
-            {"name": "Valley of Love", "address": "Ward 8, Da Lat, Lam Dong"},
-            {"name": "Domain De Marie Church", "address": "1 Tran Phu Street, Da Lat"},
-            {"name": "Tuyen Lam Lake", "address": "Ward 3, Da Lat"},
-            {"name": "Pongour Waterfall", "address": "Duc Trong District, Lam Dong"},
-            {"name": "Crazy House", "address": "3 Huynh Thuc Khang, Da Lat"},
-            
-            {"name": "Cu Lao Cham", "address": "Hoi An, Quang Nam"},
-            {"name": "Nguyen Hue Walking Street", "address": "District 1, Ho Chi Minh City"},
-            {"name": "Duong Lam Ancient Village", "address": "Son Tay Town, Hanoi"},
-            {"name": "Hung Kings Temple", "address": "Phu Tho"},
-            {"name": "West Lake", "address": "Tay Ho District, Hanoi"},
-            {"name": "Suoi Ca Than Hot Spring", "address": "Cẩm Lương, Quang Nam"},
-            {"name": "Bai Da Trung", "address": "Quang Binh"},
-            {"name": "Cuc Phuong National Park", "address": "Ninh Binh"},
-            {"name": "Ly Son Island", "address": "Quang Ngai"},
-            {"name": "Hai Van Pass", "address": "Border of Hue and Da Nang"},
-            {"name": "Quang Tri Citadel", "address": "Quang Tri"},
-            {"name": "Thien Mu Pagoda", "address": "Hue"},
-            {"name": "My Khe Beach", "address": "Da Nang"},
-            {"name": "Phu My Hung Urban Area", "address": "District 7, Ho Chi Minh City"},
-            {"name": "An Thoi Diving Site", "address": "Phu Quoc, Kien Giang"},
-            {"name": "Tan Trao Banyan Tree", "address": "Tuyen Quang"},
-            {"name": "Can Gio Mangrove Forest", "address": "Ho Chi Minh City"},
-            {"name": "Mui Ne Beach", "address": "Binh Thuan"},
-            {"name": "Nguyen Hue Flower Street", "address": "District 1, Ho Chi Minh City"},
-            {"name": "Vietnam Museum of Ethnology", "address": "Nguyen Văn Huyen, Cau Giay, Hanoi"},
-            {"name": "Dong Xuan Market", "address": "Hoan Kiem, Hanoi"},
-            {"name": "Tu Duc Tomb", "address": "Hue"},
-            {"name": "Poshanu Cham Towers", "address": "Ninh Thuan"},
-            {"name": "Hue Ancient Town", "address": "Hue"},
-            {"name": "Phat Diem Stone Church", "address": "Kim Son, Ninh Binh"},
-            {"name": "Ba Vi National Park", "address": "Ba Vi, Hanoi"},
-            {"name": "Thap Ba Hot Spring", "address": "Nha Trang, Khanh Hoa"},
-            {"name": "Ba Den Mountain", "address": "Tay Ninh"},
-            {"name": "Ancient Village Communal House", "address": "Bac Ninh"},
-            {"name": "Dai Nam Tourism Complex", "address": "Binh Duong"},
-            {"name": "Suoi Mo Waterfall", "address": "Dong Nai"},
-            {"name": "Long Bien Bridge", "address": "Hanoi"},
-            {"name": "Cua Lo Beach", "address": "Nghe An"},
-            {"name": "Thien Son-Hoan Nga Ecotourism", "address": "Ba Vi, Hanoi"},
-            {"name": "Nui Coc Lake Tourist Area", "address": "Thai Nguyen"},
-            {"name": "Hung Kings Temple", "address": "Phu Tho"},
-            {"name": "Cai Rang Floating Market", "address": "Can Tho"},
-            {"name": "Cat Ba Island", "address": "Hai Phong"},
-            {"name": "Hai Phong Cathedral", "address": "Hai Phong"},
-            {"name": "Quan Lan Island", "address": "Quang Ninh"},
-            {"name": "Cua Lo Fishing Port", "address": "Nghe An"},
-            {"name": "Luy Lau Ancient Citadel", "address": "Bac Ninh"},
-            {"name": "Ho Tram Beach", "address": "Ba Ria - Vung Tau"},
-            {"name": "Ba Dinh Square", "address": "Hanoi"}
+            {"name": "Golden Bridge (Cầu Vàng), Ba Na Hills", "address": "Hoa Vang District, Da Nang", "lat": 16.0123, "lng": 108.0680},
+            {"name": "Dragon Bridge (Cầu Rồng)", "address": "Hai Chau District, Da Nang", "lat": 16.0645, "lng": 108.2210},
+            {"name": "Hoi An Ancient Town (Phố cổ Hội An)", "address": "Minh An Ward, Hoi An City, Quang Nam", "lat": 15.8794, "lng": 108.3360},
+            {"name": "My Khe Beach (Bãi biển Mỹ Khê)", "address": "Son Tra District, Da Nang", "lat": 16.0689, "lng": 108.2435},
+            {"name": "Marble Mountains (Ngũ Hành Sơn)", "address": "Ngu Hanh Son District, Da Nang", "lat": 16.0076, "lng": 108.2831},
+            {"name": "Hai Van Pass (Đèo Hải Vân)", "address": "Border of Hue and Da Nang", "lat": 16.1950, "lng": 108.0400},
+            {"name": "Thien Mu Pagoda (Chùa Thiên Mụ)", "address": "Hue", "lat": 16.4560, "lng": 107.5500},
+            {"name": "Ly Son Island (Đảo Lý Sơn)", "address": "Quang Ngai", "lat": 15.3780, "lng": 109.1100},
+
+            {"name": "Notre-Dame Cathedral (Nhà thờ Đức Bà Sài Gòn)", "address": "District 1, Ho Chi Minh City", "lat": 10.7797, "lng": 106.6990},
+            {"name": "Ben Thanh Market (Chợ Bến Thành)", "address": "District 1, Ho Chi Minh City", "lat": 10.7725, "lng": 106.6980},
+            {"name": "Bitexco Financial Tower", "address": "District 1, Ho Chi Minh City", "lat": 10.7716, "lng": 106.7032},
+            {"name": "Nguyen Hue Walking Street (Phố đi bộ Nguyễn Huệ)", "address": "District 1, Ho Chi Minh City", "lat": 10.7735, "lng": 106.7025},
+            {"name": "Crazy House (Biệt thự Hằng Nga)", "address": "Da Lat, Lam Dong", "lat": 11.9390, "lng": 108.4370},
+            {"name": "Xuan Huong Lake (Hồ Xuân Hương)", "address": "City Center, Da Lat, Lam Dong", "lat": 11.9427, "lng": 108.4419},
+            {"name": "Bai Sao Beach (Bãi Sao)", "address": "Phu Quoc Island, Kien Giang", "lat": 10.0460, "lng": 104.0480},
+            {"name": "Dinh Cau Night Market (Chợ đêm Dinh Cậu)", "address": "Phu Quoc, Kien Giang", "lat": 10.2240, "lng": 103.9570},
+            {"name": "Cai Rang Floating Market (Chợ nổi Cái Răng)", "address": "Can Tho", "lat": 10.0075, "lng": 105.7483},
+            {"name": "Mui Ne Beach (Bãi biển Mũi Né)", "address": "Binh Thuan", "lat": 10.9300, "lng": 108.2000},
+            {"name": "Ho Tram Beach (Bãi biển Hồ Tràm)", "address": "Ba Ria - Vung Tau", "lat": 10.5180, "lng": 107.4120}
         ];
 
         // --- JAVASCRIPT & GEMINI API LOGIC AREA ---
@@ -219,10 +158,13 @@
         const previewContent = document.getElementById('preview-content');
         const previewLoading = document.getElementById('preview-loading');
 
-        // Cache to store API results, avoiding repeated calls
+        // Map variables
+        let vietnamMap;
+        let markerClusterGroup;
+        let mapMarkers = [];
+
+        // Cache and API Configuration
         const previewCache = {};
-        
-        // API Configuration
         const GEMINI_MODEL = "gemini-2.5-flash-preview-05-20";
         const GEMINI_API_KEY = "";
         const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
@@ -233,7 +175,7 @@
             if (!address) return "Other";
             if (address.includes("Ho Chi Minh City") || address.includes("HCM")) return "Ho Chi Minh City";
             if (address.includes("Hanoi") || address.includes("Hà Nội")) return "Hanoi";
-            if (address.includes("Quang Nam")) return "Quang Nam";
+            if (address.includes("Quang Nam")) return "Quang Nam (Hoi An)";
             if (address.includes("Da Nang") || address.includes("Đà Nẵng")) return "Da Nang";
             if (address.includes("Quang Ninh")) return "Quang Ninh (Ha Long)";
             if (address.includes("Lao Cai") || address.includes("Lào Cai")) return "Lao Cai (Sapa)";
@@ -247,12 +189,14 @@
 
         const locations = rawLocations.map(loc => ({
             ...loc,
-            city: extractCity(loc.address)
+            city: extractCity(loc.address),
+            // Determine region based on latitude (simple approximation for visualization)
+            region: loc.lat > 20 ? 'North' : (loc.lat > 15 ? 'Central' : 'South')
         }));
 
         function populateCityFilter() {
             const cities = new Set(locations.map(loc => loc.city).filter(c => c));
-            const priorityCities = ["Hanoi", "Ho Chi Minh City", "Quang Nam", "Da Nang", "Lam Dong (Da Lat)", "Kien Giang (Phu Quoc)", "Quang Ninh (Ha Long)", "Ninh Binh", "Thua Thien Hue"];
+            const priorityCities = ["Hanoi", "Ho Chi Minh City", "Da Nang", "Quang Nam (Hoi An)", "Lam Dong (Da Lat)", "Kien Giang (Phu Quoc)", "Quang Ninh (Ha Long)", "Ninh Binh", "Thua Thien Hue"];
             const sortedCities = Array.from(cities).sort((a, b) => {
                 const aIndex = priorityCities.indexOf(a);
                 const bIndex = priorityCities.indexOf(b);
@@ -270,7 +214,73 @@
             });
         }
 
-        // --- PREVIEW & API CALL LOGIC ---
+        // --- MAP INITIALIZATION AND RENDERING ---
+
+        function initMap() {
+            // Initialize map centered roughly on Vietnam
+            vietnamMap = L.map('vietnam-map', {
+                center: [16.0, 107.8], // Central Vietnam
+                zoom: 5,
+                minZoom: 5,
+                maxZoom: 18,
+                zoomControl: true 
+            });
+
+            // Add tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(vietnamMap);
+
+            // Initialize marker cluster group
+            markerClusterGroup = L.markerClusterGroup({
+                chunkedLoading: true,
+                spiderfyOnMaxZoom: true // Cluster functionality
+            });
+            vietnamMap.addLayer(markerClusterGroup);
+        }
+
+        function updateMapMarkers(filteredList) {
+            // 1. Clear existing markers
+            markerClusterGroup.clearLayers();
+            mapMarkers = [];
+
+            // 2. Add markers for filtered locations
+            filteredList.forEach(loc => {
+                if (loc.lat && loc.lng) {
+                    // Create tooltip content
+                    const tooltipContent = `
+                        <div class="font-bold text-indigo-700">${loc.name}</div>
+                        <div class="text-xs text-gray-600">${loc.address}</div>
+                    `;
+
+                    // Simple icon based on region (North: Blue, Central: Green, South: Red)
+                    let markerColor;
+                    if (loc.region === 'North') markerColor = '#1d4ed8'; // blue-700
+                    else if (loc.region === 'Central') markerColor = '#059669'; // emerald-600
+                    else markerColor = '#dc2626'; // red-600
+
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div style="background-color: ${markerColor}; width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+                        iconSize: [14, 14],
+                        iconAnchor: [7, 7]
+                    });
+
+                    const marker = L.marker([loc.lat, loc.lng], { icon: customIcon })
+                        .bindTooltip(tooltipContent, {
+                            permanent: false,
+                            direction: 'top',
+                            offset: [0, -10]
+                        });
+                    
+                    marker.locationData = loc; // Store location data for filtering
+                    markerClusterGroup.addLayer(marker);
+                    mapMarkers.push(marker);
+                }
+            });
+        }
+
+        // --- PREVIEW & API CALL LOGIC (Existing functionality) ---
         
         // Function to fetch API with exponential backoff
         async function retryFetch(url, options, maxRetries = 3) {
@@ -278,7 +288,6 @@
                 try {
                     const response = await fetch(url, options);
                     if (response.status === 429 && i < maxRetries - 1) {
-                        // Retry after 2^i seconds
                         const delay = Math.pow(2, i) * 1000;
                         await new Promise(resolve => setTimeout(resolve, delay));
                         continue;
@@ -297,12 +306,11 @@
 
         // Main function to call Gemini API for Google Search summary
         async function fetchGoogleSearchPreview(locationName) {
-            // 1. Check Cache
             if (previewCache[locationName]) {
                 return previewCache[locationName];
             }
 
-            // 2. Prompt Configuration (Updated to request English output, strictly 5-10 lines)
+            // Prompt Configuration (English output, strictly 5-10 lines)
             const systemPrompt = "Act as a professional travel guide. Provide a concise, single-paragraph summary of this tourist location in English, strictly limited to 5-10 lines. Focus on key highlights, history, or recent travel experiences. Do not mention phrases like 'based on search' or 'I found'.";
             const userQuery = `Find the latest information and briefly summarize ${locationName} in Vietnam. Provide the output in English, ensuring it is no more than 10 lines long.`;
 
@@ -314,7 +322,6 @@
                 },
             };
 
-            // 3. API Call
             try {
                 const response = await retryFetch(GEMINI_API_URL, {
                     method: 'POST',
@@ -327,9 +334,8 @@
 
                 if (candidate && candidate.content?.parts?.[0]?.text) {
                     const text = candidate.content.parts[0].text;
-                    
                     const data = { text, error: null };
-                    previewCache[locationName] = data; // Save to cache
+                    previewCache[locationName] = data;
                     return data;
 
                 } else {
@@ -353,7 +359,6 @@
             if (result.error) {
                  previewContent.innerHTML = `<p class="text-red-500">Error: ${result.text}</p>`;
             } else {
-                 // Replace newlines with <br> for better formatting in the preview box
                  previewContent.innerHTML = result.text.replace(/\n/g, '<br>');
             }
             
@@ -361,26 +366,22 @@
             previewContent.classList.remove('hidden');
         }
 
-        // Function to handle mouse enter event
+        // Function to handle mouse enter event (Existing functionality)
         async function handleMouseEnter(event) {
-            // Only process on large screens
             if (window.innerWidth <= 768) return; 
 
             const target = event.currentTarget;
             const locationName = target.getAttribute('data-name');
 
-            // 1. Display and position the preview card
             const rect = target.getBoundingClientRect();
             
             let cardX = rect.right + 20; 
             let cardY = rect.top + window.scrollY; 
             
-            // Shift left if it overflows right
             if (cardX + 320 > window.innerWidth - 20) {
                 cardX = rect.left - 320 - 20;
             }
             
-            // Ensure it doesn't overflow left (if shifted left)
             if (cardX < 20) {
                  cardX = rect.right + 20; 
             }
@@ -390,15 +391,13 @@
             previewCard.classList.remove('hidden');
             previewCard.style.opacity = '1';
 
-            // 2. Show loading state
             previewTitle.textContent = locationName;
             previewLoading.classList.remove('hidden');
             previewContent.classList.add('hidden');
             
-            // 3. Load data
             try {
                 const result = await fetchGoogleSearchPreview(locationName);
-                if (locationListElement.contains(target)) { // Only update if the mouse is still hovering
+                if (locationListElement.contains(target)) { 
                     updatePreviewCard(locationName, result);
                 }
             } catch(e) {
@@ -408,13 +407,13 @@
             }
         }
 
-        // Function to handle mouse leave event
+        // Function to handle mouse leave event (Existing functionality)
         function handleMouseLeave() {
             previewCard.classList.add('hidden');
             previewCard.style.opacity = '0';
         }
 
-        // --- RENDER & FILTER LOGIC (Updated to include mouse events) ---
+        // --- RENDER & FILTER LOGIC (Updated to include map updates) ---
 
         function renderLocations(filteredList) {
             locationListElement.innerHTML = '';
@@ -432,6 +431,14 @@
                 // Attach mouse events
                 item.addEventListener('mouseenter', handleMouseEnter);
                 item.addEventListener('mouseleave', handleMouseLeave);
+                
+                // Add click listener to center map on the location
+                item.addEventListener('click', () => {
+                    if (loc.lat && loc.lng) {
+                        vietnamMap.setView([loc.lat, loc.lng], 12);
+                    }
+                });
+
 
                 const icon = loc.city.includes("Hanoi") || loc.city.includes("Hue") ? '🏛️' : 
                              loc.city.includes("Ho Chi Minh City") ? '🏙️' : 
@@ -445,7 +452,7 @@
                         <h2 class="text-lg font-semibold text-indigo-600 leading-tight">${loc.name}</h2>
                     </div>
                     <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full mb-2">
-                        ${loc.city}
+                        ${loc.city} (${loc.region})
                     </p>
                     <p class="text-sm text-gray-700 mt-1">
                         <span class="font-medium text-gray-500">Address:</span> ${loc.address}
@@ -453,6 +460,9 @@
                 `;
                 locationListElement.appendChild(item);
             });
+            
+            // Update the map markers based on the filtered list
+            updateMapMarkers(filteredList);
         }
 
         function filterLocations() {
@@ -477,8 +487,9 @@
 
         window.onload = () => {
             document.getElementById('loading-message').style.display = 'none'; 
+            initMap(); // Initialize the map first
             populateCityFilter();
-            renderLocations(locations);
+            renderLocations(locations); // Render locations and populate map
         };
     </script>
 </body>
