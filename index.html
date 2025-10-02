@@ -13,12 +13,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-    <style>
-        /* Custom styles */
-        .list-container::-webkit-scrollbar { width: 6px; }
-        .list-container::-webkit-scrollbar-thumb { background-color: #a8a29e; border-radius: 3px; }
-        .list-container::-webkit-scrollbar-track { background-color: #f5f5f5; }
+    <!-- FIX LỖI 1: CHUYỂN SCRIPT THƯ VIỆN LEAFLET LÊN ĐÂY ĐỂ ĐẢM BẢO CHÚNG TẢI TRƯỚC CODE APP -->
+    <!-- Load Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20n6n+ByMhPIeZnhL6oYJbL1P5S3V3sB3t1Q2v5G5+0=" crossorigin=""></script>
+    <!-- Load Leaflet Marker Cluster JS -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <!-- KẾT THÚC PHẦN FIX LỖI TẢI THƯ VIỆN -->
 
+
+    <style>
         /* Define style for the preview card (Tooltip) */
         #preview-card {
             position: fixed;
@@ -30,18 +33,45 @@
             transition: opacity 0.3s ease;
         }
 
-        /* Map specific styles */
+        /* Map specific styles: Tăng chiều cao lên 70% viewport height */
         #vietnam-map {
-            height: 400px; /* Map height */
+            height: 70vh; 
             width: 100%;
             border-radius: 0.75rem; /* rounded-xl */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
             margin-bottom: 2rem;
-            z-index: 1; /* Keep map layer below preview card if needed */
+            z-index: 1;
         }
 
+        /* Styles cho danh sách cuộn ngang (Carousel/Slider) */
+        .horizontal-scroll-list {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 1rem;
+        }
+        
+        .horizontal-scroll-list > div {
+            flex: 0 0 auto; /* Đảm bảo các item không co lại */
+            width: 280px; /* Chiều rộng cố định của card */
+            scroll-snap-align: start;
+            margin-right: 1rem;
+        }
+
+        /* Ẩn scrollbar mặc định nhưng giữ lại khả năng cuộn */
+        .horizontal-scroll-list::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .horizontal-scroll-list::-webkit-scrollbar-thumb {
+            background-color: #93c5fd; /* blue-300 */
+            border-radius: 3px;
+        }
+        
+        /* Ẩn preview card trên mobile */
         @media (max-width: 768px) {
             #preview-card { display: none !important; }
+            #vietnam-map { height: 50vh; }
         }
     </style>
 </head>
@@ -52,42 +82,46 @@
             <h1 class="text-4xl font-extrabold text-indigo-700 mb-2">
                 Vietnam Travel Treasury
             </h1>
-            <p class="text-gray-600 text-lg">Hover over a location to see a quick summary.</p>
+            <p class="text-gray-600 text-lg">Di chuột qua một địa điểm để xem bản tóm tắt nhanh.</p>
         </header>
 
-        <!-- MAP CONTAINER (New requirement) -->
+        <!-- Search bar and filter (positioned above map) -->
+        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg mb-8 space-y-4 md:flex md:space-y-0 md:space-x-4">
+            <!-- Search Input -->
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Tìm kiếm theo tên địa điểm..."
+                class="w-full md:flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+            >
+            <!-- City Filter -->
+            <select 
+                type="text"
+                id="city-filter" 
+                class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg bg-white appearance-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+                onchange="filterLocations()"
+            >
+                <option value="">-- Lọc theo Tỉnh/Thành phố --</option>
+            </select>
+        </div>
+
+        <!-- MAP CONTAINER -->
         <h2 class="text-2xl font-bold text-gray-800 mb-3 text-center">
              📍 Bản đồ Địa điểm Check-in "Sống Ảo" tại Việt Nam 🇻🇳
         </h2>
         <div id="vietnam-map"></div>
         <!-- End Map Container -->
 
-        <!-- Search bar and filter (Existing functionalities) -->
-        <div class="bg-white p-4 sm:p-6 rounded-xl shadow-lg mb-8 space-y-4 md:flex md:space-y-0 md:space-x-4">
-            <!-- Search Input -->
-            <input 
-                type="text" 
-                id="search-input" 
-                placeholder="Search by location name..."
-                class="w-full md:flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-            >
-            <!-- City Filter -->
-            <select 
-                id="city-filter" 
-                class="w-full md:w-1/3 p-3 border border-gray-300 rounded-lg bg-white appearance-none focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
-                onchange="filterLocations()"
-            >
-                <option value="">-- Filter by City/Province --</option>
-            </select>
-        </div>
-
-        <!-- Container for the list of locations (Existing functionalities) -->
+        <!-- Container for the list of locations (Horizontal Slider/Carousel) -->
+        <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-4 border-b pb-2">
+             Danh sách 10 Địa điểm Gợi ý Hàng đầu 📋
+        </h2>
         <div 
             id="location-list" 
-            class="list-container grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-h-[70vh] overflow-y-auto pr-2"
+            class="horizontal-scroll-list"
         >
             <!-- Locations will be rendered here -->
-            <p id="loading-message" class="col-span-full text-center text-gray-500 p-8">Loading data...</p>
+            <p id="loading-message" class="text-center text-gray-500 p-8">Đang tải dữ liệu...</p>
         </div>
 
         <footer class="mt-10 text-center text-gray-500 text-sm border-t pt-4">
@@ -95,7 +129,7 @@
         </footer>
     </div>
     
-    <!-- PREVIEW CARD (Existing functionalities) -->
+    <!-- PREVIEW CARD (Tooltip for AI Summary) -->
     <div id="preview-card" class="hidden bg-white rounded-xl shadow-2xl p-4 border-t-4 border-indigo-500 transition-all duration-300">
         <div class="text-sm font-bold text-indigo-600 mb-2" id="preview-title"></div>
         <div id="preview-content" class="text-gray-700 text-sm leading-snug"></div>
@@ -105,47 +139,33 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <p class="mt-1 text-sm text-gray-500">Searching for information...</p>
+            <p class="mt-1 text-sm text-gray-500">Đang tìm kiếm thông tin...</p>
         </div>
     </div>
 
-    <!-- Load Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20n6n+ByMhPIeZnhL6oYJbL1P5S3V3sB3t1Q2v5G5+0=" crossorigin=""></script>
-    <!-- Load Leaflet Marker Cluster JS -->
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
     <script>
-        // Initial Data (Added Lat/Lng for map integration)
+        // Data containing 10 popular Vietnam check-in locations
         const rawLocations = [
+            // 1. North - Hanoi
             {"name": "Old Quarter (Phố Cổ)", "address": "Hoan Kiem District, Hanoi", "lat": 21.0313, "lng": 105.8516},
-            {"name": "Hoan Kiem Lake (Hồ Gươm)", "address": "Hoan Kiem District, Hanoi", "lat": 21.0287, "lng": 105.8522},
-            {"name": "Long Bien Bridge (Cầu Long Biên)", "address": "Connecting Long Bien and Ba Dinh Districts, Hanoi", "lat": 21.0500, "lng": 105.8620},
-            {"name": "Train Street (Phố Đường Tàu)", "address": "Ba Dinh District, Hanoi", "lat": 21.0260, "lng": 105.8450},
+            // 2. North - Quang Ninh
             {"name": "Ha Long Bay (Vịnh Hạ Long)", "address": "Ha Long City, Quang Ninh", "lat": 20.8710, "lng": 107.0350},
-            {"name": "Trang An Ecotourism (Khu du lịch Tràng An)", "address": "Gia Vien District, Ninh Binh", "lat": 20.2642, "lng": 105.9031},
+            // 3. North - Lao Cai
             {"name": "Sapa Terraces (Ruộng bậc thang Sa Pa)", "address": "Sapa, Lao Cai", "lat": 22.3390, "lng": 103.8500},
-            {"name": "Ba Vi National Park (Vườn Quốc gia Ba Vì)", "address": "Ba Vi, Hanoi", "lat": 21.0350, "lng": 105.3700},
-            
+            // 4. Central - Da Nang
             {"name": "Golden Bridge (Cầu Vàng), Ba Na Hills", "address": "Hoa Vang District, Da Nang", "lat": 16.0123, "lng": 108.0680},
-            {"name": "Dragon Bridge (Cầu Rồng)", "address": "Hai Chau District, Da Nang", "lat": 16.0645, "lng": 108.2210},
+            // 5. Central - Quang Nam
             {"name": "Hoi An Ancient Town (Phố cổ Hội An)", "address": "Minh An Ward, Hoi An City, Quang Nam", "lat": 15.8794, "lng": 108.3360},
-            {"name": "My Khe Beach (Bãi biển Mỹ Khê)", "address": "Son Tra District, Da Nang", "lat": 16.0689, "lng": 108.2435},
-            {"name": "Marble Mountains (Ngũ Hành Sơn)", "address": "Ngu Hanh Son District, Da Nang", "lat": 16.0076, "lng": 108.2831},
-            {"name": "Hai Van Pass (Đèo Hải Vân)", "address": "Border of Hue and Da Nang", "lat": 16.1950, "lng": 108.0400},
-            {"name": "Thien Mu Pagoda (Chùa Thiên Mụ)", "address": "Hue", "lat": 16.4560, "lng": 107.5500},
-            {"name": "Ly Son Island (Đảo Lý Sơn)", "address": "Quang Ngai", "lat": 15.3780, "lng": 109.1100},
-
+            // 6. Central - Hue
+            {"name": "Imperial City (Đại Nội Huế)", "address": "Hue", "lat": 16.4678, "lng": 107.5707},
+            // 7. South - HCMC
             {"name": "Notre-Dame Cathedral (Nhà thờ Đức Bà Sài Gòn)", "address": "District 1, Ho Chi Minh City", "lat": 10.7797, "lng": 106.6990},
-            {"name": "Ben Thanh Market (Chợ Bến Thành)", "address": "District 1, Ho Chi Minh City", "lat": 10.7725, "lng": 106.6980},
-            {"name": "Bitexco Financial Tower", "address": "District 1, Ho Chi Minh City", "lat": 10.7716, "lng": 106.7032},
-            {"name": "Nguyen Hue Walking Street (Phố đi bộ Nguyễn Huệ)", "address": "District 1, Ho Chi Minh City", "lat": 10.7735, "lng": 106.7025},
+            // 8. South - Da Lat
             {"name": "Crazy House (Biệt thự Hằng Nga)", "address": "Da Lat, Lam Dong", "lat": 11.9390, "lng": 108.4370},
-            {"name": "Xuan Huong Lake (Hồ Xuân Hương)", "address": "City Center, Da Lat, Lam Dong", "lat": 11.9427, "lng": 108.4419},
+            // 9. South - Phu Quoc
             {"name": "Bai Sao Beach (Bãi Sao)", "address": "Phu Quoc Island, Kien Giang", "lat": 10.0460, "lng": 104.0480},
-            {"name": "Dinh Cau Night Market (Chợ đêm Dinh Cậu)", "address": "Phu Quoc, Kien Giang", "lat": 10.2240, "lng": 103.9570},
-            {"name": "Cai Rang Floating Market (Chợ nổi Cái Răng)", "address": "Can Tho", "lat": 10.0075, "lng": 105.7483},
-            {"name": "Mui Ne Beach (Bãi biển Mũi Né)", "address": "Binh Thuan", "lat": 10.9300, "lng": 108.2000},
-            {"name": "Ho Tram Beach (Bãi biển Hồ Tràm)", "address": "Ba Ria - Vung Tau", "lat": 10.5180, "lng": 107.4120}
+            // 10. South - Can Tho
+            {"name": "Cai Rang Floating Market (Chợ nổi Cái Răng)", "address": "Can Tho", "lat": 10.0075, "lng": 105.7483}
         ];
 
         // --- JAVASCRIPT & GEMINI API LOGIC AREA ---
@@ -166,7 +186,7 @@
         // Cache and API Configuration
         const previewCache = {};
         const GEMINI_MODEL = "gemini-2.5-flash-preview-05-20";
-        const GEMINI_API_KEY = "";
+        const GEMINI_API_KEY = ""; 
         const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
         
         // --- INITIAL DATA PROCESSING LOGIC ---
@@ -180,9 +200,12 @@
             if (address.includes("Quang Ninh")) return "Quang Ninh (Ha Long)";
             if (address.includes("Lao Cai") || address.includes("Lào Cai")) return "Lao Cai (Sapa)";
             if (address.includes("Ninh Binh") || address.includes("Ninh Bình")) return "Ninh Binh";
-            if (address.includes("Kien Giang") || address.includes("Kiên Giang")) return "Kien Giang (Phu Quoc)";
+            if (address.includes("Kien Giang") || address.includes("Kiên Giang") || address.includes("Phu Quoc")) return "Kien Giang (Phu Quoc)";
             if (address.includes("Lam Dong") || address.includes("Lâm Đồng") || address.includes("Da Lat")) return "Lam Dong (Da Lat)";
-            if (address.includes("Hue") || address.includes("Huế")) return "Thua Thien Hue";
+            if (address.includes("Hue") || address.includes("Huế") || address.includes("Thua Thien Hue")) return "Thua Thien Hue";
+            if (address.includes("Can Tho") || address.includes("Cần Thơ")) return "Can Tho";
+            
+            // Default simple extraction for other cities
             const parts = address.split(',').map(p => p.trim());
             return parts[parts.length - 1] || "Other";
         }
@@ -191,12 +214,13 @@
             ...loc,
             city: extractCity(loc.address),
             // Determine region based on latitude (simple approximation for visualization)
-            region: loc.lat > 20 ? 'North' : (loc.lat > 15 ? 'Central' : 'South')
+            region: loc.lat > 20 ? 'North' : (loc.lat > 14 ? 'Central' : 'South')
         }));
 
         function populateCityFilter() {
             const cities = new Set(locations.map(loc => loc.city).filter(c => c));
-            const priorityCities = ["Hanoi", "Ho Chi Minh City", "Da Nang", "Quang Nam (Hoi An)", "Lam Dong (Da Lat)", "Kien Giang (Phu Quoc)", "Quang Ninh (Ha Long)", "Ninh Binh", "Thua Thien Hue"];
+            // Sắp xếp các thành phố ưu tiên hiển thị trước
+            const priorityCities = ["Hanoi", "Ho Chi Minh City", "Da Nang", "Quang Nam (Hoi An)", "Lam Dong (Da Lat)", "Kien Giang (Phu Quoc)", "Quang Ninh (Ha Long)", "Thua Thien Hue", "Can Tho"];
             const sortedCities = Array.from(cities).sort((a, b) => {
                 const aIndex = priorityCities.indexOf(a);
                 const bIndex = priorityCities.indexOf(b);
@@ -217,6 +241,12 @@
         // --- MAP INITIALIZATION AND RENDERING ---
 
         function initMap() {
+            // Safety check: Kiểm tra L đã được tải chưa
+            if (typeof L === 'undefined' || typeof L.map !== 'function') {
+                console.error("Leaflet (L) is not defined or L.map is not a function. Map cannot be initialized. Check script loading order.");
+                return;
+            }
+
             // Initialize map centered roughly on Vietnam
             vietnamMap = L.map('vietnam-map', {
                 center: [16.0, 107.8], // Central Vietnam
@@ -237,9 +267,16 @@
                 spiderfyOnMaxZoom: true // Cluster functionality
             });
             vietnamMap.addLayer(markerClusterGroup);
+
+            // Force map size recalculation
+            setTimeout(() => {
+                vietnamMap.invalidateSize();
+            }, 10);
         }
 
         function updateMapMarkers(filteredList) {
+            if (typeof L === 'undefined' || !markerClusterGroup) return; // Safety check
+
             // 1. Clear existing markers
             markerClusterGroup.clearLayers();
             mapMarkers = [];
@@ -247,13 +284,11 @@
             // 2. Add markers for filtered locations
             filteredList.forEach(loc => {
                 if (loc.lat && loc.lng) {
-                    // Create tooltip content
                     const tooltipContent = `
                         <div class="font-bold text-indigo-700">${loc.name}</div>
                         <div class="text-xs text-gray-600">${loc.address}</div>
                     `;
 
-                    // Simple icon based on region (North: Blue, Central: Green, South: Red)
                     let markerColor;
                     if (loc.region === 'North') markerColor = '#1d4ed8'; // blue-700
                     else if (loc.region === 'Central') markerColor = '#059669'; // emerald-600
@@ -280,9 +315,8 @@
             });
         }
 
-        // --- PREVIEW & API CALL LOGIC (Existing functionality) ---
+        // --- PREVIEW & API CALL LOGIC ---
         
-        // Function to fetch API with exponential backoff
         async function retryFetch(url, options, maxRetries = 3) {
             for (let i = 0; i < maxRetries; i++) {
                 try {
@@ -293,24 +327,29 @@
                         continue;
                     }
                     if (!response.ok) {
-                        throw new Error(`API returned status ${response.status}`);
+                        const errorBody = await response.text();
+                        throw new Error(`API returned status ${response.status}. Body: ${errorBody.substring(0, 100)}...`);
                     }
                     return response;
                 } catch (error) {
                     if (i === maxRetries - 1) throw error;
-                    console.error("Fetch failed, retrying...", error); 
                 }
             }
+            throw new Error("API call failed after multiple retries.");
         }
 
 
-        // Main function to call Gemini API for Google Search summary
         async function fetchGoogleSearchPreview(locationName) {
             if (previewCache[locationName]) {
                 return previewCache[locationName];
             }
 
-            // Prompt Configuration (English output, strictly 5-10 lines)
+            if (GEMINI_API_KEY === "") {
+                const errorMsg = "LỖI: Thiếu Khóa API (API Key). Vui lòng cung cấp Khóa Gemini API để kích hoạt chức năng tóm tắt.";
+                return { text: errorMsg, error: true };
+            }
+
+            // Prompt Configuration: 5-10 lines summary in English using Google Search
             const systemPrompt = "Act as a professional travel guide. Provide a concise, single-paragraph summary of this tourist location in English, strictly limited to 5-10 lines. Focus on key highlights, history, or recent travel experiences. Do not mention phrases like 'based on search' or 'I found'.";
             const userQuery = `Find the latest information and briefly summarize ${locationName} in Vietnam. Provide the output in English, ensuring it is no more than 10 lines long.`;
 
@@ -338,36 +377,39 @@
                     previewCache[locationName] = data;
                     return data;
 
+                } else if (result.error?.message) {
+                     const errorMsg = `LỖỖI API: ${result.error.message}`;
+                     previewCache[locationName] = { text: errorMsg, error: true };
+                     return previewCache[locationName];
                 } else {
-                    const errorMsg = "Could not generate summary. Please try again.";
+                    const errorMsg = "LỖI: Không thể tạo bản tóm tắt. Cấu trúc phản hồi không mong muốn.";
                     previewCache[locationName] = { text: errorMsg, error: true };
                     return previewCache[locationName];
                 }
 
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                const errorMsg = "Connection error. Please check the console or try again.";
+                const errorMsg = `LỖI KẾT NỐI/MẠNG: ${error.message}. Chức năng tóm tắt có thể bị chặn hoặc thiếu API Key.`;
                 previewCache[locationName] = { text: errorMsg, error: true };
                 return previewCache[locationName];
             }
         }
 
-        // Function to update the preview card
         function updatePreviewCard(locationName, result) {
             previewTitle.textContent = locationName;
             
+            previewLoading.classList.add('hidden');
+            previewContent.classList.remove('hidden');
+
             if (result.error) {
-                 previewContent.innerHTML = `<p class="text-red-500">Error: ${result.text}</p>`;
+                 previewContent.innerHTML = `<p class="text-red-600 font-bold bg-red-100 p-2 rounded-lg border border-red-300">${result.text}</p>`;
             } else {
                  previewContent.innerHTML = result.text.replace(/\n/g, '<br>');
             }
-            
-            previewLoading.classList.add('hidden');
-            previewContent.classList.remove('hidden');
         }
 
-        // Function to handle mouse enter event (Existing functionality)
         async function handleMouseEnter(event) {
+            // Tắt chức năng Preview Card trên mobile để tránh che màn hình
             if (window.innerWidth <= 768) return; 
 
             const target = event.currentTarget;
@@ -375,9 +417,11 @@
 
             const rect = target.getBoundingClientRect();
             
+            // Positioning the card next to the mouse hover location
             let cardX = rect.right + 20; 
             let cardY = rect.top + window.scrollY; 
             
+            // Adjust card position if it goes off screen (simple right-side check)
             if (cardX + 320 > window.innerWidth - 20) {
                 cardX = rect.left - 320 - 20;
             }
@@ -385,7 +429,7 @@
             if (cardX < 20) {
                  cardX = rect.right + 20; 
             }
-
+            
             previewCard.style.left = `${cardX}px`;
             previewCard.style.top = `${cardY}px`;
             previewCard.classList.remove('hidden');
@@ -402,24 +446,39 @@
                 }
             } catch(e) {
                  if (locationListElement.contains(target)) {
-                    updatePreviewCard(locationName, { text: "An error occurred while loading data.", error: true });
+                    updatePreviewCard(locationName, { text: "An unknown error occurred while loading data.", error: true });
                 }
             }
         }
 
-        // Function to handle mouse leave event (Existing functionality)
         function handleMouseLeave() {
             previewCard.classList.add('hidden');
             previewCard.style.opacity = '0';
         }
 
-        // --- RENDER & FILTER LOGIC (Updated to include map updates) ---
+        // --- RENDER & FILTER LOGIC (Updated for Horizontal Scroll) ---
+        
+        // Simple placeholder intro based on region/city
+        function getPlaceholderIntro(loc) {
+            if (loc.city.includes("Hanoi") || loc.city.includes("Ho Chi Minh City")) {
+                return "Khám phá trung tâm văn hóa và nhịp sống đô thị sôi động của Việt Nam.";
+            } else if (loc.region === 'North') {
+                 return "Tuyệt tác thiên nhiên miền núi phía Bắc với vẻ đẹp hùng vĩ và ruộng bậc thang.";
+            } else if (loc.city.includes("Da Lat")) {
+                 return "Thành phố sương mù, nơi lý tưởng cho những người yêu thích kiến trúc và khí hậu mát mẻ.";
+            } else if (loc.city.includes("Phu Quoc")) {
+                 return "Thiên đường biển đảo với bãi cát trắng và nước biển trong xanh.";
+            } else if (loc.region === 'Central') {
+                 return "Vùng đất di sản với những thành phố cổ kính và bãi biển tuyệt đẹp.";
+            }
+            return "Địa điểm du lịch độc đáo, đang chờ bạn khám phá và check-in!";
+        }
 
         function renderLocations(filteredList) {
             locationListElement.innerHTML = '';
             
             if (filteredList.length === 0) {
-                locationListElement.innerHTML = '<p class="col-span-full text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner">No locations found matching the search/filter criteria.</p>';
+                locationListElement.innerHTML = '<p class="text-center text-xl text-red-500 font-medium p-10 bg-yellow-50 rounded-xl shadow-inner mx-auto w-full">Không tìm thấy địa điểm nào phù hợp với tiêu chí tìm kiếm/lọc.</p>';
                 return;
             }
 
@@ -428,13 +487,12 @@
                 item.className = 'loc-card bg-white p-4 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border border-gray-100 cursor-pointer';
                 item.setAttribute('data-name', loc.name);
                 
-                // Attach mouse events
                 item.addEventListener('mouseenter', handleMouseEnter);
                 item.addEventListener('mouseleave', handleMouseLeave);
                 
-                // Add click listener to center map on the location
+                // Khi click vào card, bản đồ sẽ zoom đến vị trí đó
                 item.addEventListener('click', () => {
-                    if (loc.lat && loc.lng) {
+                    if (loc.lat && loc.lng && vietnamMap) {
                         vietnamMap.setView([loc.lat, loc.lng], 12);
                     }
                 });
@@ -444,24 +502,30 @@
                              loc.city.includes("Ho Chi Minh City") ? '🏙️' : 
                              loc.city.includes("Da Nang") || loc.city.includes("Quang Nam") ? '⛱️' :
                              loc.city.includes("Phu Quoc") ? '🏝️' :
-                             loc.city.includes("Da Lat") ? '⛰️' : '🇻🇳';
+                             loc.city.includes("Da Lat") || loc.city.includes("Sapa") ? '⛰️' : '🇻🇳';
+
+                // Lời giới thiệu ngắn gọn (Placeholder intro)
+                const shortIntro = getPlaceholderIntro(loc);
 
                 item.innerHTML = `
-                    <div class="flex items-center space-x-3 mb-2">
+                    <div class="flex items-center space-x-3 mb-2 border-b pb-2">
                         <span class="text-2xl">${icon}</span>
-                        <h2 class="text-lg font-semibold text-indigo-600 leading-tight">${loc.name}</h2>
+                        <h2 class="text-lg font-bold text-indigo-600 leading-tight">${loc.name}</h2>
                     </div>
-                    <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full mb-2">
+                    <p class="text-xs font-medium text-gray-500 bg-indigo-50 inline-block px-2 py-0.5 rounded-full mb-3">
                         ${loc.city} (${loc.region})
                     </p>
-                    <p class="text-sm text-gray-700 mt-1">
-                        <span class="font-medium text-gray-500">Address:</span> ${loc.address}
+                    <p class="text-sm text-gray-800 mb-2 font-semibold">Giới thiệu:</p>
+                    <p class="text-sm text-gray-600 italic leading-snug">
+                        ${shortIntro}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-2">
+                         (Di chuột để xem tóm tắt chi tiết bằng AI)
                     </p>
                 `;
                 locationListElement.appendChild(item);
             });
             
-            // Update the map markers based on the filtered list
             updateMapMarkers(filteredList);
         }
 
@@ -490,6 +554,7 @@
             initMap(); // Initialize the map first
             populateCityFilter();
             renderLocations(locations); // Render locations and populate map
+            console.log("App Initialized. Map and filter functions ready."); 
         };
     </script>
 </body>
