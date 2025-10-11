@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bản đồ Du lịch Việt Nam (Leaflet.js)</title>
+    <title>Vietnam Travel Map (Leaflet.js)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -50,28 +50,28 @@
     <div class="fixed top-0 left-0 right-0 z-20 p-4 flex flex-col items-center gap-3">
         <div class="w-full max-w-4xl bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg"> 
             <header class="text-center mb-4">
-                <h1 class="text-2xl font-extrabold text-indigo-700">Bản đồ Du lịch Việt Nam</h1>
+                <h1 class="text-2xl font-extrabold text-indigo-700">Vietnam Travel Map</h1>
             </header>
             <div class="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
-                <input type="text" id="name-search-input" placeholder="Tìm theo tên hoặc địa chỉ..." class="w-full sm:flex-grow p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm min-w-[200px]">
+                <input type="text" id="name-search-input" placeholder="Search by name or address..." class="w-full sm:flex-grow p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm min-w-[200px]">
                 <select id="city-filter" class="w-full sm:w-auto p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm bg-white">
-                    <option value="">Lọc theo Thành phố</option>
+                    <option value="">Filter by City</option>
                 </select>
             </div>
         </div>
         
         <div id="category-filter-buttons" class="flex flex-wrap justify-center gap-3">
-            <button data-category="Danh lam thắng cảnh" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
+            <button data-category="Landmark" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
                 <i class="fa-solid fa-landmark"></i>
-                <span>Danh lam</span>
+                <span>Landmarks</span>
             </button>
-            <button data-category="Quán ăn" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
+            <button data-category="Restaurant" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
                 <i class="fa-solid fa-utensils"></i>
-                <span>Quán ăn</span>
+                <span>Restaurants</span>
             </button>
-            <button data-category="Quán cà phê" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
+            <button data-category="Cafe" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
                 <i class="fa-solid fa-mug-saucer"></i>
-                <span>Cà phê</span>
+                <span>Cafes</span>
             </button>
         </div>
     </div>
@@ -79,15 +79,15 @@
     <div class="fixed bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-black/20 to-transparent" x-data="carousel()" x-init="init()">
         <div class="max-w-7xl mx-auto">
             <h2 class="text-xl font-bold text-center text-white bg-black/40 backdrop-blur-sm max-w-xs mx-auto py-2 px-4 rounded-full shadow-lg mb-2">
-                Điểm đến hàng đầu
+                Top Destinations
             </h2>
             <div class="relative">
                 <div x-ref="container" class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth">
                     </div>
-                <button @click="prev()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10">
+                <button @click="prev()" class="absolute top-1/2 -left-3 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10 hidden md:block">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <button @click="next()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10">
+                <button @click="next()" class="absolute top-1/2 -right-3 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10 hidden md:block">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </button>
             </div>
@@ -95,243 +95,243 @@
     </div>
 
     <script>
-        // --- DỮ LIỆU ĐỊA ĐIỂM ĐẦY ĐỦ (210 ĐIỂM) ---
+        // --- ALL 210 LOCATIONS (TRANSLATED TO ENGLISH) ---
         const rawLocations = [
-            // MIỀN BẮC
-            [21.0287, 105.8522, "Hồ Hoàn Kiếm (Hồ Gươm)", "Quận Hoàn Kiếm", "Hà Nội", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Di tích", "https://i.imgur.com/Y1N6uG2.jpg"],
-            [21.0368, 105.8342, "Lăng Chủ tịch Hồ Chí Minh", "Số 2 Hùng Vương, Quận Ba Đình", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/8Qp4923.jpg"],
-            [21.0278, 105.8355, "Văn Miếu - Quốc Tử Giám", "Số 58 Quốc Tử Giám, Quận Đống Đa", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/8l7b8hH.jpg"],
-            [21.0353, 105.8395, "Hoàng thành Thăng Long", "Số 19 Hoàng Diệu, Quận Ba Đình", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/0vUnV5G.jpg"],
-            [21.0325, 105.8488, "Phố cổ Hà Nội", "Quận Hoàn Kiếm", "Hà Nội", "Danh lam thắng cảnh", "Văn hóa/Du lịch", "https://i.imgur.com/g8S226J.jpg"],
-            [20.9531, 107.0756, "Vịnh Hạ Long", "Thành phố Hạ Long", "Quảng Ninh", "Danh lam thắng cảnh", "Kỳ quan thiên nhiên Thế giới", "https://i.imgur.com/K5f46s9.jpg"],
-            [21.1681, 106.7325, "Quần thể di tích Yên Tử", "Xã Thượng Yên Công, TP. Uông Bí", "Quảng Ninh", "Danh lam thắng cảnh", "Di tích lịch sử/Tâm linh", "https://i.imgur.com/i9Td2pq.jpg"],
-            [20.9750, 107.7500, "Đảo Cô Tô", "Huyện Cô Tô", "Quảng Ninh", "Danh lam thắng cảnh", "Du lịch biển/Đảo", "https://i.imgur.com/P5G2oU7.jpg"],
-            [20.2558, 105.9183, "Quần thể danh thắng Tràng An", "Huyện Hoa Lư, TP. Ninh Bình", "Ninh Bình", "Danh lam thắng cảnh", "Di sản UNESCO", "https://i.imgur.com/1Oq2E9z.jpg"],
-            [20.2458, 105.9525, "Cố đô Hoa Lư", "Xã Trường Yên, Huyện Hoa Lư", "Ninh Bình", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/sXh8w0W.jpg"],
-            [20.2833, 105.9233, "Chùa Bái Đính", "Xã Gia Sinh, Huyện Gia Viễn", "Ninh Bình", "Danh lam thắng cảnh", "Di tích tâm linh/Du lịch", "https://i.imgur.com/B0jXp2g.jpg"],
-            [20.2153, 105.9150, "Tam Cốc - Bích Động", "Xã Ninh Hải, Huyện Hoa Lư", "Ninh Bình", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/W2x9q3k.jpg"],
-            [22.3386, 103.8522, "Sa Pa (Núi Fansipan)", "Thị xã Sa Pa", "Lào Cai", "Danh lam thắng cảnh", "Du lịch nghỉ dưỡng/Văn hóa", "https://i.imgur.com/9v4v94j.jpg"],
-            [22.3278, 103.8394, "Bản Cát Cát", "Xã San Sả Hồ, Thị xã Sa Pa", "Lào Cai", "Danh lam thắng cảnh", "Du lịch văn hóa/Làng bản", "https://i.imgur.com/P0vD0J7.jpg"],
-            [23.2750, 105.2833, "Cao nguyên đá Đồng Văn", "Huyện Đồng Văn", "Hà Giang", "Danh lam thắng cảnh", "Công viên địa chất toàn cầu", "https://i.imgur.com/5lG2o7b.jpg"],
-            [23.3561, 105.3400, "Cột cờ Lũng Cú", "Xã Lũng Cú, Huyện Đồng Văn", "Hà Giang", "Danh lam thắng cảnh", "Di tích lịch sử/Danh thắng", "https://i.imgur.com/K5f46s9.jpg"],
-            [22.8464, 106.6267, "Thác Bản Giốc", "Xã Đàm Thủy, Huyện Trùng Khánh", "Cao Bằng", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/zV8x65H.jpg"],
-            [22.8550, 105.9000, "Khu di tích Pác Bó", "Xã Trường Hà, Huyện Hà Quảng", "Cao Bằng", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/1c7R8V8.jpg"],
-            [22.3667, 105.7667, "Hồ Ba Bể", "Vườn Quốc gia Ba Bể, Huyện Ba Bể", "Bắc Kạn", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/2Y5R7f7.jpg"],
-            [20.8000, 104.9000, "Cao nguyên Mộc Châu", "Huyện Mộc Châu", "Sơn La", "Danh lam thắng cảnh", "Du lịch nông nghiệp", "https://i.imgur.com/8Y4j8V9.jpg"],
-            [21.5772, 103.7781, "Đèo Pha Đin", "Ranh giới giữa Sơn La và Điện Biên", "Sơn La/Điện Biên", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Đèo", "https://i.imgur.com/mX7h6y8.jpg"],
-            [21.3167, 103.0167, "Cánh đồng Mường Thanh", "Thành phố Điện Biên Phủ", "Điện Biên", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/z3c6E4y.jpg"],
-            [21.3833, 103.0167, "Di tích lịch sử Điện Biên Phủ", "Thành phố Điện Biên Phủ", "Điện Biên", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/pY2E5S7.jpg"],
-            [21.7833, 104.3000, "Ruộng bậc thang Mù Cang Chải", "Huyện Mù Cang Chải", "Yên Bái", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/b9i9k6o.jpg"],
-            [22.1667, 105.0000, "Hồ Thác Bà", "Huyện Yên Bình, Lục Yên", "Yên Bái", "Danh lam thắng cảnh", "Hồ nhân tạo", "https://i.imgur.com/6U8Y18C.jpg"],
-            [20.7833, 107.0500, "Đảo Cát Bà", "Huyện Cát Hải", "Hải Phòng", "Danh lam thắng cảnh", "Du lịch biển/Vườn Quốc gia", "https://i.imgur.com/C3fE43t.jpg"],
-            [21.3667, 104.6000, "Núi Tà Xùa", "Huyện Bắc Yên", "Sơn La", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Săn mây", "https://i.imgur.com/fL3h1f6.jpg"],
-            [20.8167, 105.0500, "Mai Châu", "Huyện Mai Châu", "Hòa Bình", "Danh lam thắng cảnh", "Du lịch văn hóa/Làng bản", "https://i.imgur.com/mO2Xp3E.jpg"],
-            [21.3961, 105.3956, "Đền Hùng", "Xã Hy Cương, Thành phố Việt Trì", "Phú Thọ", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/4oW2S4Q.jpg"],
-            [21.0500, 105.8167, "Hồ Tây", "Quận Tây Hồ", "Hà Nội", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/5J3d4Z8.jpg"],
-            [20.7333, 105.7833, "Chùa Hương", "Xã Hương Sơn, Huyện Mỹ Đức", "Hà Nội", "Danh lam thắng cảnh", "Quần thể di tích tâm linh", "https://i.imgur.com/s4sI3FN.jpg"],
-            [21.0253, 105.8475, "Nhà tù Hỏa Lò", "Số 1 Hỏa Lò, Quận Hoàn Kiếm", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/DMMxHBi.jpg"],
-            [20.6000, 105.9500, "Chùa Tam Chúc", "Thị trấn Ba Sao, Huyện Kim Bảng", "Hà Nam", "Danh lam thắng cảnh", "Di tích tâm linh", "https://i.imgur.com/g8S226J.jpg"],
-            [20.8875, 107.0139, "Hang Sửng Sốt", "Đảo Bồ Hòn, Vịnh Hạ Long", "Quảng Ninh", "Danh lam thắng cảnh", "Hang động", "https://i.imgur.com/rS2a4z0.jpg"],
-            [21.1167, 105.5333, "Làng cổ Đường Lâm", "Thị xã Sơn Tây", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/i9Td2pq.jpg"],
-            [21.0441, 105.8436, "Phở cuốn Hương Mai", "Số 25 Ngũ Xã, Quận Ba Đình", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/w8qHJKn.jpg"],
-            [21.0315, 105.8466, "Phở Bát Đàn", "Số 49 Phố Bát Đàn, Quận Hoàn Kiếm", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/Bf1oT5Q.jpg"],
-            [21.0334, 105.8492, "Chả cá Lã Vọng", "Số 14 Phố Chả Cá, Quận Hoàn Kiếm", "Hà Nội", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/s4sI3FN.jpg"],
-            [21.0321, 105.8481, "Bún chả Hàng Quạt", "Số 74 Phố Hàng Quạt, Quận Hoàn Kiếm", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/DMMxHBi.jpg"],
-            [21.0118, 105.8507, "Bánh cuốn Bà Hoành", "Số 66 Phố Tô Hiến Thành, Quận Hai Bà Trưng", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/g8S226J.jpg"],
-            [21.0119, 105.8572, "Phở Thìn Lò Đúc", "Số 13 Phố Lò Đúc, Quận Hai Bà Trưng", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/rS2a4z0.jpg"],
-            [21.0312, 105.8545, "Cà phê Giảng", "Số 39 Phố Nguyễn Hữu Huân", "Hà Nội", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/Y1N6uG2.jpg"],
-            [21.0313, 105.8546, "Xôi Yến", "Số 35B Phố Nguyễn Hữu Huân", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/8Qp4923.jpg"],
-            [21.0347, 105.8488, "Mỳ gà tần Hàng Bồ", "Số 24 Hàng Bồ, Quận Hoàn Kiếm", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/8l7b8hH.jpg"],
-            [21.0341, 105.8519, "Bún ốc cô Huệ", "Số 43 Phố Nguyễn Siêu, Quận Hoàn Kiếm", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/0vUnV5G.jpg"],
-            [21.0475, 105.8258, "Bánh tôm Hồ Tây", "Số 1 Đường Thanh Niên, Quận Tây Hồ", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/5J3d4Z8.jpg"],
-            [21.0358, 105.8523, "Mỳ vằn thắn Bình Tây", "Số 54 Hàng Chiếu, Quận Hoàn Kiếm", "Hà Nội", "Quán ăn", "Quán ăn", "https://i.imgur.com/mO2Xp3E.jpg"],
-            [21.0110, 105.8560, "Bánh đúc nóng phố Lê Ngọc Hân", "Số 30 Phố Lê Ngọc Hân", "Hà Nội", "Quán ăn", "Quán ăn vặt", "https://i.imgur.com/fL3h1f6.jpg"],
-            [20.2458, 105.9734, "Nhà hàng Dê Núi Đức Dê", "Số 29, ngõ 458 Nguyễn Huệ, TP. Ninh Bình", "Ninh Bình", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/1Oq2E9z.jpg"],
-            [20.2582, 105.9780, "Miến lươn Bà Phấn", "999 Đường Trần Hưng Đạo, TP. Ninh Bình", "Ninh Bình", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/W2x9q3k.jpg"],
-            [20.2514, 105.9774, "Bún chả quạt Tình Mai", "Số 7 Phạm Hồng Thái, TP. Ninh Bình", "Ninh Bình", "Quán ăn", "Quán ăn", "https://i.imgur.com/sXh8w0W.jpg"],
-            [20.2541, 105.9723, "Đức Trọc Quán", "Số 52 Hoàng Hoa Thám, TP. Ninh Bình", "Ninh Bình", "Quán ăn", "Quán ăn vặt", "https://i.imgur.com/B0jXp2g.jpg"],
-            [20.2500, 105.9790, "Nhà hàng Hoàng Giang", "41 P. Trần Quang Khải, TP. Ninh Bình", "Ninh Bình", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/9v4v94j.jpg"],
-            [20.2483, 105.9750, "Bún mọc Tố Như", "Đường Lê Đại Hành, TP. Ninh Bình", "Ninh Bình", "Quán ăn", "Quán ăn", "https://i.imgur.com/P0vD0J7.jpg"],
-            [20.8576, 106.6784, "1986 Cafe & Stay", "Số 33-35 Đinh Tiên Hoàng, Quận Hồng Bàng", "Hải Phòng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/C3fE43t.jpg"],
-            [20.8415, 106.7118, "Vivaria Coffee & Trees", "Số 4B4 Lô 26BC, Lê Hồng Phong, Q. Ngô Quyền", "Hải Phòng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/pY2E5S7.jpg"],
-            [20.9167, 106.6667, "Happy House Cafe", "Số 82 đường Đồng Cau, TT. Núi Đèo", "Hải Phòng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/mX7h6y8.jpg"],
-            [20.8496, 106.6918, "Tree House Coffee", "143 Đường bao quanh hồ An Biên, Q. Ngô Quyền", "Hải Phòng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/z3c6E4y.jpg"],
-            [20.8529, 106.6872, "Cung Trầm Cafe - Ẩm Thực", "Số 136 Lê Lợi, Q. Ngô Quyền", "Hải Phòng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/8Y4j8V9.jpg"],
-            [20.8548, 106.6853, "The Coffee House Cầu Đất", "119 Cầu Đất, P. Cầu Đất, Q. Ngô Quyền", "Hải Phòng", "Quán cà phê", "Quán cà phê (Chuỗi)", "https://i.imgur.com/2Y5R7f7.jpg"],
-            [22.3333, 103.8500, "Fansipan Terrace Cafe", "Số 67 Fansipan, Thị trấn Sa Pa", "Lào Cai (Sa Pa)", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/9v4v94j.jpg"],
-            [22.3361, 103.8475, "Viettrekking Home Sapa", "Số 33 Hoàng Liên, Thị trấn Sa Pa", "Lào Cai (Sa Pa)", "Quán cà phê", "Quán cà phê/Homestay", "https://i.imgur.com/5lG2o7b.jpg"],
-            [22.3350, 103.8500, "Cộng Cà Phê Sa Pa", "Số 37 Xuân Viên, Thị trấn Sa Pa", "Lào Cai (Sa Pa)", "Quán cà phê", "Quán cà phê (Chuỗi)", "https://i.imgur.com/K5f46s9.jpg"],
-            [22.3351, 103.8501, "Le Gecko Cafe", "Số 33 Xuân Viên, Thị trấn Sa Pa", "Lào Cai (Sa Pa)", "Quán cà phê", "Quán cà phê/Nhà hàng", "https://i.imgur.com/zV8x65H.jpg"],
-            [22.3278, 103.8394, "Cóong Cafe", "Bản Cát Cát, Tổ 8, Thị trấn Sa Pa", "Lào Cai (Sa Pa)", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/1c7R8V8.jpg"],
-            // --- MIỀN TRUNG ---
-            [20.0775, 105.6033, "Thành Nhà Hồ", "Xã Vĩnh Tiến, huyện Vĩnh Lộc", "Thanh Hóa", "Danh lam thắng cảnh", "Di tích lịch sử (Di sản TG)", "https://i.imgur.com/aBcDeFg.jpg"],
-            [18.7917, 105.5833, "Khu di tích lịch sử Kim Liên", "Xã Kim Liên, huyện Nam Đàn", "Nghệ An", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/jKlMnOp.jpg"],
-            [19.7833, 105.7833, "Bãi biển Sầm Sơn", "Thành phố Sầm Sơn", "Thanh Hóa", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/qRsTuVw.jpg"],
-            [18.7833, 105.7167, "Bãi biển Cửa Lò", "Thị xã Cửa Lò", "Nghệ An", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/xYzAbCd.jpg"],
-            [18.4906, 105.7483, "Khu di tích lịch sử Ngã ba Đồng Lộc", "Xã Đồng Lộc, huyện Can Lộc", "Hà Tĩnh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/lMnOpQr.jpg"],
-            [18.2833, 106.0667, "Bãi biển Thiên Cầm", "Thị trấn Thiên Cầm, huyện Cẩm Xuyên", "Hà Tĩnh", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/sTuVwXy.jpg"],
-            [18.4333, 105.8667, "Chùa Hương Tích", "Núi Hồng Lĩnh, xã Thiên Lộc, huyện Can Lộc", "Hà Tĩnh", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Di tích tâm linh", "https://i.imgur.com/zAbCdEf.jpg"],
-            [17.4833, 106.2833, "Vườn Quốc gia Phong Nha - Kẻ Bàng", "Huyện Bố Trạch", "Quảng Bình", "Danh lam thắng cảnh", "Danh lam thắng cảnh (Di sản TN TG)", "https://i.imgur.com/OpQrStU.jpg"],
-            [17.5833, 106.2833, "Động Phong Nha", "Xã Sơn Trạch, huyện Bố Trạch", "Quảng Bình", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/VwXyZaB.jpg"],
-            [17.5250, 106.2333, "Động Thiên Đường", "Xã Sơn Trạch, huyện Bố Trạch", "Quảng Bình", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/cDeFgHj.jpg"],
-            [17.5500, 106.2833, "Suối Nước Moọc", "Nhánh Tây Đường Hồ Chí Minh, huyện Bố Trạch", "Quảng Bình", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/kLmNoPq.jpg"],
-            [17.9833, 106.4000, "Mộ Đại tướng Võ Nguyên Giáp", "Vũng Chùa - Đảo Yến, xã Quảng Đông", "Quảng Bình", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/rStUvWx.jpg"],
-            [17.4667, 106.6000, "Bãi biển Nhật Lệ", "TP. Đồng Hới", "Quảng Bình", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/yZaBcDe.jpg"],
-            [16.4678, 107.5783, "Quần thể di tích Cố đô Huế (Đại Nội Huế)", "Đường 23/8, P. Thuận Hòa, TP. Huế", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Di tích lịch sử (Di sản VH TG)", "https://i.imgur.com/FgHjKlM.jpg"],
-            [16.4719, 107.5756, "Chùa Thiên Mụ", "Đồi Hà Khê, đường Nguyễn Phúc Chu, P. Hương Long", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Di tích lịch sử/Tâm linh", "https://i.imgur.com/nOpQrSt.jpg"],
-            [16.3994, 107.5931, "Lăng Khải Định", "Núi Châu Chữ, xã Thủy Bằng, thị xã Hương Thủy", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/uVwXyZa.jpg"],
-            [16.4167, 107.5667, "Lăng Minh Mạng", "Xã Hương Thọ, thị xã Hương Trà", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/BcDeFgH.jpg"],
-            [16.4328, 107.5714, "Lăng Tự Đức", "Thôn Thượng Ba, P. Thủy Xuân, TP. Huế", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/jKlMnOp.jpg"],
-            [16.4633, 107.5881, "Cầu Trường Tiền", "Nối bờ Bắc và bờ Nam sông Hương, TP. Huế", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/qRsTuVw.jpg"],
-            [16.2650, 107.9700, "Đầm Lập An (Lăng Cô)", "Thị trấn Lăng Cô, huyện Phú Lộc", "Thừa Thiên Huế", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/xYzAbCd.jpg"],
-            [16.1833, 108.1167, "Đèo Hải Vân", "Nằm giữa TP. Đà Nẵng và tỉnh Thừa Thiên Huế", "Thừa Thiên Huế/Đà Nẵng", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/lMnOpQr.jpg"],
-            [16.0000, 108.2667, "Ngũ Hành Sơn", "Số 81 đường Huyền Trân Công Chúa, P. Hoà Hải", "Đà Nẵng", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/sTuVwXy.jpg"],
-            [16.1167, 108.2667, "Bán đảo Sơn Trà", "Quận Sơn Trà, TP. Đà Nẵng", "Đà Nẵng", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/zAbCdEf.jpg"],
-            [16.0617, 108.2272, "Cầu Rồng", "Đường Nguyễn Văn Linh, Q. Hải Châu", "Đà Nẵng", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/OpQrStU.jpg"],
-            [16.0000, 108.0667, "Bà Nà Hills", "Thôn An Sơn, xã Hòa Ninh, huyện Hòa Vang", "Đà Nẵng", "Danh lam thắng cảnh", "Khu du lịch", "https://i.imgur.com/VwXyZaB.jpg"],
-            [15.8775, 108.3267, "Phố cổ Hội An", "Phường Minh An, TP. Hội An", "Quảng Nam", "Danh lam thắng cảnh", "Di tích lịch sử (Di sản VH TG)", "https://i.imgur.com/cDeFgHj.jpg"],
-            [15.7667, 108.1167, "Thánh địa Mỹ Sơn", "Xã Duy Phú, huyện Duy Xuyên", "Quảng Nam", "Danh lam thắng cảnh", "Di tích lịch sử (Di sản VH TG)", "https://i.imgur.com/kLmNoPq.jpg"],
-            [15.9167, 108.4833, "Cù Lao Chàm", "Xã Tân Hiệp, TP. Hội An", "Quảng Nam", "Danh lam thắng cảnh", "Danh lam thắng cảnh (Khu DTSQ TG)", "https://i.imgur.com/rStUvWx.jpg"],
-            [15.5333, 108.5333, "Tượng đài Mẹ Việt Nam Anh hùng", "Thôn Phú Thạnh, xã Tam Phú, TP. Tam Kỳ", "Quảng Nam", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/yZaBcDe.jpg"],
-            [15.3833, 109.0500, "Đảo Lý Sơn", "Huyện đảo Lý Sơn", "Quảng Ngãi", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/FgHjKlM.jpg"],
-            [13.3333, 109.3167, "Ghềnh Đá Đĩa", "Thôn Phú Hạnh, xã An Ninh Đông, huyện Tuy An", "Phú Yên", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/nOpQrSt.jpg"],
-            [12.8667, 109.4333, "Hải đăng Đại Lãnh (Mũi Điện)", "Thôn Phước Tân, xã Hòa Tâm, Thị xã Đông Hòa", "Phú Yên", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/uVwXyZa.jpg"],
-            [13.7667, 109.2167, "Tháp Đôi (Tháp Chăm Pa)", "Đường Trần Hưng Đạo, P. Đống Đa, TP. Quy Nhơn", "Bình Định", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/BcDeFgH.jpg"],
-            [13.8833, 109.2333, "Eo Gió", "Xã Nhơn Lý, TP. Quy Nhơn", "Bình Định", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/jKlMnOp.jpg"],
-            [12.2667, 109.1833, "Tháp Bà Ponagar", "Đường 2/4, P. Vĩnh Phước, TP. Nha Trang", "Khánh Hòa", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/qRsTuVw.jpg"],
-            [16.0690, 108.2210, "Mì Quảng 1A", "Số 1A Hải Phòng, Q. Hải Châu", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/xYzAbCd.jpg"],
-            [16.0270, 108.1990, "Bánh tráng cuốn thịt heo Mậu", "Số 35 Đỗ Thúc Tịnh, Q. Cẩm Lệ", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/lMnOpQr.jpg"],
-            [16.0590, 108.2250, "Bún Mắm Vân", "K23/14 Trần Kế Xương, Q. Hải Châu", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/sTuVwXy.jpg"],
-            [16.0660, 108.2200, "Bún chả cá Hờn", "Số 113/2 Nguyễn Chí Thanh, Q. Hải Châu", "Đà Nẵng", "Quán ăn", "Quán ăn", "https://i.imgur.com/zAbCdEf.jpg"],
-            [16.0520, 108.2190, "Bánh Xèo Bà Dưỡng", "K280/23 Hoàng Diệu, Q. Hải Châu", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/OpQrStU.jpg"],
-            [16.1080, 108.1400, "Quán Gỏi Cá Nam Ô Thanh Hương", "Số 1029 Nguyễn Lương Bằng, Q. Liên Chiểu", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/VwXyZaB.jpg"],
-            [16.0960, 108.2520, "Sơn Trà Marina", "Đường Lê Đức Thọ, Q. Sơn Trà", "Đà Nẵng", "Quán cà phê", "Quán cà phê (View biển)", "https://i.imgur.com/cDeFgHj.jpg"],
-            [15.8770, 108.3260, "Faifo Coffee", "130 Trần Phú, TP. Hội An", "Quảng Nam (Hội An)", "Quán cà phê", "Quán cà phê (View Phố cổ)", "https://i.imgur.com/kLmNoPq.jpg"],
-            [16.0670, 108.2240, "Memory Lounge Cafe", "Số 7 Bạch Đằng, Q. Hải Châu", "Đà Nẵng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/rStUvWx.jpg"],
-            [16.4600, 107.5920, "Bún bò Huế Mệ Kéo", "Số 20 Bạch Đằng, TP. Huế", "Thừa Thiên Huế", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/yZaBcDe.jpg"],
-            [16.4700, 107.5950, "Bánh Bèo - Lọc - Nậm Bà Đỏ", "Số 8 Nguyễn Bỉnh Khiêm, TP. Huế", "Thừa Thiên Huế", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/FgHjKlM.jpg"],
-            [16.4520, 107.6000, "Quán Cơm Hến Hoa Đông", "64/7 Ưng Bình, TP. Huế", "Thừa Thiên Huế", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/nOpQrSt.jpg"],
-            [16.4730, 107.5870, "Bánh Khoái Hồng Mai", "Số 110 Đinh Tiên Hoàng, TP. Huế", "Thừa Thiên Huế", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/uVwXyZa.jpg"],
-            [16.4650, 107.5890, "Quán Bánh Mì Trường Tiền O Tho", "Số 14 Trần Hưng Đạo, TP. Huế", "Thừa Thiên Huế", "Quán ăn", "Quán ăn", "https://i.imgur.com/BcDeFgH.jpg"],
-            [16.4600, 107.5850, "Chè Hẻm Huế", "Số 1 Kiệt 29 Hùng Vương, TP. Huế", "Thừa Thiên Huế", "Quán ăn", "Quán ăn vặt", "https://i.imgur.com/jKlMnOp.jpg"],
-            [16.4610, 107.5830, "Cà Phê Muối (Cà Phê N)", "Số 106 Nguyễn Huệ, TP. Huế", "Thừa Thiên Huế", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/qRsTuVw.jpg"],
-            [15.8780, 108.3250, "Bánh Mì Phượng", "Số 2B Phan Chu Trinh, TP. Hội An", "Quảng Nam (Hội An)", "Quán ăn", "Quán ăn", "https://i.imgur.com/xYzAbCd.jpg"],
-            [15.8790, 108.3240, "Cao Lầu Liên", "Số 16 Thái Phiên, TP. Hội An", "Quảng Nam (Hội An)", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/lMnOpQr.jpg"],
-            [15.8770, 108.3250, "Cơm Gà Bà Buội", "Số 22 Phan Chu Trinh, TP. Hội An", "Quảng Nam (Hội An)", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/sTuVwXy.jpg"],
-            [15.8770, 108.3260, "Mót Hội An", "Số 150 Trần Phú, TP. Hội An", "Quảng Nam (Hội An)", "Quán cà phê", "Đồ uống truyền thống", "https://i.imgur.com/zAbCdEf.jpg"],
-            [15.8760, 108.3000, "Roving Chillhouse", "Thôn Vòng Nhi, Xã Cẩm Thanh, TP. Hội An", "Quảng Nam (Hội An)", "Quán cà phê", "Quán cà phê (View đồng lúa)", "https://i.imgur.com/OpQrStU.jpg"],
-            [13.7667, 109.2167, "Bánh Xèo Tôm Nhảy Gia Vỹ", "Số 19 Diên Hồng, TP. Quy Nhơn", "Bình Định", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/VwXyZaB.jpg"],
-            [13.7700, 109.2167, "Bún Cá Ngọc Liên", "Số 379 Nguyễn Huệ, TP. Quy Nhơn", "Bình Định", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/cDeFgHj.jpg"],
-            [13.7667, 109.2167, "Bánh Hỏi Cháo Lòng Hồng Thanh", "Số 22 Phan Bội Châu, TP. Quy Nhơn", "Bình Định", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/kLmNoPq.jpg"],
-            [13.7667, 109.2167, "Quán Hùng Cả (Bún Cá, Rạm, Sứa)", "Số 10 Ngô Mây, TP. Quy Nhơn", "Bình Định", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/rStUvWx.jpg"],
-            [12.2450, 109.1920, "Bún Cá Cô Ba", "Số 123 Yersin, TP. Nha Trang", "Khánh Hòa", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/yZaBcDe.jpg"],
-            [12.2700, 109.1950, "Quán Ốc Xuân Anh", "Số 9C Tháp Bà, TP. Nha Trang", "Khánh Hòa", "Quán ăn", "Quán ăn hải sản", "https://i.imgur.com/FgHjKlM.jpg"],
-            [12.2410, 109.1940, "Bánh Căn Mực số 51", "Số 51 Tô Hiến Thành, TP. Nha Trang", "Khánh Hòa", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/nOpQrSt.jpg"],
-            [12.2380, 109.1970, "Runam Bistro Nha Trang", "Số 34-36 Trần Phú, TP. Nha Trang", "Khánh Hòa", "Quán cà phê", "Quán cà phê/Nhà hàng", "https://i.imgur.com/uVwXyZa.jpg"],
-            [11.9390, 108.4350, "An Café", "Số 63 Bis 3 tháng 2, TP. Đà Lạt", "Lâm Đồng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/BcDeFgH.jpg"],
-            // --- MIỀN NAM ---
-            [10.7769, 106.6953, "Dinh Độc Lập (Hội trường Thống Nhất)", "135 Nam Kỳ Khởi Nghĩa, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/0vUnV5G.jpg"],
-            [10.7797, 106.6990, "Nhà thờ Đức Bà Sài Gòn", "01 Công xã Paris, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử/Kiến trúc", "https://i.imgur.com/w8qHJKn.jpg"],
-            [10.7798, 106.6995, "Bưu điện Trung tâm Sài Gòn", "02 Công xã Paris, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử/Kiến trúc", "https://i.imgur.com/Bf1oT5Q.jpg"],
-            [10.7792, 106.6925, "Bảo tàng Chứng tích Chiến tranh", "28 Võ Văn Tần, Quận 3", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/s4sI3FN.jpg"],
-            [10.7700, 106.7050, "Bến Nhà Rồng (Bảo tàng Hồ Chí Minh)", "01 Nguyễn Tất Thành, Quận 4", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/DMMxHBi.jpg"],
-            [11.0500, 106.4667, "Địa đạo Củ Chi", "Xã Phú Hiệp, huyện Củ Chi", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/zW1zL7p.jpg"],
-            [10.7725, 106.6983, "Chợ Bến Thành", "P. Bến Thành, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Danh lam/Thương mại", "https://i.imgur.com/rS2a4z0.jpg"],
-            [10.7750, 106.7025, "Phố đi bộ Nguyễn Huệ", "Đường Nguyễn Huệ, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/i9Td2pq.jpg"],
-            [11.3333, 106.1167, "Núi Bà Đen", "Phường Ninh Sơn, TP. Tây Ninh", "Tây Ninh", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Tâm linh", "https://i.imgur.com/P5G2oU7.jpg"],
-            [11.3000, 106.1667, "Tòa Thánh Tây Ninh", "Phạm Hộ Pháp, Huyện Hòa Thành", "Tây Ninh", "Danh lam thắng cảnh", "Di tích lịch sử/Tâm linh", "https://i.imgur.com/1Oq2E9z.jpg"],
-            [10.3583, 107.0800, "Khu du lịch Hồ Mây", "1A Trần Phú, P. 1, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Danh lam thắng cảnh", "Khu du lịch", "https://i.imgur.com/sXh8w0W.jpg"],
-            [10.3292, 107.0853, "Tượng Chúa Kitô Vua", "Núi Nhỏ, P. 2, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/B0jXp2g.jpg"],
-            [8.6667, 106.6167, "Vườn Quốc gia Côn Đảo", "Huyện Côn Đảo", "Bà Rịa - Vũng Tàu", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/W2x9q3k.jpg"],
-            [8.6833, 106.6167, "Di tích Nhà tù Côn Đảo", "Huyện Côn Đảo", "Bà Rịa - Vũng Tàu", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/9v4v94j.jpg"],
-            [10.4500, 107.2500, "Bãi biển Long Hải", "Thị trấn Long Hải, huyện Long Điền", "Bà Rịa - Vũng Tàu", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/P0vD0J7.jpg"],
-            [10.9667, 106.8500, "Khu du lịch Bửu Long", "Huỳnh Văn Nghệ, P. Bửu Long, TP. Biên Hòa", "Đồng Nai", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Tâm linh", "https://i.imgur.com/5lG2o7b.jpg"],
-            [11.2167, 106.9167, "Chiến khu D", "Xã Đất Cuốc, huyện Bắc Tân Uyên", "Đồng Nai/Bình Dương", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/K5f46s9.jpg"],
-            [10.6000, 105.0833, "Rừng tràm Trà Sư", "Xã Văn Giáo, huyện Tịnh Biên", "An Giang", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/zV8x65H.jpg"],
-            [10.5167, 105.0833, "Miếu Bà Chúa Xứ Núi Sam", "P. Núi Sam, TP. Châu Đốc", "An Giang", "Danh lam thắng cảnh", "Di tích lịch sử/Tâm linh", "https://i.imgur.com/1c7R8V8.jpg"],
-            [10.5167, 105.0167, "Khu di tích lịch sử Đồi Tức Dụp", "Xã An Tức, huyện Tri Tôn", "An Giang", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/2Y5R7f7.jpg"],
-            [10.0000, 105.7500, "Chợ nổi Cái Răng", "Q. Ninh Kiều, TP. Cần Thơ", "Cần Thơ", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Văn hóa", "https://i.imgur.com/8Y4j8V9.jpg"],
-            [10.0333, 105.7833, "Bến Ninh Kiều", "P. Tân An, Q. Ninh Kiều", "Cần Thơ", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/mX7h6y8.jpg"],
-            [10.0833, 105.7167, "Nhà cổ Bình Thủy", "Số 26/1A Bùi Hữu Nghĩa, Q. Bình Thủy", "Cần Thơ", "Danh lam thắng cảnh", "Di tích lịch sử/Kiến trúc", "https://i.imgur.com/z3c6E4y.jpg"],
-            [8.5833, 104.8167, "Mũi Cà Mau (Công viên văn hóa)", "Ấp Mũi, xã Đất Mũi, huyện Ngọc Hiển", "Cà Mau", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/pY2E5S7.jpg"],
-            [8.6167, 104.8000, "Vườn Quốc gia Mũi Cà Mau", "Ấp Rạch Tàu Đông, xã Đất Mũi", "Cà Mau", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/b9i9k6o.jpg"],
-            [9.2000, 105.0000, "Rừng U Minh Hạ", "Xã Khánh Lâm, huyện U Minh", "Cà Mau", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/6U8Y18C.jpg"],
-            [10.3500, 106.3333, "Chùa Vĩnh Tràng", "Đường Nguyễn Trung Trực, TP. Mỹ Tho", "Tiền Giang", "Danh lam thắng cảnh", "Di tích lịch sử/Tâm linh", "https://i.imgur.com/C3fE43t.jpg"],
-            [10.3167, 106.3500, "Cồn Thới Sơn", "Xã Thới Sơn, TP. Mỹ Tho", "Tiền Giang", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/fL3h1f6.jpg"],
-            [10.0833, 106.3500, "Khu di tích Đồng Khởi", "Xã Định Thủy, huyện Mỏ Cày Nam", "Bến Tre", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/mO2Xp3E.jpg"],
-            [9.9667, 106.5000, "Khu lăng mộ Nguyễn Đình Chiểu", "Xã An Đức, huyện Ba Tri", "Bến Tre", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/4oW2S4Q.jpg"],
-            [9.6000, 105.9833, "Chùa Đất Sét (Bửu Sơn Tự)", "Số 286 Tôn Đức Thắng, TP. Sóc Trăng", "Sóc Trăng", "Danh lam thắng cảnh", "Di tích tâm linh", "https://i.imgur.com/5J3d4Z8.jpg"],
-            [9.5833, 105.9667, "Chùa Dơi (Mã Tộc)", "Số 73B Lê Hồng Phong, TP. Sóc Trăng", "Sóc Trăng", "Danh lam thắng cảnh", "Di tích tâm linh", "https://i.imgur.com/s4sI3FN.jpg"],
-            [10.8333, 105.4167, "Vườn Quốc gia Tràm Chim", "Huyện Tam Nông", "Đồng Tháp", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/DMMxHBi.jpg"],
-            [10.5167, 105.7833, "Khu di tích Xẻo Quýt", "Xã Mỹ Hiệp và Mỹ Long, huyện Cao Lãnh", "Đồng Tháp", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/g8S226J.jpg"],
-            [10.4500, 105.6500, "Làng hoa Sa Đéc", "Phường Tân Quy Đông, TP. Sa Đéc", "Đồng Tháp", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/rS2a4z0.jpg"],
-            [10.7500, 105.8167, "Làng nổi Tân Lập", "QL62, xã Tân Lập, huyện Mộc Hóa", "Long An", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/i9Td2pq.jpg"],
-            [9.9667, 106.2667, "Ao Bà Om", "Khóm 4, P. 8, TP. Trà Vinh", "Trà Vinh", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/P5G2oU7.jpg"],
-            [10.0167, 103.9667, "Nhà tù Phú Quốc", "Số 350 Nguyễn Văn Cừ, xã An Thới", "Kiên Giang (Phú Quốc)", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/1Oq2E9z.jpg"],
-            [9.6000, 105.1333, "Rừng Quốc gia U Minh Thượng", "Xã An Minh Bắc, huyện U Minh Thượng", "Kiên Giang", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/sXh8w0W.jpg"],
-            [9.9667, 104.0500, "Bãi Sao", "Ấp Bãi Sao, xã An Thới", "Kiên Giang (Phú Quốc)", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/b9i9k6o.jpg"],
-            [10.7712, 106.6917, "Bánh mì Huỳnh Hoa", "Số 26 Lê Thị Riêng, Quận 1", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn đường phố", "https://i.imgur.com/C3fE43t.jpg"],
-            [10.7850, 106.6780, "Cơm Tấm Ba Ghiền", "Số 84 Đặng Văn Ngữ, Quận Phú Nhuận", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn", "https://i.imgur.com/fL3h1f6.jpg"],
-            [10.7680, 106.6690, "Hủ Tiếu Nam Vang Thành Đạt", "Số 16 - 18 - 20 Lý Thái Tổ, Quận 10", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn", "https://i.imgur.com/mO2Xp3E.jpg"],
-            [10.7740, 106.6710, "Bún Mắm Cô Ba", "Số 134/68 P. Thành Thái, Quận 10", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/4oW2S4Q.jpg"],
-            [10.7580, 106.7020, "Phá Lấu Bò Cô Thảo", "Số 243/30 Tôn Đản, Quận 4", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn vặt", "https://i.imgur.com/5J3d4Z8.jpg"],
-            [10.7570, 106.6550, "Sủi Cảo Thiên Thiên", "Số 195 - 197 Hà Tôn Quyền, Quận 11", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn", "https://i.imgur.com/s4sI3FN.jpg"],
-            [10.7780, 106.6850, "Lẩu Cá Kèo Bà Huyện", "Số 87 Bà Huyện Thanh Quan, Quận 3", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/DMMxHBi.jpg"],
-            [10.7960, 106.7000, "Xôi Chè Bà Chiểu", "Đường Nơ Trang Long, Quận Bình Thạnh", "TP. Hồ Chí Minh", "Quán ăn", "Đồ ăn đêm", "https://i.imgur.com/g8S226J.jpg"],
-            [10.8030, 106.7110, "Cháo Trắng Hàng Xanh", "Số 283 Xô Viết Nghệ Tĩnh, Quận Bình Thạnh", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn đêm", "https://i.imgur.com/rS2a4z0.jpg"],
-            [10.7650, 106.6890, "Cơm Gà Xối Mỡ Su Su", "Số 117/1Đ Cống Quỳnh, Quận 1", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn", "https://i.imgur.com/i9Td2pq.jpg"],
-            [10.7620, 106.6900, "Bún Thịt Nướng Chị Tuyền", "Số 175 Cô Giang, Quận 1", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn", "https://i.imgur.com/P5G2oU7.jpg"],
-            [10.7500, 106.6450, "Bánh Canh Cua 350k (Quán không tên)", "Số 360 Phạm Văn Chí, Quận 6", "TP. Hồ Chí Minh", "Quán ăn", "Quán ăn", "https://i.imgur.com/1Oq2E9z.jpg"],
-            [10.7810, 106.6830, "Oromia Coffee & Lounge", "Số 193A/19 Nam Kỳ Khởi Nghĩa, Quận 3", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/sXh8w0W.jpg"],
-            [10.7770, 106.7030, "The Workshop Coffee", "Tầng 3, 27 Ngô Đức Kế, Quận 1", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/B0jXp2g.jpg"],
-            [10.7760, 106.7020, "Bản Cà Phê Sài Gòn", "Số 38/7 Lê Lợi, Quận 1", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê (Hoài cổ)", "https://i.imgur.com/W2x9q3k.jpg"],
-            [10.7670, 106.6940, "Little Hanoi Egg Coffee", "Số 119/5 Yersin, Quận 1", "TP. Hồ Chí Minh", "Quán cà phê", "Cà phê Trứng", "https://i.imgur.com/9v4v94j.jpg"],
-            [10.8220, 106.6880, "Du Miên Garden Coffee", "Số 7 Phan Văn Trị, Quận Gò Vấp", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê (Sân vườn)", "https://i.imgur.com/P0vD0J7.jpg"],
-            [10.7750, 106.7025, "Partea - English Tearoom", "Lầu 4, 42 Nguyễn Huệ, Quận 1", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê (Trà chiều)", "https://i.imgur.com/5lG2o7b.jpg"],
-            [10.7990, 106.7380, "Okkio Caffe", "Số 110 Xuân Thủy, TP. Thủ Đức", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/K5f46s9.jpg"],
-            [10.3250, 107.0800, "Soho Coffee", "Số 66 Hạ Long, P. 2, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Quán cà phê", "Quán cà phê (View biển)", "https://i.imgur.com/zV8x65H.jpg"],
-            [10.3350, 107.0750, "Marina Club", "Số 3 Hạ Long, P. 2, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Quán cà phê", "Quán cà phê/Nhà hàng", "https://i.imgur.com/1c7R8V8.jpg"],
-            [10.3450, 107.0900, "Độc Lập Coffee", "Số 47 Lý Tự Trọng, P. 1, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Quán cà phê", "Quán cà phê (Cổ điển)", "https://i.imgur.com/2Y5R7f7.jpg"],
-            [10.3400, 107.0850, "Bánh khọt Gốc Vú Sữa", "Số 14 Nguyễn Trường Tộ, P. 2, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/8Y4j8V9.jpg"],
-            [10.3420, 107.0910, "Lẩu Cá Đuối Hoàng Minh", "Số 44 Trương Công Định, P. 3, TP. Vũng Tàu", "Bà Rịa - Vũng Tàu", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/mX7h6y8.jpg"],
-            [10.9500, 106.8500, "Cơm Niêu Hương Đồng", "Số 1709 Nguyễn Ái Quốc, TP. Biên Hòa", "Đồng Nai", "Quán ăn", "Quán ăn Việt", "https://i.imgur.com/z3c6E4y.jpg"],
-            [10.0500, 105.7500, "Bánh xèo Sáu Đèo", "Số 450 Xô Viết Nghệ Tĩnh, Q. Bình Thủy", "Cần Thơ", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/pY2E5S7.jpg"],
-            [10.0333, 105.7833, "Lẩu mắm Má Năm", "Số 98 Huỳnh Cương, Q. Ninh Kiều", "Cần Thơ", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/b9i9k6o.jpg"],
-            [10.0333, 105.7833, "Phố ẩm thực Chợ đêm Ninh Kiều", "Công viên Ninh Kiều, Q. Ninh Kiều", "Cần Thơ", "Quán ăn", "Quán ăn (Đường phố)", "https://i.imgur.com/6U8Y18C.jpg"],
-            [10.4500, 105.6500, "Hủ tiếu Bà Sẩm", "Số 188 Trần Hưng Đạo, TP. Sa Đéc", "Đồng Tháp", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/C3fE43t.jpg"],
-            [9.0000, 105.1500, "Quán Lẩu Cá Kèo Phượng", "Số 157 Ngô Quyền, TP. Cà Mau", "Cà Mau", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/fL3h1f6.jpg"],
-            [9.0000, 105.1500, "Quán Bánh Căn 30", "Số 30 Lý Thường Kiệt, TP. Cà Mau", "Cà Mau", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/mO2Xp3E.jpg"],
-            [10.5167, 105.0833, "Bánh bò thốt nốt Út Dứt", "Ngã ba Lộ Tẻ, Tỉnh lộ 948, H. Châu Thành", "An Giang", "Quán ăn", "Quán ăn vặt đặc sản", "https://i.imgur.com/4oW2S4Q.jpg"],
-            [10.5167, 105.0833, "Bún Cá Châu Đốc 16", "Số 16 Phan Văn Vàng, TP. Châu Đốc", "An Giang", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/5J3d4Z8.jpg"],
-            [10.3500, 106.3333, "Hủ Tiếu Tuyết Ngân", "Số 236 - 237 Ấp Bắc, TP. Mỹ Tho", "Tiền Giang", "Quán ăn", "Quán ăn", "https://i.imgur.com/s4sI3FN.jpg"],
-            [10.3167, 106.3500, "Bánh xèo Sáu Đèo", "ĐT876, Đồng Hoà, Huyện Châu Thành", "Tiền Giang", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/DMMxHBi.jpg"],
-            [10.0333, 105.7833, "Quán Cá Lóc Nướng Trui An", "Số 15-19-21 Trần Văn Hoài, Q. Ninh Kiều", "Cần Thơ", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/g8S226J.jpg"],
-            [10.5167, 105.0833, "Nhà hàng Lá Giang", "Khu du lịch Núi Sam, TP. Châu Đốc", "An Giang", "Quán ăn", "Nhà hàng", "https://i.imgur.com/rS2a4z0.jpg"],
-            [10.2333, 106.3167, "Làng Bè (Ẩm thực sông nước)", "Xã An Khánh, Huyện Châu Thành", "Bến Tre", "Quán ăn", "Nhà hàng", "https://i.imgur.com/i9Td2pq.jpg"],
-            [10.0500, 105.7500, "Quán Cà phê Nông Trại", "Số 191/14 Sư Vạn Hạnh, Q. Bình Thủy", "Cần Thơ", "Quán cà phê", "Quán cà phê (Sân vườn)", "https://i.imgur.com/P5G2oU7.jpg"],
-            [10.8000, 106.7333, "The Deck Saigon", "Số 38 Nguyễn Ư Dĩ, TP. Thủ Đức", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê/Nhà hàng (View sông)", "https://i.imgur.com/1Oq2E9z.jpg"]
+            // NORTHERN VIETNAM
+            [21.0287, 105.8522, "Hoan Kiem Lake (Sword Lake)", "Hoan Kiem District, Hanoi", "Hanoi", "Landmark", "Scenic/Historic Site", "https://i.imgur.com/Y1N6uG2.jpg"],
+            [21.0368, 105.8342, "Ho Chi Minh Mausoleum", "2 Hung Vuong, Ba Dinh District, Hanoi", "Hanoi", "Landmark", "Historic Site", "https://i.imgur.com/8Qp4923.jpg"],
+            [21.0278, 105.8355, "Temple of Literature", "58 Quoc Tu Giam, Dong Da District, Hanoi", "Hanoi", "Landmark", "Historic/Cultural Site", "https://i.imgur.com/8l7b8hH.jpg"],
+            [21.0353, 105.8395, "Imperial Citadel of Thang Long", "19 Hoang Dieu, Ba Dinh District, Hanoi", "Hanoi", "Landmark", "Historic/Cultural Site", "https://i.imgur.com/0vUnV5G.jpg"],
+            [21.0325, 105.8488, "Hanoi Old Quarter", "Hoan Kiem District, Hanoi", "Hanoi", "Landmark", "Cultural/Tourist Area", "https://i.imgur.com/g8S226J.jpg"],
+            [20.9531, 107.0756, "Ha Long Bay", "Ha Long City, Quang Ninh", "Quang Ninh", "Landmark", "World Natural Wonder", "https://i.imgur.com/K5f46s9.jpg"],
+            [21.1681, 106.7325, "Yen Tu Pagoda Complex", "Thuong Yen Cong Commune, Uong Bi City, Quang Ninh", "Quang Ninh", "Landmark", "Historic/Spiritual Site", "https://i.imgur.com/i9Td2pq.jpg"],
+            [20.9750, 107.7500, "Co To Island", "Co To District, Quang Ninh", "Quang Ninh", "Landmark", "Beach/Island Tourism", "https://i.imgur.com/P5G2oU7.jpg"],
+            [20.2558, 105.9183, "Trang An Landscape Complex", "Hoa Lu District, Ninh Binh City, Ninh Binh", "Ninh Bình", "Landmark", "UNESCO Heritage Site", "https://i.imgur.com/1Oq2E9z.jpg"],
+            [20.2458, 105.9525, "Hoa Lu Ancient Capital", "Truong Yen Commune, Hoa Lu District, Ninh Binh", "Ninh Bình", "Landmark", "Historic/Cultural Site", "https://i.imgur.com/sXh8w0W.jpg"],
+            [20.2833, 105.9233, "Bai Dinh Pagoda", "Gia Sinh Commune, Gia Vien District, Ninh Binh", "Ninh Bình", "Landmark", "Spiritual/Tourist Site", "https://i.imgur.com/B0jXp2g.jpg"],
+            [20.2153, 105.9150, "Tam Coc - Bich Dong", "Ninh Hai Commune, Hoa Lu District, Ninh Binh", "Ninh Bình", "Landmark", "Scenic Landscape", "https://i.imgur.com/W2x9q3k.jpg"],
+            [22.3386, 103.8522, "Sa Pa (Fansipan Mountain)", "Sa Pa Town, Lao Cai Province", "Lào Cai", "Landmark", "Resort/Cultural Tourism", "https://i.imgur.com/9v4v94j.jpg"],
+            [22.3278, 103.8394, "Cat Cat Village", "San Sa Ho Commune, Sa Pa Town, Lao Cai", "Lào Cai", "Landmark", "Cultural Tourism/Village", "https://i.imgur.com/P0vD0J7.jpg"],
+            [23.2750, 105.2833, "Dong Van Karst Plateau", "Dong Van District, Ha Giang Province", "Hà Giang", "Landmark", "Global Geopark", "https://i.imgur.com/5lG2o7b.jpg"],
+            [23.3561, 105.3400, "Lung Cu Flag Tower", "Lung Cu Commune, Dong Van District, Ha Giang", "Hà Giang", "Landmark", "Historic Site/Scenic Spot", "https://i.imgur.com/K5f46s9.jpg"],
+            [22.8464, 106.6267, "Ban Gioc Waterfall", "Dam Thuy Commune, Trung Khanh District, Cao Bang", "Cao Bằng", "Landmark", "Scenic Landscape", "https://i.imgur.com/zV8x65H.jpg"],
+            [22.8550, 105.9000, "Pac Bo Historical Site", "Truong Ha Commune, Ha Quang District, Cao Bang", "Cao Bằng", "Landmark", "Historic Site", "https://i.imgur.com/1c7R8V8.jpg"],
+            [22.3667, 105.7667, "Ba Be Lake", "Ba Be National Park, Ba Be District, Bac Kan", "Bắc Kạn", "Landmark", "Scenic Landscape", "https://i.imgur.com/2Y5R7f7.jpg"],
+            [20.8000, 104.9000, "Moc Chau Plateau", "Moc Chau District, Son La Province", "Sơn La", "Landmark", "Scenic/Agricultural Tourism", "https://i.imgur.com/8Y4j8V9.jpg"],
+            [21.5772, 103.7781, "Pha Din Pass", "Border between Son La and Dien Bien", "Sơn La/Điện Biên", "Landmark", "Scenic Pass", "https://i.imgur.com/mX7h6y8.jpg"],
+            [21.3167, 103.0167, "Muong Thanh Field", "Dien Bien Phu City, Dien Bien Province", "Điện Biên", "Landmark", "Scenic Landscape", "https://i.imgur.com/z3c6E4y.jpg"],
+            [21.3833, 103.0167, "Dien Bien Phu Historical Site", "Dien Bien Phu City, Dien Bien Province", "Điện Biên", "Landmark", "Historic Site", "https://i.imgur.com/pY2E5S7.jpg"],
+            [21.7833, 104.3000, "Mu Cang Chai Rice Terraces", "Mu Cang Chai District, Yen Bai Province", "Yên Bái", "Landmark", "Scenic Landscape", "https://i.imgur.com/b9i9k6o.jpg"],
+            [22.1667, 105.0000, "Thac Ba Lake", "Yen Binh & Luc Yen Districts, Yen Bai", "Yên Bái", "Landmark", "Artificial Lake", "https://i.imgur.com/6U8Y18C.jpg"],
+            [20.7833, 107.0500, "Cat Ba Island", "Cat Hai District, Hai Phong City", "Hải Phòng", "Landmark", "Beach/National Park", "https://i.imgur.com/C3fE43t.jpg"],
+            [21.3667, 104.6000, "Ta Xua Mountain", "Bac Yen District, Son La Province", "Sơn La", "Landmark", "Scenic/Cloud Hunting", "https://i.imgur.com/fL3h1f6.jpg"],
+            [20.8167, 105.0500, "Mai Chau", "Mai Chau District, Hoa Binh Province", "Hòa Bình", "Landmark", "Cultural Tourism/Village", "https://i.imgur.com/mO2Xp3E.jpg"],
+            [21.3961, 105.3956, "Hung Kings' Temple", "Hy Cuong Commune, Viet Tri City, Phu Tho", "Phú Thọ", "Landmark", "Historic/Cultural Site", "https://i.imgur.com/4oW2S4Q.jpg"],
+            [21.0500, 105.8167, "West Lake", "Tay Ho District, Hanoi", "Hanoi", "Landmark", "Scenic Landscape", "https://i.imgur.com/5J3d4Z8.jpg"],
+            [20.7333, 105.7833, "Perfume Pagoda", "Huong Son Commune, My Duc District, Hanoi", "Hanoi", "Landmark", "Spiritual Complex", "https://i.imgur.com/s4sI3FN.jpg"],
+            [21.0253, 105.8475, "Hoa Lo Prison", "1 Hoa Lo, Hoan Kiem District, Hanoi", "Hanoi", "Landmark", "Historic Site", "https://i.imgur.com/DMMxHBi.jpg"],
+            [20.6000, 105.9500, "Tam Chuc Pagoda", "Ba Sao Town, Kim Bang District, Ha Nam", "Hà Nam", "Landmark", "Spiritual Site", "https://i.imgur.com/g8S226J.jpg"],
+            [20.8875, 107.0139, "Sung Sot Cave (Surprise Cave)", "Bo Hon Island, Ha Long Bay, Quang Ninh", "Quảng Ninh", "Landmark", "Cave", "https://i.imgur.com/rS2a4z0.jpg"],
+            [21.1167, 105.5333, "Duong Lam Ancient Village", "Son Tay Town, Hanoi", "Hanoi", "Landmark", "Historic/Cultural Site", "https://i.imgur.com/i9Td2pq.jpg"],
+            [21.0441, 105.8436, "Huong Mai Pho Cuon", "25 Ngu Xa, Ba Dinh District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/w8qHJKn.jpg"],
+            [21.0315, 105.8466, "Pho Bat Dan", "49 Bat Dan Street, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/Bf1oT5Q.jpg"],
+            [21.0334, 105.8492, "Cha Ca La Vong", "14 Cha Ca Street, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/s4sI3FN.jpg"],
+            [21.0321, 105.8481, "Bun Cha Hang Quat", "74 Hang Quat Street, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/DMMxHBi.jpg"],
+            [21.0118, 105.8507, "Banh Cuon Ba Hoanh", "66 To Hien Thanh Street, Hai Ba Trung District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/g8S226J.jpg"],
+            [21.0119, 105.8572, "Pho Thin Lo Duc", "13 Lo Duc Street, Hai Ba Trung District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/rS2a4z0.jpg"],
+            [21.0312, 105.8545, "Giang Cafe", "39 Nguyen Huu Huan Street, Hoan Kiem District, Hanoi", "Hanoi", "Cafe", "Cafe", "https://i.imgur.com/Y1N6uG2.jpg"],
+            [21.0313, 105.8546, "Xoi Yen", "35B Nguyen Huu Huan Street, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/8Qp4923.jpg"],
+            [21.0347, 105.8488, "My Ga Tan Hang Bo", "24 Hang Bo, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/8l7b8hH.jpg"],
+            [21.0341, 105.8519, "Bun Oc Co Hue", "43 Nguyen Sieu Street, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/0vUnV5G.jpg"],
+            [21.0475, 105.8258, "Banh Tom Ho Tay", "1 Thanh Nien Road, Tay Ho District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/5J3d4Z8.jpg"],
+            [21.0358, 105.8523, "My Van Than Binh Tay", "54 Hang Chieu, Hoan Kiem District, Hanoi", "Hanoi", "Restaurant", "Local Food", "https://i.imgur.com/mO2Xp3E.jpg"],
+            [21.0110, 105.8560, "Banh Duc Nong Le Ngoc Han", "30 Le Ngoc Han Street, Hai Ba Trung District, Hanoi", "Hanoi", "Restaurant", "Snack Stall", "https://i.imgur.com/fL3h1f6.jpg"],
+            [20.2458, 105.9734, "Duc De Goat Restaurant", "29, lane 458 Nguyen Hue, Nam Binh, Ninh Binh", "Ninh Bình", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/1Oq2E9z.jpg"],
+            [20.2582, 105.9780, "Mien Luon Ba Phan", "999 Tran Hung Dao Street, Ninh Binh City", "Ninh Bình", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/W2x9q3k.jpg"],
+            [20.2514, 105.9774, "Bun Cha Quat Tinh Mai", "7 Pham Hong Thai, Van Giang, Ninh Binh", "Ninh Bình", "Restaurant", "Local Food", "https://i.imgur.com/sXh8w0W.jpg"],
+            [20.2541, 105.9723, "Duc Troc Quan", "52 Hoang Hoa Tham, Thanh Binh, Ninh Binh", "Ninh Bình", "Restaurant", "Snack Stall", "https://i.imgur.com/B0jXp2g.jpg"],
+            [20.2500, 105.9790, "Hoang Giang Restaurant", "41 Tran Quang Khai, Nam Thanh, Ninh Binh", "Ninh Bình", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/9v4v94j.jpg"],
+            [20.2483, 105.9750, "Bun Moc To Nhu", "Le Dai Hanh Street, Tan Thanh, Ninh Binh", "Ninh Bình", "Restaurant", "Local Food", "https://i.imgur.com/P0vD0J7.jpg"],
+            [20.8576, 106.6784, "1986 Cafe & Stay", "33-35 Dinh Tien Hoang, Hong Bang District, Hai Phong", "Hải Phòng", "Cafe", "Cafe", "https://i.imgur.com/C3fE43t.jpg"],
+            [20.8415, 106.7118, "Vivaria Coffee & Trees", "4B4 Lot 26BC, Le Hong Phong, Ngo Quyen District, Hai Phong", "Hải Phòng", "Cafe", "Cafe", "https://i.imgur.com/pY2E5S7.jpg"],
+            [20.9167, 106.6667, "Happy House Cafe", "82 Dong Cau Street, Nui Deo Town, Thuy Nguyen District, Hai Phong", "Hải Phòng", "Cafe", "Cafe", "https://i.imgur.com/mX7h6y8.jpg"],
+            [20.8496, 106.6918, "Tree House Coffee", "143 An Bien Lake Street, Ngo Quyen District, Hai Phong", "Hải Phòng", "Cafe", "Cafe", "https://i.imgur.com/z3c6E4y.jpg"],
+            [20.8529, 106.6872, "Cung Tram Cafe", "136 Le Loi, Ngo Quyen District, Hai Phong", "Hải Phòng", "Cafe", "Cafe", "https://i.imgur.com/8Y4j8V9.jpg"],
+            [20.8548, 106.6853, "The Coffee House Cau Dat", "119 Cau Dat, Ngo Quyen District, Hai Phong", "Hải Phòng", "Cafe", "Chain Cafe", "https://i.imgur.com/2Y5R7f7.jpg"],
+            [22.3333, 103.8500, "Fansipan Terrace Cafe", "67 Fansipan, Sa Pa Town, Lao Cai", "Lào Cai (Sa Pa)", "Cafe", "Cafe", "https://i.imgur.com/9v4v94j.jpg"],
+            [22.3361, 103.8475, "Viettrekking Home Sapa", "33 Hoang Lien, Sa Pa Town, Lao Cai", "Lào Cai (Sa Pa)", "Cafe", "Cafe/Homestay", "https://i.imgur.com/5lG2o7b.jpg"],
+            [22.3350, 103.8500, "Cong Ca Phe Sa Pa", "37 Xuan Vien, Sa Pa Town, Lao Cai", "Lào Cai (Sa Pa)", "Cafe", "Chain Cafe", "https://i.imgur.com/K5f46s9.jpg"],
+            [22.3351, 103.8501, "Le Gecko Cafe", "33 Xuan Vien, Sa Pa Town, Lao Cai", "Lào Cai (Sa Pa)", "Cafe", "Cafe/Restaurant", "https://i.imgur.com/zV8x65H.jpg"],
+            [22.3278, 103.8394, "Coong Cafe", "Cat Cat Village, Sa Pa Town, Lao Cai", "Lào Cai (Sa Pa)", "Cafe", "Cafe", "https://i.imgur.com/1c7R8V8.jpg"],
+            // CENTRAL VIETNAM
+            [20.0775, 105.6033, "Ho Citadel", "Vinh Tien & Vinh Long Communes, Vinh Loc, Thanh Hoa", "Thanh Hóa", "Landmark", "World Heritage Site", "https://i.imgur.com/aBcDeFg.jpg"],
+            [18.7917, 105.5833, "Kim Lien Historical Site", "Kim Lien Commune, Nam Dan, Nghe An", "Nghệ An", "Landmark", "Historic Site", "https://i.imgur.com/jKlMnOp.jpg"],
+            [19.7833, 105.7833, "Sam Son Beach", "Sam Son City, Thanh Hoa", "Thanh Hóa", "Landmark", "Scenic Landscape", "https://i.imgur.com/qRsTuVw.jpg"],
+            [18.7833, 105.7167, "Cua Lo Beach", "Cua Lo Town, Nghe An", "Nghệ An", "Landmark", "Scenic Landscape", "https://i.imgur.com/xYzAbCd.jpg"],
+            [18.4906, 105.7483, "Dong Loc T-junction", "Dong Loc Commune, Can Loc, Ha Tinh", "Hà Tĩnh", "Landmark", "Historic Site", "https://i.imgur.com/lMnOpQr.jpg"],
+            [18.2833, 106.0667, "Thien Cam Beach", "Thien Cam Town, Cam Xuyen, Ha Tinh", "Hà Tĩnh", "Landmark", "Scenic Landscape", "https://i.imgur.com/sTuVwXy.jpg"],
+            [18.4333, 105.8667, "Huong Tich Pagoda", "Hong Linh Mountain, Thien Loc, Can Loc, Ha Tinh", "Hà Tĩnh", "Landmark", "Scenic/Spiritual Site", "https://i.imgur.com/zAbCdEf.jpg"],
+            [17.4833, 106.2833, "Phong Nha - Ke Bang National Park", "Bo Trach, Minh Hoa, Tuyen Hoa, Quang Ninh, Quang Binh", "Quảng Bình", "Landmark", "World Natural Heritage", "https://i.imgur.com/OpQrStU.jpg"],
+            [17.5833, 106.2833, "Phong Nha Cave", "Son Trach Commune, Bo Trach, Quang Binh", "Quảng Bình", "Landmark", "Scenic Landscape", "https://i.imgur.com/VwXyZaB.jpg"],
+            [17.5250, 106.2333, "Paradise Cave", "Son Trach Commune, Bo Trach, Quang Binh", "Quảng Bình", "Landmark", "Scenic Landscape", "https://i.imgur.com/cDeFgHj.jpg"],
+            [17.5500, 106.2833, "Nuoc Mooc Stream", "Ho Chi Minh West Road, Bo Trach, Quang Binh", "Quảng Bình", "Landmark", "Scenic Landscape", "https://i.imgur.com/kLmNoPq.jpg"],
+            [17.9833, 106.4000, "General Vo Nguyen Giap's Tomb", "Vung Chua - Dao Yen, Quang Dong, Quang Trach, Quang Binh", "Quảng Bình", "Landmark", "Historic Site", "https://i.imgur.com/rStUvWx.jpg"],
+            [17.4667, 106.6000, "Nhat Le Beach", "Dong Hoi City, Quang Binh", "Quảng Bình", "Landmark", "Scenic Landscape", "https://i.imgur.com/yZaBcDe.jpg"],
+            [16.4678, 107.5783, "Hue Imperial City (The Citadel)", "23/8 Street, Thuan Hoa Ward, Hue City", "Thừa Thiên Huế", "Landmark", "World Cultural Heritage", "https://i.imgur.com/FgHjKlM.jpg"],
+            [16.4719, 107.5756, "Thien Mu Pagoda", "Ha Khe Hill, Nguyen Phuc Chu Street, Huong Long, Hue", "Thừa Thiên Huế", "Landmark", "Historic/Spiritual Site", "https://i.imgur.com/nOpQrSt.jpg"],
+            [16.3994, 107.5931, "Khai Dinh Tomb", "Chau Chu Mountain, Thuy Bang, Huong Thuy, Hue", "Thừa Thiên Huế", "Landmark", "Historic Site", "https://i.imgur.com/uVwXyZa.jpg"],
+            [16.4167, 107.5667, "Minh Mang Tomb", "Huong Tho Commune, Huong Tra, Hue", "Thừa Thiên Huế", "Landmark", "Historic Site", "https://i.imgur.com/BcDeFgH.jpg"],
+            [16.4328, 107.5714, "Tu Duc Tomb", "Thuong Ba Village, Thuy Xuan, Hue City", "Thừa Thiên Huế", "Landmark", "Historic Site", "https://i.imgur.com/jKlMnOp.jpg"],
+            [16.4633, 107.5881, "Truong Tien Bridge", "Connects North and South banks of Perfume River, Hue", "Thừa Thiên Huế", "Landmark", "Scenic Landscape", "https://i.imgur.com/qRsTuVw.jpg"],
+            [16.2650, 107.9700, "Lap An Lagoon (Lang Co)", "Lang Co Town, Phu Loc District, Hue", "Thừa Thiên Huế", "Landmark", "Scenic Landscape", "https://i.imgur.com/xYzAbCd.jpg"],
+            [16.1833, 108.1167, "Hai Van Pass", "Between Da Nang and Thua Thien Hue", "Thừa Thiên Huế/Đà Nẵng", "Landmark", "Scenic Pass", "https://i.imgur.com/lMnOpQr.jpg"],
+            [16.0000, 108.2667, "Marble Mountains", "81 Huyen Tran Cong Chua, Hoa Hai, Ngu Hanh Son, Da Nang", "Đà Nẵng", "Landmark", "Scenic Landscape", "https://i.imgur.com/sTuVwXy.jpg"],
+            [16.1167, 108.2667, "Son Tra Peninsula", "Son Tra District, Da Nang", "Đà Nẵng", "Landmark", "Scenic Landscape", "https://i.imgur.com/zAbCdEf.jpg"],
+            [16.0617, 108.2272, "Dragon Bridge", "Nguyen Van Linh Street, Hai Chau District, Da Nang", "Đà Nẵng", "Landmark", "Scenic Landscape", "https://i.imgur.com/OpQrStU.jpg"],
+            [16.0000, 108.0667, "Ba Na Hills", "An Son Village, Hoa Ninh Commune, Hoa Vang, Da Nang", "Đà Nẵng", "Landmark", "Tourist Complex", "https://i.imgur.com/VwXyZaB.jpg"],
+            [15.8775, 108.3267, "Hoi An Ancient Town", "Minh An Ward, Hoi An City, Quang Nam", "Quảng Nam", "Landmark", "World Cultural Heritage", "https://i.imgur.com/cDeFgHj.jpg"],
+            [15.7667, 108.1167, "My Son Sanctuary", "Duy Phu Commune, Duy Xuyen District, Quang Nam", "Quảng Nam", "Landmark", "World Cultural Heritage", "https://i.imgur.com/kLmNoPq.jpg"],
+            [15.9167, 108.4833, "Cham Islands", "Tan Hiep Commune, Hoi An City, Quang Nam", "Quảng Nam", "Landmark", "World Biosphere Reserve", "https://i.imgur.com/rStUvWx.jpg"],
+            [15.5333, 108.5333, "Vietnamese Heroic Mother Statue", "Phu Thanh Village, Tam Phu, Tam Ky, Quang Nam", "Quảng Nam", "Landmark", "Historic Site", "https://i.imgur.com/yZaBcDe.jpg"],
+            [15.3833, 109.0500, "Ly Son Island", "Ly Son Island District, Quang Ngai", "Quảng Ngãi", "Landmark", "Scenic Landscape", "https://i.imgur.com/FgHjKlM.jpg"],
+            [13.3333, 109.3167, "Ganh Da Dia (The Cliff of Stone Plates)", "Phu Hanh Village, An Ninh Dong, Tuy An, Phu Yen", "Phú Yên", "Landmark", "Scenic Landscape", "https://i.imgur.com/nOpQrSt.jpg"],
+            [12.8667, 109.4333, "Dai Lanh Lighthouse (Mui Dien)", "Phuoc Tan Village, Hoa Tam, Dong Hoa, Phu Yen", "Phú Yên", "Landmark", "Scenic Landscape", "https://i.imgur.com/uVwXyZa.jpg"],
+            [13.7667, 109.2167, "Twin Towers (Cham Towers)", "Tran Hung Dao Street, Dong Da, Quy Nhon, Binh Dinh", "Bình Định", "Landmark", "Historic Site", "https://i.imgur.com/BcDeFgH.jpg"],
+            [13.8833, 109.2333, "Eo Gio (Windy Pass)", "Nhon Ly Commune, Quy Nhon City, Binh Dinh", "Bình Định", "Landmark", "Scenic Landscape", "https://i.imgur.com/jKlMnOp.jpg"],
+            [12.2667, 109.1833, "Po Nagar Cham Towers", "2/4 Street, Vinh Phuoc, Nha Trang, Khanh Hoa", "Khánh Hòa", "Landmark", "Historic Site", "https://i.imgur.com/qRsTuVw.jpg"],
+            [16.0690, 108.2210, "Mi Quang 1A", "1A Hai Phong, Hai Chau, Da Nang", "Đà Nẵng", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/xYzAbCd.jpg"],
+            [16.0270, 108.1990, "Banh trang cuon thit heo Mau", "35 Do Thuc Tinh, Cam Le, Da Nang", "Đà Nẵng", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/lMnOpQr.jpg"],
+            [16.0590, 108.2250, "Bun Mam Van", "K23/14 Tran Ke Xuong, Hai Chau, Da Nang", "Đà Nẵng", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/sTuVwXy.jpg"],
+            [16.0660, 108.2200, "Bun cha ca Hon", "113/2 Nguyen Chi Thanh, Hai Chau, Da Nang", "Đà Nẵng", "Restaurant", "Local Food", "https://i.imgur.com/zAbCdEf.jpg"],
+            [16.0520, 108.2190, "Banh Xeo Ba Duong", "K280/23 Hoang Dieu, Hai Chau, Da Nang", "Đà Nẵng", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/OpQrStU.jpg"],
+            [16.1080, 108.1400, "Goi Ca Nam O Thanh Huong", "1029 Nguyen Luong Bang, Lien Chieu, Da Nang", "Đà Nẵng", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/VwXyZaB.jpg"],
+            [16.0960, 108.2520, "Son Tra Marina", "Le Duc Tho Street, Son Tra, Da Nang", "Đà Nẵng", "Cafe", "Seaview Cafe", "https://i.imgur.com/cDeFgHj.jpg"],
+            [15.8770, 108.3260, "Faifo Coffee", "130 Tran Phu, Hoi An, Quang Nam", "Quảng Nam (Hội An)", "Cafe", "Old Town View Cafe", "https://i.imgur.com/kLmNoPq.jpg"],
+            [16.0670, 108.2240, "Memory Lounge Cafe", "7 Bach Dang, Hai Chau, Da Nang", "Đà Nẵng", "Cafe", "Cafe", "https://i.imgur.com/rStUvWx.jpg"],
+            [16.4600, 107.5920, "Bun bo Hue Me Keo", "20 Bach Dang, Phu Cat, Hue", "Thừa Thiên Huế", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/yZaBcDe.jpg"],
+            [16.4700, 107.5950, "Banh Beo - Loc - Nam Ba Do", "8 Nguyen Binh Khiem, Phu Hiep, Hue", "Thừa Thiên Huế", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/FgHjKlM.jpg"],
+            [16.4520, 107.6000, "Com Hen Hoa Dong", "64/7 Ung Binh, Vy Da, Hue", "Thừa Thiên Huế", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/nOpQrSt.jpg"],
+            [16.4730, 107.5870, "Banh Khoai Hong Mai", "110 Dinh Tien Hoang, Thuan Thanh, Hue", "Thừa Thiên Huế", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/uVwXyZa.jpg"],
+            [16.4650, 107.5890, "Banh Mi Truong Tien O Tho", "14 Tran Hung Dao, Phu Hoa, Hue", "Thừa Thiên Huế", "Restaurant", "Local Food", "https://i.imgur.com/BcDeFgH.jpg"],
+            [16.4600, 107.5850, "Che Hem Hue", "1 Alley 29 Hung Vuong, Phu Hoi, Hue", "Thừa Thiên Huế", "Restaurant", "Snack Stall", "https://i.imgur.com/jKlMnOp.jpg"],
+            [16.4610, 107.5830, "Salt Coffee (Ca Phe N)", "106 Nguyen Hue, Vinh Ninh, Hue", "Thừa Thiên Huế", "Cafe", "Cafe", "https://i.imgur.com/qRsTuVw.jpg"],
+            [15.8780, 108.3250, "Banh Mi Phuong", "2B Phan Chu Trinh, Hoi An, Quang Nam", "Quảng Nam (Hội An)", "Restaurant", "Local Food", "https://i.imgur.com/xYzAbCd.jpg"],
+            [15.8790, 108.3240, "Cao Lau Lien", "16 Thai Phien, Hoi An, Quang Nam", "Quảng Nam (Hội An)", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/lMnOpQr.jpg"],
+            [15.8770, 108.3250, "Com Ga Ba Buoi", "22 Phan Chu Trinh, Hoi An, Quang Nam", "Quảng Nam (Hội An)", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/sTuVwXy.jpg"],
+            [15.8770, 108.3260, "Mot Hoi An", "150 Tran Phu, Hoi An, Quang Nam", "Quảng Nam (Hội An)", "Cafe", "Traditional Drink Stall", "https://i.imgur.com/zAbCdEf.jpg"],
+            [15.8760, 108.3000, "Roving Chillhouse", "Vong Nhi Hamlet, Cam Thanh, Hoi An, Quang Nam", "Quảng Nam (Hội An)", "Cafe", "Rice Field View Cafe", "https://i.imgur.com/OpQrStU.jpg"],
+            [13.7667, 109.2167, "Banh Xeo Tom Nhay Gia Vy", "19 Dien Hong, Quy Nhon, Binh Dinh", "Bình Định", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/VwXyZaB.jpg"],
+            [13.7700, 109.2167, "Bun Ca Ngoc Lien", "379 Nguyen Hue, Quy Nhon, Binh Dinh", "Bình Định", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/cDeFgHj.jpg"],
+            [13.7667, 109.2167, "Banh Hoi Chao Long Hong Thanh", "22 Phan Boi Chau, Quy Nhon, Binh Dinh", "Bình Định", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/kLmNoPq.jpg"],
+            [13.7667, 109.2167, "Quan Hung Ca (Bun Ca, Ram, Sua)", "10 Ngo May, Quy Nhon, Binh Dinh", "Bình Định", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/rStUvWx.jpg"],
+            [12.2450, 109.1920, "Bun Ca Co Ba", "123 Yersin, Nha Trang, Khanh Hoa", "Khánh Hòa", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/yZaBcDe.jpg"],
+            [12.2700, 109.1950, "Quan Oc Xuan Anh", "9C Thap Ba, Nha Trang, Khanh Hoa", "Khánh Hòa", "Restaurant", "Seafood Restaurant", "https://i.imgur.com/FgHjKlM.jpg"],
+            [12.2410, 109.1940, "Banh Can Muc 51", "51 To Hien Thanh, Nha Trang, Khanh Hoa", "Khánh Hòa", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/nOpQrSt.jpg"],
+            [12.2380, 109.1970, "Runam Bistro Nha Trang", "34-36 Tran Phu, Nha Trang, Khanh Hoa", "Khánh Hòa", "Cafe", "Cafe/Restaurant", "https://i.imgur.com/uVwXyZa.jpg"],
+            [11.9390, 108.4350, "An Cafe", "63 Bis 3 Thang 2, Da Lat, Lam Dong", "Lâm Đồng", "Cafe", "Cafe", "https://i.imgur.com/BcDeFgH.jpg"],
+            // SOUTHERN VIETNAM
+            [10.7769, 106.6953, "Independence Palace", "135 Nam Ky Khoi Nghia, District 1, HCMC", "TP. Hồ Chí Minh", "Landmark", "Historic Site", "https://i.imgur.com/0vUnV5G.jpg"],
+            [10.7797, 106.6990, "Saigon Notre-Dame Cathedral", "1 Cong xa Paris, District 1, HCMC", "TP. Hồ Chí Minh", "Landmark", "Historic/Architectural Site", "https://i.imgur.com/w8qHJKn.jpg"],
+            [10.7798, 106.6995, "Saigon Central Post Office", "2 Cong xa Paris, District 1, HCMC", "TP. Hồ Chí Minh", "Landmark", "Historic/Architectural Site", "https://i.imgur.com/Bf1oT5Q.jpg"],
+            [10.7792, 106.6925, "War Remnants Museum", "28 Vo Van Tan, District 3, HCMC", "TP. Hồ Chí Minh", "Landmark", "Historic Site", "https://i.imgur.com/s4sI3FN.jpg"],
+            [10.7700, 106.7050, "Nha Rong Harbor (Ho Chi Minh Museum)", "1 Nguyen Tat Thanh, District 4, HCMC", "TP. Hồ Chí Minh", "Landmark", "Historic Site", "https://i.imgur.com/DMMxHBi.jpg"],
+            [11.0500, 106.4667, "Cu Chi Tunnels", "Phu Hiep & Nhuan Duc Communes, Cu Chi, HCMC", "TP. Hồ Chí Minh", "Landmark", "Historic Site", "https://i.imgur.com/zW1zL7p.jpg"],
+            [10.7725, 106.6983, "Ben Thanh Market", "Ben Thanh Ward, District 1, HCMC", "TP. Hồ Chí Minh", "Landmark", "Market/Commercial", "https://i.imgur.com/rS2a4z0.jpg"],
+            [10.7750, 106.7025, "Nguyen Hue Walking Street", "Nguyen Hue Street, District 1, HCMC", "TP. Hồ Chí Minh", "Landmark", "Scenic Spot", "https://i.imgur.com/i9Td2pq.jpg"],
+            [11.3333, 106.1167, "Ba Den Mountain", "Ninh Son Ward, Tay Ninh City, Tay Ninh", "Tây Ninh", "Landmark", "Scenic/Spiritual Site", "https://i.imgur.com/P5G2oU7.jpg"],
+            [11.3000, 106.1667, "Cao Dai Temple", "Pham Ho Phap, Hoa Thanh District, Tay Ninh", "Tây Ninh", "Landmark", "Historic/Spiritual Site", "https://i.imgur.com/1Oq2E9z.jpg"],
+            [10.3583, 107.0800, "Ho May Park", "1A Tran Phu, Ward 1, Vung Tau", "Bà Rịa - Vũng Tàu", "Landmark", "Tourist Complex", "https://i.imgur.com/sXh8w0W.jpg"],
+            [10.3292, 107.0853, "Christ the King Statue", "Nho Mountain, Ward 2, Vung Tau", "Bà Rịa - Vũng Tàu", "Landmark", "Scenic Spot", "https://i.imgur.com/B0jXp2g.jpg"],
+            [8.6667, 106.6167, "Con Dao National Park", "Con Dao District, Ba Ria - Vung Tau", "Bà Rịa - Vũng Tàu", "Landmark", "Scenic Landscape", "https://i.imgur.com/W2x9q3k.jpg"],
+            [8.6833, 106.6167, "Con Dao Prison", "Con Dao District, Ba Ria - Vung Tau", "Bà Rịa - Vũng Tàu", "Landmark", "Historic Site", "https://i.imgur.com/9v4v94j.jpg"],
+            [10.4500, 107.2500, "Long Hai Beach", "Long Hai Town, Long Dien District, Ba Ria - Vung Tau", "Bà Rịa - Vũng Tàu", "Landmark", "Scenic Landscape", "https://i.imgur.com/P0vD0J7.jpg"],
+            [10.9667, 106.8500, "Buu Long Tourist Area", "Huynh Van Nghe, Buu Long, Bien Hoa, Dong Nai", "Đồng Nai", "Landmark", "Scenic/Spiritual Site", "https://i.imgur.com/5lG2o7b.jpg"],
+            [11.2167, 106.9167, "War Zone D", "Dat Cuoc Commune, Bac Tan Uyen, Binh Duong", "Đồng Nai/Bình Dương", "Landmark", "Historic Site", "https://i.imgur.com/K5f46s9.jpg"],
+            [10.6000, 105.0833, "Tra Su Cajuput Forest", "Van Giao Commune, Tinh Bien, An Giang", "An Giang", "Landmark", "Scenic Landscape", "https://i.imgur.com/zV8x65H.jpg"],
+            [10.5167, 105.0833, "Ba Chua Xu Temple at Sam Mountain", "Nui Sam Ward, Chau Doc, An Giang", "An Giang", "Landmark", "Historic/Spiritual Site", "https://i.imgur.com/1c7R8V8.jpg"],
+            [10.5167, 105.0167, "Tuc Dup Hill Historical Site", "An Tuc Commune, Tri Ton, An Giang", "An Giang", "Landmark", "Historic Site", "https://i.imgur.com/2Y5R7f7.jpg"],
+            [10.0000, 105.7500, "Cai Rang Floating Market", "Ninh Kieu District, Can Tho City", "Cần Thơ", "Landmark", "Cultural/Scenic Spot", "https://i.imgur.com/8Y4j8V9.jpg"],
+            [10.0333, 105.7833, "Ninh Kieu Wharf", "Tan An Ward, Ninh Kieu District, Can Tho", "Cần Thơ", "Landmark", "Scenic Spot", "https://i.imgur.com/mX7h6y8.jpg"],
+            [10.0833, 105.7167, "Binh Thuy Ancient House", "26/1A Bui Huu Nghia, Binh Thuy, Can Tho", "Cần Thơ", "Landmark", "Historic/Architectural Site", "https://i.imgur.com/z3c6E4y.jpg"],
+            [8.5833, 104.8167, "Cape Ca Mau", "Mui Hamlet, Dat Mui Commune, Ngoc Hien, Ca Mau", "Cà Mau", "Landmark", "Scenic Spot", "https://i.imgur.com/pY2E5S7.jpg"],
+            [8.6167, 104.8000, "Mui Ca Mau National Park", "Rach Tau Dong Hamlet, Dat Mui, Ngoc Hien, Ca Mau", "Cà Mau", "Landmark", "Scenic Landscape", "https://i.imgur.com/b9i9k6o.jpg"],
+            [9.2000, 105.0000, "U Minh Ha Forest", "Khanh Lam & Tran Hoi Communes, Ca Mau", "Cà Mau", "Landmark", "Scenic Landscape", "https://i.imgur.com/6U8Y18C.jpg"],
+            [10.3500, 106.3333, "Vinh Trang Pagoda", "Nguyen Trung Truc Street, My Phong, My Tho, Tien Giang", "Tiền Giang", "Landmark", "Historic/Spiritual Site", "https://i.imgur.com/C3fE43t.jpg"],
+            [10.3167, 106.3500, "Thoi Son Islet", "Thoi Son Commune, My Tho, Tien Giang", "Tiền Giang", "Landmark", "Scenic Spot", "https://i.imgur.com/fL3h1f6.jpg"],
+            [10.0833, 106.3500, "Dong Khoi Relic Site", "Dinh Thuy Commune, Mo Cay Nam, Ben Tre", "Bến Tre", "Landmark", "Historic Site", "https://i.imgur.com/mO2Xp3E.jpg"],
+            [9.9667, 106.5000, "Nguyen Dinh Chieu Tomb", "An Duc Commune, Ba Tri, Ben Tre", "Bến Tre", "Landmark", "Historic/Cultural Site", "https://i.imgur.com/4oW2S4Q.jpg"],
+            [9.6000, 105.9833, "Dat Set Pagoda (Buu Son Tu)", "286 Ton Duc Thang, Ward 5, Soc Trang", "Sóc Trăng", "Landmark", "Spiritual Site", "https://i.imgur.com/5J3d4Z8.jpg"],
+            [9.5833, 105.9667, "Doi Pagoda (Bat Pagoda)", "73B Le Hong Phong, Ward 3, Soc Trang", "Sóc Trăng", "Landmark", "Spiritual Site", "https://i.imgur.com/s4sI3FN.jpg"],
+            [10.8333, 105.4167, "Tram Chim National Park", "Tam Nong District, Dong Thap", "Đồng Tháp", "Landmark", "Scenic Landscape", "https://i.imgur.com/DMMxHBi.jpg"],
+            [10.5167, 105.7833, "Xeo Quyt Relic Site", "My Hiep & My Long Communes, Cao Lanh, Dong Thap", "Đồng Tháp", "Landmark", "Historic Site", "https://i.imgur.com/g8S226J.jpg"],
+            [10.4500, 105.6500, "Sa Dec Flower Village", "Tan Quy Dong Ward, Sa Dec City, Dong Thap", "Đồng Tháp", "Landmark", "Scenic Spot", "https://i.imgur.com/rS2a4z0.jpg"],
+            [10.7500, 105.8167, "Tan Lap Floating Village", "QL62, Tan Lap Commune, Moc Hoa, Long An", "Long An", "Landmark", "Scenic Spot", "https://i.imgur.com/i9Td2pq.jpg"],
+            [9.9667, 106.2667, "Ba Om Pond", "Ward 8, Tra Vinh City, Tra Vinh", "Trà Vinh", "Landmark", "Scenic Spot", "https://i.imgur.com/P5G2oU7.jpg"],
+            [10.0167, 103.9667, "Phu Quoc Prison", "350 Nguyen Van Cu, An Thoi, Phu Quoc, Kien Giang", "Kiên Giang (Phú Quốc)", "Landmark", "Historic Site", "https://i.imgur.com/1Oq2E9z.jpg"],
+            [9.6000, 105.1333, "U Minh Thuong National Park", "An Minh Bac Commune, U Minh Thuong, Kien Giang", "Kiên Giang", "Landmark", "Scenic Landscape", "https://i.imgur.com/sXh8w0W.jpg"],
+            [9.9667, 104.0500, "Sao Beach", "Bai Sao Hamlet, An Thoi, Phu Quoc, Kien Giang", "Kiên Giang (Phú Quốc)", "Landmark", "Scenic Landscape", "https://i.imgur.com/b9i9k6o.jpg"],
+            [10.7712, 106.6917, "Banh Mi Huynh Hoa", "26 Le Thi Rieng, District 1, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Street Food", "https://i.imgur.com/C3fE43t.jpg"],
+            [10.7850, 106.6780, "Com Tam Ba Ghien", "84 Dang Van Ngu, Phu Nhuan District, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Local Food", "https://i.imgur.com/fL3h1f6.jpg"],
+            [10.7680, 106.6690, "Hu Tieu Nam Vang Thanh Dat", "16-20 Ly Thai To, District 10, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Local Food", "https://i.imgur.com/mO2Xp3E.jpg"],
+            [10.7740, 106.6710, "Bun Mam Co Ba", "134/68 Thanh Thai, District 10, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/4oW2S4Q.jpg"],
+            [10.7580, 106.7020, "Pha Lau Bo Co Thao", "243/30 Ton Dan, District 4, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Snack Stall", "https://i.imgur.com/5J3d4Z8.jpg"],
+            [10.7570, 106.6550, "Sui Cao Thien Thien", "195-197 Ha Ton Quyen, District 11, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Local Food", "https://i.imgur.com/s4sI3FN.jpg"],
+            [10.7780, 106.6850, "Lau Ca Keo Ba Huyen", "87 Ba Huyen Thanh Quan, District 3, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/DMMxHBi.jpg"],
+            [10.7960, 106.7000, "Xoi Che Ba Chieu", "No Trang Long Street, Binh Thanh District, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Late-night Food", "https://i.imgur.com/g8S226J.jpg"],
+            [10.8030, 106.7110, "Chao Trang Hang Xanh", "283 Xo Viet Nghe Tinh, Binh Thanh District, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Late-night Food", "https://i.imgur.com/rS2a4z0.jpg"],
+            [10.7650, 106.6890, "Com Ga Xoi Mo Su Su", "117/1D Cong Quynh, District 1, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Local Food", "https://i.imgur.com/i9Td2pq.jpg"],
+            [10.7620, 106.6900, "Bun Thit Nuong Chi Tuyen", "175 Co Giang, District 1, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Local Food", "https://i.imgur.com/P5G2oU7.jpg"],
+            [10.7500, 106.6450, "Banh Canh Cua 350k", "360 Pham Van Chi, District 6, HCMC", "TP. Hồ Chí Minh", "Restaurant", "Local Food", "https://i.imgur.com/1Oq2E9z.jpg"],
+            [10.7810, 106.6830, "Oromia Coffee & Lounge", "193A/19 Nam Ky Khoi Nghia, District 3, HCMC", "TP. Hồ Chí Minh", "Cafe", "Cafe", "https://i.imgur.com/sXh8w0W.jpg"],
+            [10.7770, 106.7030, "The Workshop Coffee", "3rd Floor, 27 Ngo Duc Ke, District 1, HCMC", "TP. Hồ Chí Minh", "Cafe", "Cafe", "https://i.imgur.com/B0jXp2g.jpg"],
+            [10.7760, 106.7020, "Ban Ca Phe Sai Gon", "38/7 Le Loi, District 1, HCMC", "TP. Hồ Chí Minh", "Cafe", "Vintage Cafe", "https://i.imgur.com/W2x9q3k.jpg"],
+            [10.7670, 106.6940, "Little Hanoi Egg Coffee", "119/5 Yersin, District 1, HCMC", "TP. Hồ Chí Minh", "Cafe", "Egg Coffee", "https://i.imgur.com/9v4v94j.jpg"],
+            [10.8220, 106.6880, "Du Mien Garden Coffee", "7 Phan Van Tri, Go Vap District, HCMC", "TP. Hồ Chí Minh", "Cafe", "Garden Cafe", "https://i.imgur.com/P0vD0J7.jpg"],
+            [10.7750, 106.7025, "Partea - English Tearoom", "4th Floor, 42 Nguyen Hue, District 1, HCMC", "TP. Hồ Chí Minh", "Cafe", "Afternoon Tea", "https://i.imgur.com/5lG2o7b.jpg"],
+            [10.7990, 106.7380, "Okkio Caffe", "110 Xuan Thuy, Thao Dien, Thu Duc City, HCMC", "TP. Hồ Chí Minh", "Cafe", "Cafe", "https://i.imgur.com/K5f46s9.jpg"],
+            [10.3250, 107.0800, "Soho Coffee", "66 Ha Long, Ward 2, Vung Tau", "Bà Rịa - Vũng Tàu", "Cafe", "Seaview Cafe", "https://i.imgur.com/zV8x65H.jpg"],
+            [10.3350, 107.0750, "Marina Club", "3 Ha Long, Ward 2, Vung Tau", "Bà Rịa - Vũng Tàu", "Cafe", "Cafe/Restaurant", "https://i.imgur.com/1c7R8V8.jpg"],
+            [10.3450, 107.0900, "Doc Lap Coffee", "47 Ly Tu Trong, Ward 1, Vung Tau", "Bà Rịa - Vũng Tàu", "Cafe", "Vintage Cafe", "https://i.imgur.com/2Y5R7f7.jpg"],
+            [10.3400, 107.0850, "Banh khot Goc Vu Sua", "14 Nguyen Truong To, Ward 2, Vung Tau", "Bà Rịa - Vũng Tàu", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/8Y4j8V9.jpg"],
+            [10.3420, 107.0910, "Lau Ca Duoi Hoang Minh", "44 Truong Cong Dinh, Ward 3, Vung Tau", "Bà Rịa - Vũng Tàu", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/mX7h6y8.jpg"],
+            [10.9500, 106.8500, "Com Nieu Huong Dong", "1709 Nguyen Ai Quoc, Bien Hoa, Dong Nai", "Đồng Nai", "Restaurant", "Vietnamese Restaurant", "https://i.imgur.com/z3c6E4y.jpg"],
+            [10.0500, 105.7500, "Banh xeo Sau Deo", "450 Xo Viet Nghe Tinh, Binh Thuy, Can Tho", "Cần Thơ", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/pY2E5S7.jpg"],
+            [10.0333, 105.7833, "Lau mam Ma Nam", "98 Huynh Cuong, Ninh Kieu, Can Tho", "Cần Thơ", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/b9i9k6o.jpg"],
+            [10.0333, 105.7833, "Ninh Kieu Night Market", "Ninh Kieu Park, Ninh Kieu, Can Tho", "Cần Thơ", "Restaurant", "Street Food", "https://i.imgur.com/6U8Y18C.jpg"],
+            [10.4500, 105.6500, "Hu tieu Ba Sam", "188 Tran Hung Dao, Sa Dec, Dong Thap", "Đồng Tháp", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/C3fE43t.jpg"],
+            [9.0000, 105.1500, "Lau Ca Keo Phuong", "157 Ngo Quyen, Ca Mau City", "Cà Mau", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/fL3h1f6.jpg"],
+            [9.0000, 105.1500, "Banh Can 30", "30 Ly Thuong Kiet, Ca Mau City", "Cà Mau", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/mO2Xp3E.jpg"],
+            [10.5167, 105.0833, "Banh bo thot not Ut Dut", "Lo Te T-junction, Provincial Road 948, Chau Thanh, An Giang", "An Giang", "Restaurant", "Specialty Snack", "https://i.imgur.com/4oW2S4Q.jpg"],
+            [10.5167, 105.0833, "Bun Ca Chau Doc 16", "16 Phan Van Vang, Chau Doc, An Giang", "An Giang", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/5J3d4Z8.jpg"],
+            [10.3500, 106.3333, "Hu Tieu Tuyet Ngan", "236-237 Ap Bac, My Tho, Tien Giang", "Tiền Giang", "Restaurant", "Local Food", "https://i.imgur.com/s4sI3FN.jpg"],
+            [10.3167, 106.3500, "Banh xeo Sau Deo", "DT876, Dong Hoa, Chau Thanh, Tien Giang", "Tiền Giang", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/DMMxHBi.jpg"],
+            [10.0333, 105.7833, "Ca Loc Nuong Trui An", "15-21 Tran Van Hoai, Ninh Kieu, Can Tho", "Cần Thơ", "Restaurant", "Specialty Restaurant", "https://i.imgur.com/g8S226J.jpg"],
+            [10.5167, 105.0833, "La Giang Restaurant", "Sam Mountain Tourist Area, Chau Doc, An Giang", "An Giang", "Restaurant", "Restaurant", "https://i.imgur.com/rS2a4z0.jpg"],
+            [10.2333, 106.3167, "Lang Be (River Cuisine)", "An Khanh Commune, Chau Thanh, Ben Tre", "Bến Tre", "Restaurant", "Restaurant", "https://i.imgur.com/i9Td2pq.jpg"],
+            [10.0500, 105.7500, "Nong Trai Cafe", "191/14 Su Van Hanh, Binh Thuy, Can Tho", "Cần Thơ", "Cafe", "Garden Cafe", "https://i.imgur.com/P5G2oU7.jpg"],
+            [10.8000, 106.7333, "The Deck Saigon", "38 Nguyen U Di, Thao Dien, Thu Duc City, HCMC", "TP. Hồ Chí Minh", "Cafe", "River View Cafe/Restaurant", "https://i.imgur.com/1Oq2E9z.jpg"]
         ];
 
-        // --- 15 ĐỊA ĐIỂM NỔI BẬT (ĐÃ SỬA LẠI URL ẢNH) ---
+        // --- 15 FEATURED LOCATIONS (TRANSLATED & ICONS ADDED) ---
         const featuredLocations = [
-            { name: "Vịnh Hạ Long", address: "Thành phố Hạ Long, Quảng Ninh", tag: "Kỳ quan thiên nhiên", description: "Khám phá hàng ngàn hòn đảo đá vôi kỳ vĩ và làn nước xanh như ngọc tại di sản thiên nhiên thế giới được UNESCO công nhận.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Halong_Bay_in_July_2022_01.jpg/1280px-Halong_Bay_in_July_2022_01.jpg" },
-            { name: "Phố cổ Hà Nội", address: "Quận Hoàn Kiếm, Hà Nội", tag: "Văn hóa & Ẩm thực", description: "Lạc vào những con phố nghề san sát, thưởng thức ẩm thực đường phố đặc sắc và cảm nhận nhịp sống ngàn năm văn hiến.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hanoi_-_Old_Quarter_03.jpg/1280px-Hanoi_-_Old_Quarter_03.jpg" },
-            { name: "Sa Pa (Núi Fansipan)", address: "Thị xã Sa Pa, Lào Cai", tag: "Thiên nhiên & Trải nghiệm", description: "Chinh phục 'Nóc nhà Đông Dương' hùng vĩ và chiêm ngưỡng những thửa ruộng bậc thang tuyệt đẹp giữa mây ngàn.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Fansipan_Mountain_in_winter.jpg/1280px-Fansipan_Mountain_in_winter.jpg" },
-            { name: "Quần thể danh thắng Tràng An", address: "Huyện Hoa Lư, Ninh Bình", tag: "Di sản UNESCO", description: "Ngồi thuyền xuôi theo dòng nước, len lỏi qua các hang động và núi đá vôi để khám phá vẻ đẹp của 'Hạ Long trên cạn'.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Trang_An_landscape_complex.jpg/1280px-Trang_An_landscape_complex.jpg" },
-            { name: "Cà phê Giảng", address: "Số 39 Nguyễn Hữu Huân, Hà Nội", tag: "Đặc sản Hà Nội", description: "Thưởng thức ly cà phê trứng trứ danh, một sáng tạo độc đáo với lớp kem trứng béo ngậy hòa quyện cùng vị cà phê đắng dịu.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Egg_coffee_at_Giang_Cafe_in_Hanoi.jpg/1024px-Egg_coffee_at_Giang_Cafe_in_Hanoi.jpg" },
-            { name: "Phố cổ Hội An", address: "TP. Hội An, Quảng Nam", tag: "Di sản thế giới", description: "Dạo bước trên những con đường lát đá cổ kính, ngắm nhìn những ngôi nhà màu vàng và thả đèn hoa đăng trên sông Hoài thơ mộng.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Hoi_An_Bridge_and_river.jpg/1280px-Hoi_An_Bridge_and_river.jpg" },
-            { name: "Đại Nội Huế", address: "TP. Huế, Thừa Thiên Huế", tag: "Lịch sử & Kiến trúc", description: "Quay ngược thời gian trở về triều Nguyễn, khám phá kinh thành, cung điện và đền đài mang đậm dấu ấn lịch sử vàng son.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gate_of_Hue_Imperial_City.jpg/1280px-Gate_of_Hue_Imperial_City.jpg" },
-            { name: "Bà Nà Hills (Cầu Vàng)", address: "Huyện Hòa Vang, Đà Nẵng", tag: "Kiến trúc độc đáo", description: "Dạo bước trên Cầu Vàng trứ danh được nâng đỡ bởi đôi bàn tay khổng lồ và tận hưởng không khí trong lành, mát mẻ.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Golden_Bridge_in_Ba_Na_Hills_3.jpg/1280px-Golden_Bridge_in_Ba_Na_Hills_3.jpg" },
-            { name: "Ghềnh Đá Đĩa", address: "Huyện Tuy An, Phú Yên", tag: "Địa chất kỳ thú", description: "Chiêm ngưỡng kiệt tác của thiên nhiên với hàng chục nghìn cột đá bazan hình lục giác xếp chồng lên nhau như một tổ ong khổng lồ.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Ganh_Da_Dia_Phu_Yen_Vietnam.jpg/1280px-Ganh_Da_Dia_Phu_Yen_Vietnam.jpg"},
-            { name: "Động Phong Nha", address: "Huyện Bố Trạch, Quảng Bình", tag: "Khám phá hang động", description: "Du thuyền trên sông Son để tiến vào hang động, chiêm ngưỡng hệ thống thạch nhũ tráng lệ và kỳ ảo bậc nhất thế giới.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Phong_Nha_Cave_2.jpg/1280px-Phong_Nha_Cave_2.jpg"},
-            { name: "Chợ nổi Cái Răng", address: "Q. Ninh Kiều, Cần Thơ", tag: "Văn hóa Sông nước", description: "Trải nghiệm nét văn hóa độc đáo của miền Tây khi ngồi thuyền len lỏi giữa hàng trăm ghe thuyền mua bán tấp nập trên sông.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Cai_Rang_floating_market_in_the_morning.jpg/1280px-Cai_Rang_floating_market_in_the_morning.jpg" },
-            { name: "Bãi Sao, Phú Quốc", address: "TP. Phú Quốc, Kiên Giang", tag: "Thiên đường nghỉ dưỡng", description: "Thư giãn trên bãi cát trắng mịn như kem, đắm mình trong làn nước biển trong xanh và tận hưởng không gian yên bình.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bai_Sao%2C_Phu_Quoc%2C_Vietnam_3.jpg/1280px-Bai_Sao%2C_Phu_Quoc%2C_Vietnam_3.jpg"},
-            { name: "Dinh Độc Lập", address: "Quận 1, TP. Hồ Chí Minh", tag: "Chứng nhân Lịch sử", description: "Tham quan công trình kiến trúc ghi dấu ấn sâu đậm trong lịch sử Việt Nam, nơi diễn ra sự kiện thống nhất đất nước.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Reunification_Palace_in_Ho_Chi_Minh_City%2C_Vietnam.jpg/1280px-Reunification_Palace_in_Ho_Chi_Minh_City%2C_Vietnam.jpg"},
-            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cu-chi-tunnels.jpg/1280px-Cu-chi-tunnels.jpg" },
-            { name: "Bánh mì Huỳnh Hoa", address: "Quận 1, TP. Hồ Chí Minh", tag: "Ẩm thực đường phố", description: "Thưởng thức ổ bánh mì trứ danh Sài Gòn, nổi tiếng với phần nhân đầy đặn, pate béo ngậy và hương vị đậm đà khó quên.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Banh_mi_heo_quay_saigon.jpg/1024px-Banh_mi_heo_quay_saigon.jpg"}
+            { name: "Ha Long Bay", address: "Ha Long City, Quang Ninh", tag: "Natural Wonder", description: "Explore thousands of majestic limestone islands and emerald waters in this UNESCO World Natural Heritage site.", type: "Landmark" },
+            { name: "Hanoi Old Quarter", address: "Hoan Kiem District, Hanoi", tag: "Culture & Food", description: "Get lost in the bustling guild streets, savoring unique street food and feeling the pulse of a thousand-year-old capital.", type: "Landmark" },
+            { name: "Sa Pa (Fansipan)", address: "Sa Pa Town, Lao Cai", tag: "Nature & Adventure", description: "Conquer the 'Roof of Indochina' and admire the stunning terraced rice fields nestled among the clouds.", type: "Landmark" },
+            { name: "Trang An Landscape Complex", address: "Hoa Lu District, Ninh Binh", tag: "UNESCO Heritage", description: "Take a boat trip through caves and limestone karsts to discover the beauty of 'Ha Long on Land'.", type: "Landmark" },
+            { name: "Giang Cafe", address: "39 Nguyen Huu Huan, Hanoi", tag: "Hanoi Specialty", description: "Enjoy the legendary egg coffee, a unique creation with a rich, creamy egg foam atop strong Vietnamese coffee.", type: "Cafe" },
+            { name: "Hoi An Ancient Town", address: "Hoi An City, Quang Nam", tag: "World Heritage", description: "Stroll along ancient cobblestone streets, admire yellow-walled houses, and release lanterns on the poetic Hoai River.", type: "Landmark" },
+            { name: "Hue Imperial City", address: "Hue City, Thua Thien Hue", tag: "History & Architecture", description: "Travel back in time to the Nguyen Dynasty, exploring the citadels, palaces, and temples of a golden era.", type: "Landmark" },
+            { name: "Ba Na Hills (Golden Bridge)", address: "Hoa Vang District, Da Nang", tag: "Unique Architecture", description: "Walk on the famous Golden Bridge held by giant stone hands and enjoy the cool, fresh mountain air.", type: "Landmark" },
+            { name: "Ganh Da Dia", address: "Tuy An District, Phu Yen", tag: "Geological Wonder", description: "Marvel at nature's masterpiece, a collection of interlocking basalt rock columns resembling a giant honeycomb.", type: "Landmark"},
+            { name: "Phong Nha Cave", address: "Bo Trach District, Quang Binh", tag: "Cave Exploration", description: "Take a boat on the Son River to enter a cave system with some of the most magnificent stalactites and stalagmites in the world.", type: "Landmark"},
+            { name: "Cai Rang Floating Market", address: "Ninh Kieu District, Can Tho", tag: "River Culture", description: "Experience the unique culture of the Mekong Delta by boat, weaving through hundreds of boats selling goods on the river.", type: "Landmark" },
+            { name: "Sao Beach, Phu Quoc", address: "Phu Quoc City, Kien Giang", tag: "Beach Paradise", description: "Relax on creamy white sand, swim in crystal-clear turquoise water, and enjoy the peaceful atmosphere.", type: "Landmark"},
+            { name: "Independence Palace", address: "District 1, Ho Chi Minh City", tag: "Historical Witness", description: "Visit the architectural landmark that played a pivotal role in Vietnam's history, marking the end of the war.", type: "Landmark"},
+            { name: "Cu Chi Tunnels", address: "Cu Chi District, Ho Chi Minh City", tag: "Historic Site", description: "Explore the vast underground network that stands as a testament to the resilience and ingenuity of the Vietnamese people.", type: "Landmark" },
+            { name: "Banh Mi Huynh Hoa", address: "District 1, Ho Chi Minh City", tag: "Street Food Icon", description: "Savor Saigon's most famous banh mi, known for its generous fillings, rich pâté, and unforgettable flavors.", type: "Restaurant"}
         ];
         
-        // --- SCRIPT XỬ LÝ CHÍNH ---
+        // --- SCRIPT ---
         const locations = rawLocations.map(([lat, lng, name, address, city, mainCategory, detailedType, imageUrl], index) => ({
             id: index, lat, lng, name, address, city, mainCategory, detailedType, imageUrl
         }));
@@ -392,10 +392,10 @@
             allMarkers = locations.map(loc => {
                 let iconClass = 'marker-tourist';
                 let iconHtml = '<i class="fa-solid fa-landmark"></i>';
-                if (loc.mainCategory === 'Quán ăn') {
+                if (loc.mainCategory === 'Restaurant') {
                     iconClass = 'marker-restaurant';
                     iconHtml = '<i class="fa-solid fa-utensils"></i>';
-                } else if (loc.mainCategory === 'Quán cà phê') {
+                } else if (loc.mainCategory === 'Cafe') {
                     iconClass = 'marker-cafe';
                     iconHtml = '<i class="fa-solid fa-mug-saucer"></i>';
                 }
@@ -470,16 +470,24 @@
                 },
                 renderFeaturedItems() {
                     const container = this.$refs.container;
-                    container.innerHTML = featuredLocations.map(loc => `
+                    container.innerHTML = featuredLocations.map(loc => {
+                        let iconHtml = '<i class="fa-solid fa-landmark text-blue-500"></i>';
+                        if (loc.type === 'Restaurant') iconHtml = '<i class="fa-solid fa-utensils text-orange-500"></i>';
+                        else if (loc.type === 'Cafe') iconHtml = '<i class="fa-solid fa-mug-saucer text-yellow-800"></i>';
+
+                        return `
                         <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 snap-start p-2">
                             <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col p-4">
-                                <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full self-start mb-2">${loc.tag}</span>
+                                <div class="flex items-center gap-2 mb-2">
+                                    ${iconHtml}
+                                    <span class="text-xs font-semibold text-indigo-600">${loc.tag}</span>
+                                </div>
                                 <h3 class="font-bold text-md text-gray-800">${loc.name}</h3>
                                 <p class="text-sm text-gray-500 mb-2">${loc.address}</p>
                                 <p class="text-xs text-gray-600 flex-grow">${loc.description}</p>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 },
                 scrollToCurrent() {
                     const container = this.$refs.container;
