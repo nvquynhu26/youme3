@@ -64,9 +64,7 @@
             text-align: center;
             line-height: 1.2;
             padding: 8px;
-            /* **[Lưu ý]** Đã bỏ thuộc tính background-color để hiển thị ảnh thực tế
-               Nếu ảnh không tải được, chỉ hiển thị alt text.
-            */
+            background-color: #e5e7eb; /* Fallback background for broken images */
         }
     </style>
 </head>
@@ -105,54 +103,53 @@
     </div>
 
     <script>
-        // Enhanced Location Data (Translated and Mocked Description/Image)
+        // Enhanced Location Data with REAL Image URLs
         const rawLocations = [
             // Format: [lat, lng, name, address, city, description, image_url]
-            // ĐÃ CẬP NHẬT URL ẢNH MINH HỌA THỰC TẾ (Sử dụng link ảnh mẫu có độ phân giải cao)
-            [21.0285, 105.8542, "Old Quarter", "Hoan Kiem District, Hanoi", "Hanoi", "The historic heart of Hanoi, famous for its narrow streets and traditional architecture and bustling night life.", "https://picsum.photos/400/120?random=1&image=10"], // Phố Cổ Hà Nội
-            [21.0300, 105.8550, "Ta Hien Street", "Hoan Kiem District, Hanoi", "Hanoi", "Known as 'Beer Street', a lively hub for local and foreign tourists to enjoy street food and beverages.", "https://picsum.photos/400/120?random=2&image=15"], // Phố Bia Tạ Hiện
-            [21.0203, 105.8518, "St. Joseph's Cathedral", "40 Nha Chung St., Hoan Kiem District, Hanoi", "Hanoi", "A stunning Gothic-style Roman Catholic cathedral built in 1886, a major religious landmark.", "https://picsum.photos/400/120?random=3&image=20"], // Nhà Thờ Lớn
-            [21.0330, 105.8450, "Train Street", "Tran Phu Street, Ba Dinh District, Hanoi", "Hanoi", "A unique narrow residential street where an active train passes just inches away from houses.", "https://picsum.photos/400/120?random=4&image=25"], // Phố Đường Tàu
-            [21.0368, 105.8342, "Ho Chi Minh Mausoleum", "2 Hung Vuong, Ba Dinh District, Hanoi", "Hanoi", "The final resting place of the revolutionary leader Ho Chi Minh, a place of historical significance.", "https://picsum.photos/400/120?random=5&image=30"], // Lăng Bác
-            [21.0285, 105.8522, "Hoan Kiem Lake", "Hoan Kiem District, Hanoi", "Hanoi", "A central lake in Hanoi, home to Ngoc Son Temple and the iconic Turtle Tower.", "https://picsum.photos/400/120?random=6&image=35"], // Hồ Hoàn Kiếm
+            [21.0285, 105.8542, "Old Quarter", "Hoan Kiem District, Hanoi", "Hanoi", "The historic heart of Hanoi, famous for its narrow streets and traditional architecture and bustling night life.", "https://i.imgur.com/g8S226J.jpg"],
+            [21.0300, 105.8550, "Ta Hien Street", "Hoan Kiem District, Hanoi", "Hanoi", "Known as 'Beer Street', a lively hub for local and foreign tourists to enjoy street food and beverages.", "https://i.imgur.com/rS2a4z0.jpg"],
+            [21.0203, 105.8518, "St. Joseph's Cathedral", "40 Nha Chung St., Hoan Kiem District, Hanoi", "Hanoi", "A stunning Gothic-style Roman Catholic cathedral built in 1886, a major religious landmark.", "https://i.imgur.com/i9Td2pq.jpg"],
+            [21.0330, 105.8450, "Train Street", "Tran Phu Street, Ba Dinh District, Hanoi", "Hanoi", "A unique narrow residential street where an active train passes just inches away from houses.", "https://i.imgur.com/P5G2oU7.jpg"],
+            [21.0368, 105.8342, "Ho Chi Minh Mausoleum", "2 Hung Vuong, Ba Dinh District, Hanoi", "Hanoi", "The final resting place of the revolutionary leader Ho Chi Minh, a place of historical significance.", "https://i.imgur.com/8Qp4923.jpg"],
+            [21.0285, 105.8522, "Hoan Kiem Lake", "Hoan Kiem District, Hanoi", "Hanoi", "A central lake in Hanoi, home to Ngoc Son Temple and the iconic Turtle Tower.", "https://i.imgur.com/Y1N6uG2.jpg"],
             
-            [10.7797, 106.7009, "Notre Dame Cathedral", "1 Cong Xa Paris, Dist. 1, HCMC", "HCMC", "A beautiful colonial-era cathedral built with materials imported from France, a key city symbol.", "https://picsum.photos/400/120?random=7&image=40"], // Nhà Thờ Đức Bà
-            [10.7799, 106.7018, "Central Post Office", "2 Cong Xa Paris, Dist. 1, HCMC", "HCMC", "A stunning example of French colonial architecture, still a functioning post office today.", "https://picsum.photos/400/120?random=8&image=45"], // Bưu Điện Trung Tâm
-            [10.7725, 106.6983, "Ben Thanh Market", "45 Le Loi, Dist. 1, HCMC", "HCMC", "One of the most famous landmarks in Ho Chi Minh City, offering everything from food to souvenirs.", "https://picsum.photos/400/120?random=9&image=50"], // Chợ Bến Thành
-            [10.7719, 106.7042, "Bitexco Financial Tower", "2 Hai Trieu, Dist. 1, HCMC", "HCMC", "A modern skyscraper with an observation deck, offering panoramic views of the city.", "https://picsum.photos/400/120?random=10&image=55"], // Tòa nhà Bitexco
+            [10.7797, 106.7009, "Notre Dame Cathedral", "1 Cong Xa Paris, Dist. 1, HCMC", "HCMC", "A beautiful colonial-era cathedral built with materials imported from France, a key city symbol.", "https://i.imgur.com/w8qHJKn.jpg"], 
+            [10.7799, 106.7018, "Central Post Office", "2 Cong Xa Paris, Dist. 1, HCMC", "HCMC", "A stunning example of French colonial architecture, still a functioning post office today.", "https://i.imgur.com/Bf1oT5Q.jpg"],
+            [10.7725, 106.6983, "Ben Thanh Market", "45 Le Loi, Dist. 1, HCMC", "HCMC", "One of the most famous landmarks in Ho Chi Minh City, offering everything from food to souvenirs.", "https://i.imgur.com/s4sI3FN.jpg"],
+            [10.7719, 106.7042, "Bitexco Financial Tower", "2 Hai Trieu, Dist. 1, HCMC", "HCMC", "A modern skyscraper with an observation deck, offering panoramic views of the city.", "https://i.imgur.com/DMMxHBi.jpg"],
 
-            [15.8794, 108.3364, "Hoi An Ancient Town", "Minh An Ward, Hoi An City, Quang Nam", "Quang Nam", "A UNESCO World Heritage site known for its well-preserved traditional architecture and canals.", "https://picsum.photos/400/120?random=11&image=60"], // Phố Cổ Hội An
-            [15.8767, 108.3262, "Japanese Bridge", "Hoi An Ancient Town, Quang Nam", "Quang Nam", "An iconic covered bridge built in the 17th century, linking two halves of the town.", "https://picsum.photos/400/120?random=12&image=65"], // Chùa Cầu
-            // ... (Các địa điểm khác cũng sẽ được cập nhật tương tự)
-            [16.0678, 108.2199, "Dragon Bridge", "Hai Chau District, Da Nang", "Da Nang", "A modern bridge famous for its design and weekend fire/water show.", "https://picsum.photos/400/120?random=13&image=70"], 
-            [16.0465, 108.2435, "My Khe Beach", "Son Tra District, Da Nang", "Da Nang", "A long stretch of white sand known for its clear water and excellent surfing conditions.", "https://picsum.photos/400/120?random=14&image=75"],
+            [15.8794, 108.3364, "Hoi An Ancient Town", "Minh An Ward, Hoi An City, Quang Nam", "Quang Nam", "A UNESCO World Heritage site known for its well-preserved traditional architecture and canals.", "https://i.imgur.com/sXh8w0W.jpg"], 
+            [15.8767, 108.3262, "Japanese Bridge", "Hoi An Ancient Town, Quang Nam", "Quang Nam", "An iconic covered bridge built in the 17th century, linking two halves of the town.", "https://i.imgur.com/B0jXp2g.jpg"],
 
-            [20.8930, 107.0300, "Ha Long Bay", "Ha Long City, Quang Ninh", "Quang Ninh", "A breathtaking UNESCO World Heritage Site famous for its thousands of limestone karsts and islands.", "https://picsum.photos/400/120?random=15&image=80"],
-            [22.3486, 103.8400, "Ham Rong Mountain", "Sapa Town, Lao Cai", "Lao Cai", "Offering stunning panoramic views of Sapa town and the surrounding mountains and valleys.", "https://picsum.photos/400/120?random=16&image=85"], 
-            [20.2450, 105.9750, "Trang An Scenic Landscape", "Gia Vien District, Ninh Binh", "Ninh Binh", "Known as the 'Ha Long Bay on land,' featuring towering karst peaks and boat tours through caves.", "https://picsum.photos/400/120?random=17&image=90"], 
-            [10.0500, 103.9500, "Sao Beach", "Phu Quoc Island, Kien Giang", "Kien Giang", "One of the most beautiful beaches in Phu Quoc, known for its white sand and gentle waves.", "https://picsum.photos/400/120?random=18&image=95"], 
-            [11.9400, 108.4400, "Xuan Huong Lake", "Da Lat City Center, Lam Dong", "Lam Dong", "A peaceful lake in the heart of the romantic mountain city of Da Lat.", "https://picsum.photos/400/120?random=19&image=100"],
+            [16.0678, 108.2199, "Dragon Bridge", "Hai Chau District, Da Nang", "Da Nang", "A modern bridge famous for its design and weekend fire/water show.", "https://i.imgur.com/P0vD0J7.jpg"], 
+            [16.0465, 108.2435, "My Khe Beach", "Son Tra District, Da Nang", "Da Nang", "A long stretch of white sand known for its clear water and excellent surfing conditions.", "https://i.imgur.com/5lG2o7b.jpg"],
+
+            [20.8930, 107.0300, "Ha Long Bay", "Ha Long City, Quang Ninh", "Quang Ninh", "A breathtaking UNESCO World Heritage Site famous for its thousands of limestone karsts and islands.", "https://i.imgur.com/K5f46s9.jpg"],
+            [22.3486, 103.8400, "Ham Rong Mountain", "Sapa Town, Lao Cai", "Lao Cai", "Offering stunning panoramic views of Sapa town and the surrounding mountains and valleys.", "https://i.imgur.com/9v4v94j.jpg"], 
+            [20.2450, 105.9750, "Trang An Scenic Landscape", "Gia Vien District, Ninh Binh", "Ninh Binh", "Known as the 'Ha Long Bay on land,' featuring towering karst peaks and boat tours through caves.", "https://i.imgur.com/1Oq2E9z.jpg"], 
+            [10.0500, 103.9500, "Sao Beach", "Phu Quoc Island, Kien Giang", "Kien Giang", "One of the most beautiful beaches in Phu Quoc, known for its white sand and gentle waves.", "https://i.imgur.com/b9i9k6o.jpg"], 
+            [11.9400, 108.4400, "Xuan Huong Lake", "Da Lat City Center, Lam Dong", "Lam Dong", "A peaceful lake in the heart of the romantic mountain city of Da Lat.", "https://i.imgur.com/6U8Y18C.jpg"],
             
-            [21.0320, 105.8430, "Tong Duy Tan Street", "Hoan Kiem District, Hanoi", "Hanoi", "A small street famous for its late-night street food stalls and variety of local dishes.", "https://picsum.photos/400/120?random=20&image=105"],
-            [21.0500, 105.8650, "Long Bien Bridge", "Connecting Long Bien and Ba Dinh Districts, Hanoi", "Hanoi", "A historical cantilever bridge built by the French, symbolizing Hanoi's resilient past.", "https://picsum.photos/400/120?random=21&image=110"],
-            [21.0360, 105.8360, "One Pillar Pagoda", "Dien Bien Ward, Ba Dinh District, Hanoi", "Hanoi", "A historic Buddhist temple with a unique single-pillar structure, resembling a lotus flower.", "https://picsum.photos/400/120?random=22&image=115"],
-            [10.7780, 106.6980, "Tan Dinh Church (Pink Church)", "289 Hai Ba Trung, Dist. 1, HCMC", "HCMC", "A distinctive Roman Catholic church known for its striking pink exterior.", "https://picsum.photos/400/120?random=23&image=120"],
-            [15.9800, 108.2500, "Marble Mountains", "Ngu Hanh Son District, Da Nang", "Da Nang", "A cluster of five marble and limestone hills containing caves, tunnels, and pagodas.", "https://picsum.photos/400/120?random=24&image=125"],
-            [22.3700, 103.8000, "Silver Waterfall", "Sapa, Lao Cai", "Lao Cai", "A beautiful waterfall located near Sapa, known for its powerful flow and cool mist.", "https://picsum.photos/400/120?random=25&image=130"],
-            [20.2100, 105.9000, "Tam Coc - Bich Dong", "Ninh Binh", "Ninh Binh", "Famous for its limestone karsts and rice paddies, often explored by rowing boat.", "https://picsum.photos/400/120?random=26&image=135"],
-            [16.4637, 107.5909, "Thien Mu Pagoda", "Hue", "Hue", "The tallest pagoda in Vietnam, overlooking the Perfume River, a symbol of Hue.", "https://picsum.photos/400/120?random=27&image=140"],
-            [16.4688, 107.5762, "Imperial Citadel of Hue", "Hue", "Hue", "A walled fortress and palace, once the seat of the Nguyen Dynasty emperors.", "https://picsum.photos/400/120?random=28&image=145"],
-            [10.0200, 105.7800, "Cai Rang Floating Market", "Can Tho", "Can Tho", "The largest floating market in the Mekong Delta, bustling with boats selling goods.", "https://picsum.photos/400/120?random=29&image=150"],
-            [20.7800, 107.0500, "Cat Ba Island", "Hai Phong", "Hai Phong", "The largest island in the Cat Ba Archipelago, known for its national park and beautiful beaches.", "https://picsum.photos/400/120?random=30&image=155"],
-            [10.5500, 107.4500, "Ho Tram Beach", "Ba Ria - Vung Tau", "Ba Ria - Vung Tau", "A tranquil coastal area known for its pristine beaches and resort complexes.", "https://picsum.photos/400/120?random=31&image=160"],
-            [21.0380, 105.8300, "Ba Dinh Square", "Hanoi", "Hanoi", "The largest square in Vietnam, where President Ho Chi Minh read the Declaration of Independence.", "https://picsum.photos/400/120?random=32&image=165"]
+            [21.0320, 105.8430, "Tong Duy Tan Street", "Hoan Kiem District, Hanoi", "Hanoi", "A small street famous for its late-night street food stalls and variety of local dishes.", "https://i.imgur.com/C3fE43t.jpg"],
+            [21.0500, 105.8650, "Long Bien Bridge", "Connecting Long Bien and Ba Dinh Districts, Hanoi", "Hanoi", "A historical cantilever bridge built by the French, symbolizing Hanoi's resilient past.", "https://i.imgur.com/fL3h1f6.jpg"],
+            [21.0360, 105.8360, "One Pillar Pagoda", "Dien Bien Ward, Ba Dinh District, Hanoi", "Hanoi", "A historic Buddhist temple with a unique single-pillar structure, resembling a lotus flower.", "https://i.imgur.com/mO2Xp3E.jpg"],
+            [10.7780, 106.6980, "Tan Dinh Church (Pink Church)", "289 Hai Ba Trung, Dist. 1, HCMC", "HCMC", "A distinctive Roman Catholic church known for its striking pink exterior.", "https://i.imgur.com/4oW2S4Q.jpg"],
+            [15.9800, 108.2500, "Marble Mountains", "Ngu Hanh Son District, Da Nang", "Da Nang", "A cluster of five marble and limestone hills containing caves, tunnels, and pagodas.", "https://i.imgur.com/5J3d4Z8.jpg"],
+            [22.3700, 103.8000, "Silver Waterfall", "Sapa, Lao Cai", "Lao Cai", "A beautiful waterfall located near Sapa, known for its powerful flow and cool mist.", "https://i.imgur.com/zV8x65H.jpg"],
+            [20.2100, 105.9000, "Tam Coc - Bich Dong", "Ninh Hai Commune, Ninh Binh", "Ninh Binh", "Famous for its limestone karsts and rice paddies, often explored by rowing boat.", "https://i.imgur.com/W2x9q3k.jpg"],
+            [16.4637, 107.5909, "Thien Mu Pagoda", "Hue", "Hue", "The tallest pagoda in Vietnam, overlooking the Perfume River, a symbol of Hue.", "https://i.imgur.com/1c7R8V8.jpg"],
+            [16.4688, 107.5762, "Imperial Citadel of Hue", "Hue", "Hue", "A walled fortress and palace, once the seat of the Nguyen Dynasty emperors.", "https://i.imgur.com/2Y5R7f7.jpg"],
+            [10.0200, 105.7800, "Cai Rang Floating Market", "Can Tho", "Can Tho", "The largest floating market in the Mekong Delta, bustling with boats selling goods.", "https://i.imgur.com/8Y4j8V9.jpg"],
+            [20.7800, 107.0500, "Cat Ba Island", "Hai Phong", "Hai Phong", "The largest island in the Cat Ba Archipelago, known for its national park and beautiful beaches.", "https://i.imgur.com/mX7h6y8.jpg"],
+            [10.5500, 107.4500, "Ho Tram Beach", "Ba Ria - Vung Tau", "Ba Ria - Vung Tau", "A tranquil coastal area known for its pristine beaches and resort complexes.", "https://i.imgur.com/z3c6E4y.jpg"],
+            [21.0380, 105.8300, "Ba Dinh Square", "Hanoi", "Hanoi", "The largest square in Vietnam, where President Ho Chi Minh read the Declaration of Independence.", "https://i.imgur.com/pY2E5S7.jpg"]
         ];
 
         // Convert raw data to objects
         const locations = rawLocations.map(([lat, lng, name, address, city, description, imageUrl], index) => ({
             id: index,
             lat, lng, name, address, city, description, 
-            imageUrl: imageUrl // **[ĐIỂM ĐÃ SỬA]** Sử dụng trực tiếp URL đã được cung cấp thay vì thêm 'placehold.co'
+            imageUrl // The value is now the direct URL
         }));
 
         // Khai báo biến toàn cục cho Leaflet
@@ -261,8 +258,8 @@
             let filteredLocations = locations.filter(loc => {
                 // Filter by name/address
                 const matchesName = !nameSearchTerm || 
-                                    loc.name.toLowerCase().includes(nameSearchTerm) ||
-                                    loc.address.toLowerCase().includes(nameSearchTerm);
+                                     loc.name.toLowerCase().includes(nameSearchTerm) ||
+                                     loc.address.toLowerCase().includes(nameSearchTerm);
                 
                 // Filter by city
                 const matchesCity = !selectedCity || loc.city === selectedCity;
@@ -320,7 +317,6 @@
                 card.setAttribute('data-lat', loc.lat);
                 card.setAttribute('data-lng', loc.lng);
                 
-                // Thẻ ảnh sử dụng imageUrl đã được sửa đổi
                 card.innerHTML = `
                     <img src="${loc.imageUrl}" alt="${loc.name}" class="card-image">
                     <div class="p-4 flex-grow">
