@@ -19,23 +19,40 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7fafc; 
+            overflow: hidden; /* Prevent body from scrolling */
         }
+        
+        /* NEW: Map as full-screen background */
         #leaflet-map {
-            width: 100%;
-            height: 60vh;
-            margin: 0 auto;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            background-color: #a5d8ff; /* Fallback map color */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; /* Put it in the background */
         }
+
+        /* NEW: Scrollable content overlay */
+        .content-overlay {
+            position: relative;
+            z-index: 10; /* Put it on top of the map */
+            height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            pointer-events: none; /* Clicks pass through to the map */
+        }
+        
+        /* NEW: Make content blocks clickable again */
+        .content-overlay > * {
+            pointer-events: auto;
+        }
+
         .leaflet-popup-content-wrapper {
             border-radius: 8px !important;
         }
         .leaflet-popup-content {
             font-weight: 500;
         }
-        /* Styles for Custom Markers */
         .custom-div-icon {
             display: flex;
             justify-content: center;
@@ -52,66 +69,72 @@
         .marker-tourist { background-color: #3B82F6; } /* Blue */
         .marker-restaurant { background-color: #F97316; } /* Orange */
         .marker-cafe { background-color: #78350F; } /* Brown */
-        /* Style for Carousel */
+
         .carousel-container {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         .carousel-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, and Opera */
+            display: none;
         }
     </style>
 </head>
-<body class="p-4 sm:p-8">
+<body>
 
-    <div class="mx-auto max-w-7xl text-center"> 
-        <header class="mb-6">
-            <h1 class="text-3xl font-extrabold text-indigo-700 mb-1">
-                Bản đồ Du lịch Chi tiết Việt Nam
-            </h1>
-            <p class="text-gray-600">Sử dụng Leaflet.js và OpenStreetMap để hiển thị các điểm đến.</p>
-        </header>
+    <div id="leaflet-map"></div>
 
-        <div class="mb-6 max-w-4xl mx-auto flex flex-wrap gap-3 justify-center">
-            <input type="text" id="name-search-input" placeholder="Tìm theo tên hoặc địa chỉ..." 
-                   class="flex-grow p-3 border-2 border-indigo-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-md min-w-[250px]">
-            
-            <select id="city-filter" 
-                    class="w-40 p-3 border-2 border-indigo-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-md bg-white">
-                <option value="">Lọc theo Thành phố</option>
-            </select>
-
-            <select id="category-filter"
-                    class="w-48 p-3 border-2 border-indigo-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-md bg-white">
-                <option value="">Lọc theo Loại hình</option>
-                <option value="Danh lam thắng cảnh">Danh lam thắng cảnh</option>
-                <option value="Quán ăn">Quán ăn</option>
-                <option value="Quán cà phê">Quán cà phê</option>
-            </select>
-        </div>
-
-        <div id="leaflet-map" class="max-w-4xl mx-auto mb-6"></div>
+    <div class="content-overlay">
         
-    </div>
-
-    <div class="mt-12 max-w-7xl mx-auto" 
-         x-data="carousel()" 
-         x-init="init()">
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Khám phá các điểm đến hàng đầu</h2>
-
-        <div class="relative">
-            <div x-ref="container" class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth">
+        <div class="p-4 sm:p-8">
+            <div class="mx-auto max-w-4xl text-center bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-lg"> 
+                <header class="mb-6">
+                    <h1 class="text-3xl font-extrabold text-indigo-700 mb-1">
+                        Bản đồ Du lịch Chi tiết Việt Nam
+                    </h1>
+                    <p class="text-gray-600">Khám phá 210 điểm đến nổi bật trên khắp cả nước.</p>
+                </header>
+        
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <input type="text" id="name-search-input" placeholder="Tìm theo tên hoặc địa chỉ..." 
+                           class="flex-grow p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm min-w-[250px]">
+                    
+                    <select id="city-filter" 
+                            class="w-40 p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm bg-white">
+                        <option value="">Lọc theo Thành phố</option>
+                    </select>
+        
+                    <select id="category-filter"
+                            class="w-48 p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm bg-white">
+                        <option value="">Lọc theo Loại hình</option>
+                        <option value="Danh lam thắng cảnh">Danh lam thắng cảnh</option>
+                        <option value="Quán ăn">Quán ăn</option>
+                        <option value="Quán cà phê">Quán cà phê</option>
+                    </select>
                 </div>
-
-            <button @click="prev()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md -ml-4 z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-            </button>
-            <button @click="next()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md -mr-4 z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-            </button>
+            </div>
         </div>
-    </div>
 
+        <div class="py-12">
+            <div class="mt-12 max-w-7xl mx-auto" x-data="carousel()" x-init="init()">
+                <h2 class="text-2xl font-bold text-center text-gray-800 bg-white/90 backdrop-blur-sm max-w-md mx-auto py-2 px-4 rounded-xl shadow-lg">
+                    Khám phá các điểm đến hàng đầu
+                </h2>
+        
+                <div class="relative mt-6">
+                    <div x-ref="container" class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth px-4">
+                        </div>
+        
+                    <button @click="prev()" class="absolute top-1/2 left-0 sm:left-2 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    </button>
+                    <button @click="next()" class="absolute top-1/2 right-0 sm:right-2 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
 
     <script>
         // --- DỮ LIỆU ĐỊA ĐIỂM ĐẦY ĐỦ (210 ĐIỂM) ---
@@ -218,7 +241,6 @@
             [13.7667, 109.2167, "Tháp Đôi (Tháp Chăm Pa)", "Đường Trần Hưng Đạo, P. Đống Đa, TP. Quy Nhơn", "Bình Định", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/BcDeFgH.jpg"],
             [13.8833, 109.2333, "Eo Gió", "Xã Nhơn Lý, TP. Quy Nhơn", "Bình Định", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/jKlMnOp.jpg"],
             [12.2667, 109.1833, "Tháp Bà Ponagar", "Đường 2/4, P. Vĩnh Phước, TP. Nha Trang", "Khánh Hòa", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/qRsTuVw.jpg"],
-            // Quán ăn và Cà phê Miền Trung
             [16.0690, 108.2210, "Mì Quảng 1A", "Số 1A Hải Phòng, Q. Hải Châu", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/xYzAbCd.jpg"],
             [16.0270, 108.1990, "Bánh tráng cuốn thịt heo Mậu", "Số 35 Đỗ Thúc Tịnh, Q. Cẩm Lệ", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/lMnOpQr.jpg"],
             [16.0590, 108.2250, "Bún Mắm Vân", "K23/14 Trần Kế Xương, Q. Hải Châu", "Đà Nẵng", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/sTuVwXy.jpg"],
@@ -249,7 +271,6 @@
             [12.2410, 109.1940, "Bánh Căn Mực số 51", "Số 51 Tô Hiến Thành, TP. Nha Trang", "Khánh Hòa", "Quán ăn", "Quán ăn đặc sản", "https://i.imgur.com/nOpQrSt.jpg"],
             [12.2380, 109.1970, "Runam Bistro Nha Trang", "Số 34-36 Trần Phú, TP. Nha Trang", "Khánh Hòa", "Quán cà phê", "Quán cà phê/Nhà hàng", "https://i.imgur.com/uVwXyZa.jpg"],
             [11.9390, 108.4350, "An Café", "Số 63 Bis 3 tháng 2, TP. Đà Lạt", "Lâm Đồng", "Quán cà phê", "Quán cà phê", "https://i.imgur.com/BcDeFgH.jpg"],
-
             // --- MIỀN NAM ---
             [10.7769, 106.6953, "Dinh Độc Lập (Hội trường Thống Nhất)", "135 Nam Kỳ Khởi Nghĩa, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/0vUnV5G.jpg"],
             [10.7797, 106.6990, "Nhà thờ Đức Bà Sài Gòn", "01 Công xã Paris, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử/Kiến trúc", "https://i.imgur.com/w8qHJKn.jpg"],
@@ -426,7 +447,6 @@
             const nameSearchTerm = document.getElementById('name-search-input').value.toLowerCase().trim();
             const selectedCity = document.getElementById('city-filter').value;
             const selectedCategory = document.getElementById('category-filter').value;
-
             let filteredLocations = locations;
             if (nameSearchTerm || selectedCity || selectedCategory) {
                  filteredLocations = locations.filter(loc => {
@@ -443,10 +463,7 @@
             markerClusterGroup.clearLayers();
             const markersToShow = locationsToShow.map(loc => allMarkers.find(m => m.locationData.id === loc.id));
             markerClusterGroup.addLayers(markersToShow.filter(m => m));
-            
             if (locationsToShow.length > 0 && locationsToShow.length < locations.length) {
-                const bounds = L.latLngBounds(locationsToShow.map(loc => [loc.lat, loc.lng]));
-                // Use the cluster group's bounds for a better fit
                 const clusterBounds = markerClusterGroup.getBounds();
                 if (clusterBounds.isValid()) {
                     map.fitBounds(clusterBounds, {padding: [50, 50], maxZoom: 14});
@@ -454,7 +471,6 @@
             }
         }
         
-        // --- Alpine.js Carousel Controller ---
         function carousel() {
             return {
                 currentIndex: 0,
@@ -509,7 +525,6 @@
                 }
             }
         }
-
         window.onload = initializeApp;
     </script>
 </body>
