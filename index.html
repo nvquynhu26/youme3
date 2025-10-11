@@ -14,37 +14,33 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; /* Prevent body scrolling */
-        }
-        
-        /* Map as full-screen background */
-        #leaflet-map {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0; /* Background layer */
-        }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; }
+        #leaflet-map { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
 
-        /* Custom marker styles */
+        /* Custom marker icon styles */
         .custom-div-icon {
             display: flex; justify-content: center; align-items: center;
-            width: 24px; height: 24px;
+            width: 28px; height: 28px;
             border-radius: 50%; border: 2px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            font-size: 12px; font-weight: bold; color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            font-size: 14px; color: white;
         }
         .marker-tourist { background-color: #3B82F6; } /* Blue */
         .marker-restaurant { background-color: #F97316; } /* Orange */
         .marker-cafe { background-color: #78350F; } /* Brown */
+        
+        /* NEW: Filter button active state */
+        .filter-btn.active {
+            background-color: #4f46e5 !important;
+            color: white !important;
+            border-color: #4f46e5 !important;
+        }
 
-        /* Carousel styles */
         .carousel-container { -ms-overflow-style: none; scrollbar-width: none; }
         .carousel-container::-webkit-scrollbar { display: none; }
     </style>
@@ -54,21 +50,29 @@
     <div id="leaflet-map"></div>
 
     <div class="sticky top-0 z-20 p-4">
-        <div class="mx-auto max-w-4xl bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg"> 
+        <div class="mx-auto max-w-5xl bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg"> 
             <header class="text-center mb-4">
                 <h1 class="text-2xl font-extrabold text-indigo-700">Bản đồ Du lịch Việt Nam</h1>
             </header>
-            <div class="flex flex-wrap gap-3 justify-center">
-                <input type="text" id="name-search-input" placeholder="Tìm theo tên hoặc địa chỉ..." class="flex-grow p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm min-w-[200px]">
-                <select id="city-filter" class="w-full sm:w-40 p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm bg-white">
+            <div class="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
+                <input type="text" id="name-search-input" placeholder="Tìm theo tên hoặc địa chỉ..." class="w-full sm:flex-grow p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm min-w-[200px]">
+                <select id="city-filter" class="w-full sm:w-auto p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm bg-white">
                     <option value="">Lọc theo Thành phố</option>
                 </select>
-                <select id="category-filter" class="w-full sm:w-48 p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 shadow-sm bg-white">
-                    <option value="">Lọc theo Loại hình</option>
-                    <option value="Danh lam thắng cảnh">Danh lam thắng cảnh</option>
-                    <option value="Quán ăn">Quán ăn</option>
-                    <option value="Quán cà phê">Quán cà phê</option>
-                </select>
+            </div>
+            <div id="category-filter-buttons" class="mt-3 flex flex-wrap justify-center gap-2">
+                <button data-category="Danh lam thắng cảnh" class="filter-btn flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-landmark"></i>
+                    <span>Danh lam</span>
+                </button>
+                <button data-category="Quán ăn" class="filter-btn flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-utensils"></i>
+                    <span>Quán ăn</span>
+                </button>
+                <button data-category="Quán cà phê" class="filter-btn flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-mug-saucer"></i>
+                    <span>Cà phê</span>
+                </button>
             </div>
         </div>
     </div>
@@ -82,10 +86,10 @@
                 <div x-ref="container" class="carousel-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth">
                     </div>
                 <button @click="prev()" class="absolute top-1/2 left-0 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                 </button>
                 <button @click="next()" class="absolute top-1/2 right-0 -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-2 text-gray-700 hover:bg-white transition shadow-md z-10">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </button>
             </div>
         </div>
@@ -311,21 +315,21 @@
 
         // --- 15 ĐỊA ĐIỂM NỔI BẬT (ĐÃ SỬA LẠI URL ẢNH) ---
         const featuredLocations = [
-            { name: "Vịnh Hạ Long", address: "Thành phố Hạ Long, Quảng Ninh", tag: "Kỳ quan thiên nhiên", description: "Khám phá hàng ngàn hòn đảo đá vôi kỳ vĩ và làn nước xanh như ngọc tại di sản thiên nhiên thế giới được UNESCO công nhận." },
-            { name: "Phố cổ Hà Nội", address: "Quận Hoàn Kiếm, Hà Nội", tag: "Văn hóa & Ẩm thực", description: "Lạc vào những con phố nghề san sát, thưởng thức ẩm thực đường phố đặc sắc và cảm nhận nhịp sống ngàn năm văn hiến." },
-            { name: "Sa Pa (Núi Fansipan)", address: "Thị xã Sa Pa, Lào Cai", tag: "Thiên nhiên & Trải nghiệm", description: "Chinh phục 'Nóc nhà Đông Dương' hùng vĩ và chiêm ngưỡng những thửa ruộng bậc thang tuyệt đẹp giữa mây ngàn." },
-            { name: "Quần thể danh thắng Tràng An", address: "Huyện Hoa Lư, Ninh Bình", tag: "Di sản UNESCO", description: "Ngồi thuyền xuôi theo dòng nước, len lỏi qua các hang động và núi đá vôi để khám phá vẻ đẹp của 'Hạ Long trên cạn'." },
-            { name: "Cà phê Giảng", address: "Số 39 Nguyễn Hữu Huân, Hà Nội", tag: "Đặc sản Hà Nội", description: "Thưởng thức ly cà phê trứng trứ danh, một sáng tạo độc đáo với lớp kem trứng béo ngậy hòa quyện cùng vị cà phê đắng dịu." },
-            { name: "Phố cổ Hội An", address: "TP. Hội An, Quảng Nam", tag: "Di sản thế giới", description: "Dạo bước trên những con đường lát đá cổ kính, ngắm nhìn những ngôi nhà màu vàng và thả đèn hoa đăng trên sông Hoài thơ mộng." },
-            { name: "Đại Nội Huế", address: "TP. Huế, Thừa Thiên Huế", tag: "Lịch sử & Kiến trúc", description: "Quay ngược thời gian trở về triều Nguyễn, khám phá kinh thành, cung điện và đền đài mang đậm dấu ấn lịch sử vàng son." },
-            { name: "Bà Nà Hills (Cầu Vàng)", address: "Huyện Hòa Vang, Đà Nẵng", tag: "Kiến trúc độc đáo", description: "Dạo bước trên Cầu Vàng trứ danh được nâng đỡ bởi đôi bàn tay khổng lồ và tận hưởng không khí trong lành, mát mẻ." },
-            { name: "Ghềnh Đá Đĩa", address: "Huyện Tuy An, Phú Yên", tag: "Địa chất kỳ thú", description: "Chiêm ngưỡng kiệt tác của thiên nhiên với hàng chục nghìn cột đá bazan hình lục giác xếp chồng lên nhau như một tổ ong khổng lồ."},
-            { name: "Động Phong Nha", address: "Huyện Bố Trạch, Quảng Bình", tag: "Khám phá hang động", description: "Du thuyền trên sông Son để tiến vào hang động, chiêm ngưỡng hệ thống thạch nhũ tráng lệ và kỳ ảo bậc nhất thế giới."},
-            { name: "Chợ nổi Cái Răng", address: "Q. Ninh Kiều, Cần Thơ", tag: "Văn hóa Sông nước", description: "Trải nghiệm nét văn hóa độc đáo của miền Tây khi ngồi thuyền len lỏi giữa hàng trăm ghe thuyền mua bán tấp nập trên sông." },
-            { name: "Bãi Sao, Phú Quốc", address: "TP. Phú Quốc, Kiên Giang", tag: "Thiên đường nghỉ dưỡng", description: "Thư giãn trên bãi cát trắng mịn như kem, đắm mình trong làn nước biển trong xanh và tận hưởng không gian yên bình."},
-            { name: "Dinh Độc Lập", address: "Quận 1, TP. Hồ Chí Minh", tag: "Chứng nhân Lịch sử", description: "Tham quan công trình kiến trúc ghi dấu ấn sâu đậm trong lịch sử Việt Nam, nơi diễn ra sự kiện thống nhất đất nước."},
-            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam." },
-            { name: "Bánh mì Huỳnh Hoa", address: "Quận 1, TP. Hồ Chí Minh", tag: "Ẩm thực đường phố", description: "Thưởng thức ổ bánh mì trứ danh Sài Gòn, nổi tiếng với phần nhân đầy đặn, pate béo ngậy và hương vị đậm đà khó quên."}
+            { name: "Vịnh Hạ Long", address: "Thành phố Hạ Long, Quảng Ninh", tag: "Kỳ quan thiên nhiên", description: "Khám phá hàng ngàn hòn đảo đá vôi kỳ vĩ và làn nước xanh như ngọc tại di sản thiên nhiên thế giới được UNESCO công nhận.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Halong_Bay_in_July_2022_01.jpg/1280px-Halong_Bay_in_July_2022_01.jpg" },
+            { name: "Phố cổ Hà Nội", address: "Quận Hoàn Kiếm, Hà Nội", tag: "Văn hóa & Ẩm thực", description: "Lạc vào những con phố nghề san sát, thưởng thức ẩm thực đường phố đặc sắc và cảm nhận nhịp sống ngàn năm văn hiến.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hanoi_-_Old_Quarter_03.jpg/1280px-Hanoi_-_Old_Quarter_03.jpg" },
+            { name: "Sa Pa (Núi Fansipan)", address: "Thị xã Sa Pa, Lào Cai", tag: "Thiên nhiên & Trải nghiệm", description: "Chinh phục 'Nóc nhà Đông Dương' hùng vĩ và chiêm ngưỡng những thửa ruộng bậc thang tuyệt đẹp giữa mây ngàn.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Fansipan_Mountain_in_winter.jpg/1280px-Fansipan_Mountain_in_winter.jpg" },
+            { name: "Quần thể danh thắng Tràng An", address: "Huyện Hoa Lư, Ninh Bình", tag: "Di sản UNESCO", description: "Ngồi thuyền xuôi theo dòng nước, len lỏi qua các hang động và núi đá vôi để khám phá vẻ đẹp của 'Hạ Long trên cạn'.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Trang_An_landscape_complex.jpg/1280px-Trang_An_landscape_complex.jpg" },
+            { name: "Cà phê Giảng", address: "Số 39 Nguyễn Hữu Huân, Hà Nội", tag: "Đặc sản Hà Nội", description: "Thưởng thức ly cà phê trứng trứ danh, một sáng tạo độc đáo với lớp kem trứng béo ngậy hòa quyện cùng vị cà phê đắng dịu.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Egg_coffee_at_Giang_Cafe_in_Hanoi.jpg/1024px-Egg_coffee_at_Giang_Cafe_in_Hanoi.jpg" },
+            { name: "Phố cổ Hội An", address: "TP. Hội An, Quảng Nam", tag: "Di sản thế giới", description: "Dạo bước trên những con đường lát đá cổ kính, ngắm nhìn những ngôi nhà màu vàng và thả đèn hoa đăng trên sông Hoài thơ mộng.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Hoi_An_Bridge_and_river.jpg/1280px-Hoi_An_Bridge_and_river.jpg" },
+            { name: "Đại Nội Huế", address: "TP. Huế, Thừa Thiên Huế", tag: "Lịch sử & Kiến trúc", description: "Quay ngược thời gian trở về triều Nguyễn, khám phá kinh thành, cung điện và đền đài mang đậm dấu ấn lịch sử vàng son.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gate_of_Hue_Imperial_City.jpg/1280px-Gate_of_Hue_Imperial_City.jpg" },
+            { name: "Bà Nà Hills (Cầu Vàng)", address: "Huyện Hòa Vang, Đà Nẵng", tag: "Kiến trúc độc đáo", description: "Dạo bước trên Cầu Vàng trứ danh được nâng đỡ bởi đôi bàn tay khổng lồ và tận hưởng không khí trong lành, mát mẻ.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Golden_Bridge_in_Ba_Na_Hills_3.jpg/1280px-Golden_Bridge_in_Ba_Na_Hills_3.jpg" },
+            { name: "Ghềnh Đá Đĩa", address: "Huyện Tuy An, Phú Yên", tag: "Địa chất kỳ thú", description: "Chiêm ngưỡng kiệt tác của thiên nhiên với hàng chục nghìn cột đá bazan hình lục giác xếp chồng lên nhau như một tổ ong khổng lồ.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Ganh_Da_Dia_Phu_Yen_Vietnam.jpg/1280px-Ganh_Da_Dia_Phu_Yen_Vietnam.jpg"},
+            { name: "Động Phong Nha", address: "Huyện Bố Trạch, Quảng Bình", tag: "Khám phá hang động", description: "Du thuyền trên sông Son để tiến vào hang động, chiêm ngưỡng hệ thống thạch nhũ tráng lệ và kỳ ảo bậc nhất thế giới.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Phong_Nha_Cave_2.jpg/1280px-Phong_Nha_Cave_2.jpg"},
+            { name: "Chợ nổi Cái Răng", address: "Q. Ninh Kiều, Cần Thơ", tag: "Văn hóa Sông nước", description: "Trải nghiệm nét văn hóa độc đáo của miền Tây khi ngồi thuyền len lỏi giữa hàng trăm ghe thuyền mua bán tấp nập trên sông.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Cai_Rang_floating_market_in_the_morning.jpg/1280px-Cai_Rang_floating_market_in_the_morning.jpg" },
+            { name: "Bãi Sao, Phú Quốc", address: "TP. Phú Quốc, Kiên Giang", tag: "Thiên đường nghỉ dưỡng", description: "Thư giãn trên bãi cát trắng mịn như kem, đắm mình trong làn nước biển trong xanh và tận hưởng không gian yên bình.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bai_Sao%2C_Phu_Quoc%2C_Vietnam_3.jpg/1280px-Bai_Sao%2C_Phu_Quoc%2C_Vietnam_3.jpg"},
+            { name: "Dinh Độc Lập", address: "Quận 1, TP. Hồ Chí Minh", tag: "Chứng nhân Lịch sử", description: "Tham quan công trình kiến trúc ghi dấu ấn sâu đậm trong lịch sử Việt Nam, nơi diễn ra sự kiện thống nhất đất nước.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Reunification_Palace_in_Ho_Chi_Minh_City%2C_Vietnam.jpg/1280px-Reunification_Palace_in_Ho_Chi_Minh_City%2C_Vietnam.jpg"},
+            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cu-chi-tunnels.jpg/1280px-Cu-chi-tunnels.jpg" },
+            { name: "Bánh mì Huỳnh Hoa", address: "Quận 1, TP. Hồ Chí Minh", tag: "Ẩm thực đường phố", description: "Thưởng thức ổ bánh mì trứ danh Sài Gòn, nổi tiếng với phần nhân đầy đặn, pate béo ngậy và hương vị đậm đà khó quên.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Banh_mi_heo_quay_saigon.jpg/1024px-Banh_mi_heo_quay_saigon.jpg"}
         ];
         
         // --- SCRIPT XỬ LÝ CHÍNH ---
@@ -333,21 +337,37 @@
             id: index, lat, lng, name, address, city, mainCategory, detailedType, imageUrl
         }));
 
-        let map, allMarkers = [], markerClusterGroup;
+        let map, allMarkers = [], markerClusterGroup, activeCategory = '';
 
         function initializeApp() {
             initializeLeafletMap();
             const nameInput = document.getElementById('name-search-input');
             const cityFilter = document.getElementById('city-filter');
-            const categoryFilter = document.getElementById('category-filter');
+            const categoryButtons = document.querySelectorAll('#category-filter-buttons .filter-btn');
+
             let searchTimeout;
             const handleFilterChange = () => { 
                 clearTimeout(searchTimeout); 
                 searchTimeout = setTimeout(filterAndRender, 300); 
             };
+            
             nameInput.addEventListener('input', handleFilterChange);
             cityFilter.addEventListener('change', handleFilterChange);
-            categoryFilter.addEventListener('change', handleFilterChange);
+
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const category = button.dataset.category;
+                    if (button.classList.contains('active')) {
+                        activeCategory = '';
+                        button.classList.remove('active');
+                    } else {
+                        categoryButtons.forEach(btn => btn.classList.remove('active'));
+                        activeCategory = category;
+                        button.classList.add('active');
+                    }
+                    handleFilterChange();
+                });
+            });
         }
 
         function initializeLeafletMap() {
@@ -357,10 +377,15 @@
                 maxBoundsViscosity: 1.0
             }).setView([16.0, 107.5], 6);
             map.setMinZoom(6);
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>',
             }).addTo(map);
-            markerClusterGroup = L.markerClusterGroup();
+            
+            markerClusterGroup = L.markerClusterGroup({
+                disableClusteringAtZoom: 15 // NEW: Disable clustering at zoom level 15
+            });
+
             createAllMarkers();
             renderFilteredMarkers(locations);
             map.addLayer(markerClusterGroup);
@@ -370,14 +395,22 @@
         function createAllMarkers() {
             allMarkers = locations.map(loc => {
                 let iconClass = 'marker-tourist';
-                if (loc.mainCategory === 'Quán ăn') iconClass = 'marker-restaurant';
-                else if (loc.mainCategory === 'Quán cà phê') iconClass = 'marker-cafe';
+                let iconHtml = '<i class="fa-solid fa-landmark"></i>'; // Default icon
+                if (loc.mainCategory === 'Quán ăn') {
+                    iconClass = 'marker-restaurant';
+                    iconHtml = '<i class="fa-solid fa-utensils"></i>';
+                } else if (loc.mainCategory === 'Quán cà phê') {
+                    iconClass = 'marker-cafe';
+                    iconHtml = '<i class="fa-solid fa-mug-saucer"></i>';
+                }
                 
                 const customIcon = L.divIcon({
                     className: `custom-div-icon ${iconClass}`,
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12]
+                    html: iconHtml,
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
                 });
+
                 const marker = L.marker([loc.lat, loc.lng], { icon: customIcon });
                 const popupContent = `<div class="p-1 font-inter"><p class="font-bold text-base text-indigo-700">${loc.name}</p><p class="text-xs text-gray-600">${loc.address}</p><p class="text-xs mt-1 text-gray-500 italic">${loc.detailedType}</p></div>`;
                 marker.bindPopup(popupContent, { maxWidth: 300 });
@@ -400,7 +433,8 @@
         function filterAndRender() {
             const nameSearchTerm = document.getElementById('name-search-input').value.toLowerCase().trim();
             const selectedCity = document.getElementById('city-filter').value;
-            const selectedCategory = document.getElementById('category-filter').value;
+            const selectedCategory = activeCategory;
+
             let filteredLocations = locations;
             if (nameSearchTerm || selectedCity || selectedCategory) {
                  filteredLocations = locations.filter(loc => {
@@ -442,7 +476,7 @@
                 renderFeaturedItems() {
                     const container = this.$refs.container;
                     container.innerHTML = featuredLocations.map(loc => `
-                        <div class="flex-shrink-0 w-full sm:w-1/2 md:w-1/3 snap-start p-2">
+                        <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 snap-start p-2">
                             <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col p-4">
                                 <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full self-start mb-2">${loc.tag}</span>
                                 <h3 class="font-bold text-md text-gray-800">${loc.name}</h3>
