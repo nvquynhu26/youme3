@@ -21,8 +21,6 @@
     <style>
         body { font-family: 'Inter', sans-serif; overflow: hidden; }
         #leaflet-map { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
-
-        /* Custom marker icon styles */
         .custom-div-icon {
             display: flex; justify-content: center; align-items: center;
             width: 28px; height: 28px;
@@ -34,11 +32,11 @@
         .marker-restaurant { background-color: #F97316; } /* Orange */
         .marker-cafe { background-color: #78350F; } /* Brown */
         
-        /* NEW: Filter button active state */
         .filter-btn.active {
             background-color: #4f46e5 !important;
             color: white !important;
             border-color: #4f46e5 !important;
+            box-shadow: 0 4px 14px 0 rgb(79 70 229 / 39%);
         }
 
         .carousel-container { -ms-overflow-style: none; scrollbar-width: none; }
@@ -49,8 +47,8 @@
 
     <div id="leaflet-map"></div>
 
-    <div class="sticky top-0 z-20 p-4">
-        <div class="mx-auto max-w-5xl bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg"> 
+    <div class="fixed top-0 left-0 right-0 z-20 p-4 flex flex-col items-center gap-3">
+        <div class="w-full max-w-4xl bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg"> 
             <header class="text-center mb-4">
                 <h1 class="text-2xl font-extrabold text-indigo-700">Bản đồ Du lịch Việt Nam</h1>
             </header>
@@ -60,20 +58,21 @@
                     <option value="">Lọc theo Thành phố</option>
                 </select>
             </div>
-            <div id="category-filter-buttons" class="mt-3 flex flex-wrap justify-center gap-2">
-                <button data-category="Danh lam thắng cảnh" class="filter-btn flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-landmark"></i>
-                    <span>Danh lam</span>
-                </button>
-                <button data-category="Quán ăn" class="filter-btn flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-utensils"></i>
-                    <span>Quán ăn</span>
-                </button>
-                <button data-category="Quán cà phê" class="filter-btn flex items-center gap-2 px-3 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-mug-saucer"></i>
-                    <span>Cà phê</span>
-                </button>
-            </div>
+        </div>
+        
+        <div id="category-filter-buttons" class="flex flex-wrap justify-center gap-3">
+            <button data-category="Danh lam thắng cảnh" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
+                <i class="fa-solid fa-landmark"></i>
+                <span>Danh lam</span>
+            </button>
+            <button data-category="Quán ăn" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Quán ăn</span>
+            </button>
+            <button data-category="Quán cà phê" class="filter-btn flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-white/90 backdrop-blur-sm border-2 border-white rounded-full shadow-lg hover:bg-white transition">
+                <i class="fa-solid fa-mug-saucer"></i>
+                <span>Cà phê</span>
+            </button>
         </div>
     </div>
 
@@ -101,6 +100,7 @@
             // MIỀN BẮC
             [21.0287, 105.8522, "Hồ Hoàn Kiếm (Hồ Gươm)", "Quận Hoàn Kiếm", "Hà Nội", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Di tích", "https://i.imgur.com/Y1N6uG2.jpg"],
             [21.0368, 105.8342, "Lăng Chủ tịch Hồ Chí Minh", "Số 2 Hùng Vương, Quận Ba Đình", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/8Qp4923.jpg"],
+            // ... (toàn bộ 210 địa điểm của bạn vẫn ở đây, tôi chỉ rút gọn để dễ đọc)
             [21.0278, 105.8355, "Văn Miếu - Quốc Tử Giám", "Số 58 Quốc Tử Giám, Quận Đống Đa", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/8l7b8hH.jpg"],
             [21.0353, 105.8395, "Hoàng thành Thăng Long", "Số 19 Hoàng Diệu, Quận Ba Đình", "Hà Nội", "Danh lam thắng cảnh", "Di tích lịch sử/Văn hóa", "https://i.imgur.com/0vUnV5G.jpg"],
             [21.0325, 105.8488, "Phố cổ Hà Nội", "Quận Hoàn Kiếm", "Hà Nội", "Danh lam thắng cảnh", "Văn hóa/Du lịch", "https://i.imgur.com/g8S226J.jpg"],
@@ -313,7 +313,7 @@
             [10.8000, 106.7333, "The Deck Saigon", "Số 38 Nguyễn Ư Dĩ, TP. Thủ Đức", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê/Nhà hàng (View sông)", "https://i.imgur.com/1Oq2E9z.jpg"]
         ];
 
-        // --- 15 ĐỊA ĐIỂM NỔI BẬT (ĐÃ SỬA LẠI URL ẢNH) ---
+        // --- 15 ĐỊA ĐIỂM NỔI BẬT (ĐÃ SỬA URL ẢNH) ---
         const featuredLocations = [
             { name: "Vịnh Hạ Long", address: "Thành phố Hạ Long, Quảng Ninh", tag: "Kỳ quan thiên nhiên", description: "Khám phá hàng ngàn hòn đảo đá vôi kỳ vĩ và làn nước xanh như ngọc tại di sản thiên nhiên thế giới được UNESCO công nhận.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Halong_Bay_in_July_2022_01.jpg/1280px-Halong_Bay_in_July_2022_01.jpg" },
             { name: "Phố cổ Hà Nội", address: "Quận Hoàn Kiếm, Hà Nội", tag: "Văn hóa & Ẩm thực", description: "Lạc vào những con phố nghề san sát, thưởng thức ẩm thực đường phố đặc sắc và cảm nhận nhịp sống ngàn năm văn hiến.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hanoi_-_Old_Quarter_03.jpg/1280px-Hanoi_-_Old_Quarter_03.jpg" },
@@ -337,23 +337,23 @@
             id: index, lat, lng, name, address, city, mainCategory, detailedType, imageUrl
         }));
 
-        let map, allMarkers = [], markerClusterGroup, activeCategory = '';
+        let map, allMarkers = [], markerClusterGroup;
 
         function initializeApp() {
             initializeLeafletMap();
             const nameInput = document.getElementById('name-search-input');
             const cityFilter = document.getElementById('city-filter');
             const categoryButtons = document.querySelectorAll('#category-filter-buttons .filter-btn');
-
+            
             let searchTimeout;
             const handleFilterChange = () => { 
                 clearTimeout(searchTimeout); 
                 searchTimeout = setTimeout(filterAndRender, 300); 
             };
-            
+
             nameInput.addEventListener('input', handleFilterChange);
             cityFilter.addEventListener('change', handleFilterChange);
-
+            
             categoryButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const category = button.dataset.category;
@@ -377,15 +377,12 @@
                 maxBoundsViscosity: 1.0
             }).setView([16.0, 107.5], 6);
             map.setMinZoom(6);
-
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>',
             }).addTo(map);
-            
             markerClusterGroup = L.markerClusterGroup({
-                disableClusteringAtZoom: 15 // NEW: Disable clustering at zoom level 15
+                disableClusteringAtZoom: 15
             });
-
             createAllMarkers();
             renderFilteredMarkers(locations);
             map.addLayer(markerClusterGroup);
@@ -395,7 +392,7 @@
         function createAllMarkers() {
             allMarkers = locations.map(loc => {
                 let iconClass = 'marker-tourist';
-                let iconHtml = '<i class="fa-solid fa-landmark"></i>'; // Default icon
+                let iconHtml = '<i class="fa-solid fa-landmark"></i>';
                 if (loc.mainCategory === 'Quán ăn') {
                     iconClass = 'marker-restaurant';
                     iconHtml = '<i class="fa-solid fa-utensils"></i>';
@@ -410,7 +407,6 @@
                     iconSize: [28, 28],
                     iconAnchor: [14, 14]
                 });
-
                 const marker = L.marker([loc.lat, loc.lng], { icon: customIcon });
                 const popupContent = `<div class="p-1 font-inter"><p class="font-bold text-base text-indigo-700">${loc.name}</p><p class="text-xs text-gray-600">${loc.address}</p><p class="text-xs mt-1 text-gray-500 italic">${loc.detailedType}</p></div>`;
                 marker.bindPopup(popupContent, { maxWidth: 300 });
