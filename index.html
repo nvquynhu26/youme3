@@ -309,23 +309,23 @@
             [10.8000, 106.7333, "The Deck Saigon", "Số 38 Nguyễn Ư Dĩ, TP. Thủ Đức", "TP. Hồ Chí Minh", "Quán cà phê", "Quán cà phê/Nhà hàng (View sông)", "https://i.imgur.com/1Oq2E9z.jpg"]
         ];
 
-        // --- 15 ĐỊA ĐIỂM NỔI BẬT CHO CAROUSEL (ĐÃ SỬA URL ẢNH) ---
+        // --- 15 ĐỊA ĐIỂM NỔI BẬT (ĐÃ SỬA LẠI URL ẢNH) ---
         const featuredLocations = [
-            { name: "Vịnh Hạ Long", address: "Thành phố Hạ Long, Quảng Ninh", tag: "Kỳ quan thiên nhiên", description: "Khám phá hàng ngàn hòn đảo đá vôi kỳ vĩ và làn nước xanh như ngọc tại di sản thiên nhiên thế giới được UNESCO công nhận.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Halong_Bay_in_July_2022_01.jpg/1280px-Halong_Bay_in_July_2022_01.jpg" },
-            { name: "Phố cổ Hà Nội", address: "Quận Hoàn Kiếm, Hà Nội", tag: "Văn hóa & Ẩm thực", description: "Lạc vào những con phố nghề san sát, thưởng thức ẩm thực đường phố đặc sắc và cảm nhận nhịp sống ngàn năm văn hiến.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Hanoi_-_Old_Quarter_03.jpg/1280px-Hanoi_-_Old_Quarter_03.jpg" },
-            { name: "Sa Pa (Núi Fansipan)", address: "Thị xã Sa Pa, Lào Cai", tag: "Thiên nhiên & Trải nghiệm", description: "Chinh phục 'Nóc nhà Đông Dương' hùng vĩ và chiêm ngưỡng những thửa ruộng bậc thang tuyệt đẹp giữa mây ngàn.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Fansipan_Mountain_in_winter.jpg/1280px-Fansipan_Mountain_in_winter.jpg" },
-            { name: "Quần thể danh thắng Tràng An", address: "Huyện Hoa Lư, Ninh Bình", tag: "Di sản UNESCO", description: "Ngồi thuyền xuôi theo dòng nước, len lỏi qua các hang động và núi đá vôi để khám phá vẻ đẹp của 'Hạ Long trên cạn'.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Trang_An_landscape_complex.jpg/1280px-Trang_An_landscape_complex.jpg" },
-            { name: "Cà phê Giảng", address: "Số 39 Nguyễn Hữu Huân, Hà Nội", tag: "Đặc sản Hà Nội", description: "Thưởng thức ly cà phê trứng trứ danh, một sáng tạo độc đáo với lớp kem trứng béo ngậy hòa quyện cùng vị cà phê đắng dịu.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Egg_coffee_at_Giang_Cafe_in_Hanoi.jpg/1024px-Egg_coffee_at_Giang_Cafe_in_Hanoi.jpg" },
-            { name: "Phố cổ Hội An", address: "TP. Hội An, Quảng Nam", tag: "Di sản thế giới", description: "Dạo bước trên những con đường lát đá cổ kính, ngắm nhìn những ngôi nhà màu vàng và thả đèn hoa đăng trên sông Hoài thơ mộng.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Hoi_An_Bridge_and_river.jpg/1280px-Hoi_An_Bridge_and_river.jpg" },
-            { name: "Đại Nội Huế", address: "TP. Huế, Thừa Thiên Huế", tag: "Lịch sử & Kiến trúc", description: "Quay ngược thời gian trở về triều Nguyễn, khám phá kinh thành, cung điện và đền đài mang đậm dấu ấn lịch sử vàng son.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Gate_of_Hue_Imperial_City.jpg/1280px-Gate_of_Hue_Imperial_City.jpg" },
-            { name: "Bà Nà Hills (Cầu Vàng)", address: "Huyện Hòa Vang, Đà Nẵng", tag: "Kiến trúc độc đáo", description: "Dạo bước trên Cầu Vàng trứ danh được nâng đỡ bởi đôi bàn tay khổng lồ và tận hưởng không khí trong lành, mát mẻ.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Golden_Bridge_in_Ba_Na_Hills_3.jpg/1280px-Golden_Bridge_in_Ba_Na_Hills_3.jpg" },
-            { name: "Ghềnh Đá Đĩa", address: "Huyện Tuy An, Phú Yên", tag: "Địa chất kỳ thú", description: "Chiêm ngưỡng kiệt tác của thiên nhiên với hàng chục nghìn cột đá bazan hình lục giác xếp chồng lên nhau như một tổ ong khổng lồ.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Ganh_Da_Dia_Phu_Yen_Vietnam.jpg/1280px-Ganh_Da_Dia_Phu_Yen_Vietnam.jpg"},
-            { name: "Động Phong Nha", address: "Huyện Bố Trạch, Quảng Bình", tag: "Khám phá hang động", description: "Du thuyền trên sông Son để tiến vào hang động, chiêm ngưỡng hệ thống thạch nhũ tráng lệ và kỳ ảo bậc nhất thế giới.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Phong_Nha_Cave_2.jpg/1280px-Phong_Nha_Cave_2.jpg"},
-            { name: "Chợ nổi Cái Răng", address: "Q. Ninh Kiều, Cần Thơ", tag: "Văn hóa Sông nước", description: "Trải nghiệm nét văn hóa độc đáo của miền Tây khi ngồi thuyền len lỏi giữa hàng trăm ghe thuyền mua bán tấp nập trên sông.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Cai_Rang_floating_market_in_the_morning.jpg/1280px-Cai_Rang_floating_market_in_the_morning.jpg" },
-            { name: "Bãi Sao, Phú Quốc", address: "TP. Phú Quốc, Kiên Giang", tag: "Thiên đường nghỉ dưỡng", description: "Thư giãn trên bãi cát trắng mịn như kem, đắm mình trong làn nước biển trong xanh và tận hưởng không gian yên bình.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Bai_Sao%2C_Phu_Quoc%2C_Vietnam_3.jpg/1280px-Bai_Sao%2C_Phu_Quoc%2C_Vietnam_3.jpg"},
-            { name: "Dinh Độc Lập", address: "Quận 1, TP. Hồ Chí Minh", tag: "Chứng nhân Lịch sử", description: "Tham quan công trình kiến trúc ghi dấu ấn sâu đậm trong lịch sử Việt Nam, nơi diễn ra sự kiện thống nhất đất nước.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Reunification_Palace_in_Ho_Chi_Minh_City%2C_Vietnam.jpg/1280px-Reunification_Palace_in_Ho_Chi_Min_h_City%2C_Vietnam.jpg"},
-            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Cu-chi-tunnels.jpg/1280px-Cu-chi-tunnels.jpg" },
-            { name: "Bánh mì Huỳnh Hoa", address: "Quận 1, TP. Hồ Chí Minh", tag: "Ẩm thực đường phố", description: "Thưởng thức ổ bánh mì trứ danh Sài Gòn, nổi tiếng với phần nhân đầy đặn, pate béo ngậy và hương vị đậm đà khó quên.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Banh_mi_heo_quay_saigon.jpg/1024px-Banh_mi_heo_quay_saigon.jpg"}
+            { name: "Vịnh Hạ Long", address: "Thành phố Hạ Long, Quảng Ninh", tag: "Kỳ quan thiên nhiên", description: "Khám phá hàng ngàn hòn đảo đá vôi kỳ vĩ và làn nước xanh như ngọc tại di sản thiên nhiên thế giới được UNESCO công nhận." },
+            { name: "Phố cổ Hà Nội", address: "Quận Hoàn Kiếm, Hà Nội", tag: "Văn hóa & Ẩm thực", description: "Lạc vào những con phố nghề san sát, thưởng thức ẩm thực đường phố đặc sắc và cảm nhận nhịp sống ngàn năm văn hiến." },
+            { name: "Sa Pa (Núi Fansipan)", address: "Thị xã Sa Pa, Lào Cai", tag: "Thiên nhiên & Trải nghiệm", description: "Chinh phục 'Nóc nhà Đông Dương' hùng vĩ và chiêm ngưỡng những thửa ruộng bậc thang tuyệt đẹp giữa mây ngàn." },
+            { name: "Quần thể danh thắng Tràng An", address: "Huyện Hoa Lư, Ninh Bình", tag: "Di sản UNESCO", description: "Ngồi thuyền xuôi theo dòng nước, len lỏi qua các hang động và núi đá vôi để khám phá vẻ đẹp của 'Hạ Long trên cạn'." },
+            { name: "Cà phê Giảng", address: "Số 39 Nguyễn Hữu Huân, Hà Nội", tag: "Đặc sản Hà Nội", description: "Thưởng thức ly cà phê trứng trứ danh, một sáng tạo độc đáo với lớp kem trứng béo ngậy hòa quyện cùng vị cà phê đắng dịu." },
+            { name: "Phố cổ Hội An", address: "TP. Hội An, Quảng Nam", tag: "Di sản thế giới", description: "Dạo bước trên những con đường lát đá cổ kính, ngắm nhìn những ngôi nhà màu vàng và thả đèn hoa đăng trên sông Hoài thơ mộng." },
+            { name: "Đại Nội Huế", address: "TP. Huế, Thừa Thiên Huế", tag: "Lịch sử & Kiến trúc", description: "Quay ngược thời gian trở về triều Nguyễn, khám phá kinh thành, cung điện và đền đài mang đậm dấu ấn lịch sử vàng son." },
+            { name: "Bà Nà Hills (Cầu Vàng)", address: "Huyện Hòa Vang, Đà Nẵng", tag: "Kiến trúc độc đáo", description: "Dạo bước trên Cầu Vàng trứ danh được nâng đỡ bởi đôi bàn tay khổng lồ và tận hưởng không khí trong lành, mát mẻ." },
+            { name: "Ghềnh Đá Đĩa", address: "Huyện Tuy An, Phú Yên", tag: "Địa chất kỳ thú", description: "Chiêm ngưỡng kiệt tác của thiên nhiên với hàng chục nghìn cột đá bazan hình lục giác xếp chồng lên nhau như một tổ ong khổng lồ."},
+            { name: "Động Phong Nha", address: "Huyện Bố Trạch, Quảng Bình", tag: "Khám phá hang động", description: "Du thuyền trên sông Son để tiến vào hang động, chiêm ngưỡng hệ thống thạch nhũ tráng lệ và kỳ ảo bậc nhất thế giới."},
+            { name: "Chợ nổi Cái Răng", address: "Q. Ninh Kiều, Cần Thơ", tag: "Văn hóa Sông nước", description: "Trải nghiệm nét văn hóa độc đáo của miền Tây khi ngồi thuyền len lỏi giữa hàng trăm ghe thuyền mua bán tấp nập trên sông." },
+            { name: "Bãi Sao, Phú Quốc", address: "TP. Phú Quốc, Kiên Giang", tag: "Thiên đường nghỉ dưỡng", description: "Thư giãn trên bãi cát trắng mịn như kem, đắm mình trong làn nước biển trong xanh và tận hưởng không gian yên bình."},
+            { name: "Dinh Độc Lập", address: "Quận 1, TP. Hồ Chí Minh", tag: "Chứng nhân Lịch sử", description: "Tham quan công trình kiến trúc ghi dấu ấn sâu đậm trong lịch sử Việt Nam, nơi diễn ra sự kiện thống nhất đất nước."},
+            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam." },
+            { name: "Bánh mì Huỳnh Hoa", address: "Quận 1, TP. Hồ Chí Minh", tag: "Ẩm thực đường phố", description: "Thưởng thức ổ bánh mì trứ danh Sài Gòn, nổi tiếng với phần nhân đầy đặn, pate béo ngậy và hương vị đậm đà khó quên."}
         ];
         
         // --- SCRIPT XỬ LÝ CHÍNH ---
@@ -437,20 +437,17 @@
                     this.startAutoplay();
                 },
                 updateItemsPerScreen() {
-                    this.itemsPerScreen = window.innerWidth < 768 ? 1 : 3;
+                    this.itemsPerScreen = window.innerWidth < 768 ? 1 : (window.innerWidth < 1024 ? 2 : 3);
                 },
                 renderFeaturedItems() {
                     const container = this.$refs.container;
                     container.innerHTML = featuredLocations.map(loc => `
                         <div class="flex-shrink-0 w-full sm:w-1/2 md:w-1/3 snap-start p-2">
-                            <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col">
-                                <img src="${loc.imageUrl}" alt="${loc.name}" class="w-full h-40 object-cover">
-                                <div class="p-4 flex flex-col flex-grow">
-                                    <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full self-start mb-2">${loc.tag}</span>
-                                    <h3 class="font-bold text-md text-gray-800">${loc.name}</h3>
-                                    <p class="text-sm text-gray-500 mb-2">${loc.address}</p>
-                                    <p class="text-xs text-gray-600 flex-grow">${loc.description}</p>
-                                </div>
+                            <div class="bg-white rounded-lg shadow-lg overflow-hidden h-full flex flex-col p-4">
+                                <span class="text-xs font-semibold text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full self-start mb-2">${loc.tag}</span>
+                                <h3 class="font-bold text-md text-gray-800">${loc.name}</h3>
+                                <p class="text-sm text-gray-500 mb-2">${loc.address}</p>
+                                <p class="text-xs text-gray-600 flex-grow">${loc.description}</p>
                             </div>
                         </div>
                     `).join('');
@@ -463,12 +460,10 @@
                 next() {
                     this.currentIndex = (this.currentIndex >= featuredLocations.length - this.itemsPerScreen) ? 0 : this.currentIndex + 1;
                     this.scrollToCurrent();
-                    this.resetAutoplay();
                 },
                 prev() {
                     this.currentIndex = (this.currentIndex <= 0) ? featuredLocations.length - this.itemsPerScreen : this.currentIndex - 1;
                     this.scrollToCurrent();
-                    this.resetAutoplay();
                 },
                 startAutoplay() {
                     this.interval = setInterval(() => { this.next(); }, 7000);
