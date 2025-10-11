@@ -27,7 +27,7 @@
             margin: 0 auto;
             border-radius: 1rem;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            background-color: #a5d8ff; /* Màu nền cho bản đồ */
+            background-color: #a5d8ff; /* Fallback map color */
         }
         .leaflet-popup-content-wrapper {
             border-radius: 8px !important;
@@ -35,8 +35,7 @@
         .leaflet-popup-content {
             font-weight: 500;
         }
-
-        /* NEW: Styles for Custom Markers */
+        /* Styles for Custom Markers */
         .custom-div-icon {
             display: flex;
             justify-content: center;
@@ -53,8 +52,6 @@
         .marker-tourist { background-color: #3B82F6; } /* Blue */
         .marker-restaurant { background-color: #F97316; } /* Orange */
         .marker-cafe { background-color: #78350F; } /* Brown */
-
-
         /* Style for Carousel */
         .carousel-container {
             -ms-overflow-style: none;  /* IE and Edge */
@@ -259,7 +256,7 @@
             [10.7798, 106.6995, "Bưu điện Trung tâm Sài Gòn", "02 Công xã Paris, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử/Kiến trúc", "https://i.imgur.com/Bf1oT5Q.jpg"],
             [10.7792, 106.6925, "Bảo tàng Chứng tích Chiến tranh", "28 Võ Văn Tần, Quận 3", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/s4sI3FN.jpg"],
             [10.7700, 106.7050, "Bến Nhà Rồng (Bảo tàng Hồ Chí Minh)", "01 Nguyễn Tất Thành, Quận 4", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/DMMxHBi.jpg"],
-            [11.0500, 106.4667, "Địa đạo Củ Chi", "Xã Phú Hiệp, huyện Củ Chi", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/g8S226J.jpg"],
+            [11.0500, 106.4667, "Địa đạo Củ Chi", "Xã Phú Hiệp, huyện Củ Chi", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Di tích lịch sử", "https://i.imgur.com/zW1zL7p.jpg"],
             [10.7725, 106.6983, "Chợ Bến Thành", "P. Bến Thành, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Danh lam/Thương mại", "https://i.imgur.com/rS2a4z0.jpg"],
             [10.7750, 106.7025, "Phố đi bộ Nguyễn Huệ", "Đường Nguyễn Huệ, Quận 1", "TP. Hồ Chí Minh", "Danh lam thắng cảnh", "Danh lam thắng cảnh", "https://i.imgur.com/i9Td2pq.jpg"],
             [11.3333, 106.1167, "Núi Bà Đen", "Phường Ninh Sơn, TP. Tây Ninh", "Tây Ninh", "Danh lam thắng cảnh", "Danh lam thắng cảnh/Tâm linh", "https://i.imgur.com/P5G2oU7.jpg"],
@@ -352,7 +349,7 @@
             { name: "Chợ nổi Cái Răng", address: "Q. Ninh Kiều, Cần Thơ", tag: "Văn hóa Sông nước", description: "Trải nghiệm nét văn hóa độc đáo của miền Tây khi ngồi thuyền len lỏi giữa hàng trăm ghe thuyền mua bán tấp nập trên sông.", imageUrl: "https://i.imgur.com/8Y4j8V9.jpg" },
             { name: "Bãi Sao, Phú Quốc", address: "TP. Phú Quốc, Kiên Giang", tag: "Thiên đường nghỉ dưỡng", description: "Thư giãn trên bãi cát trắng mịn như kem, đắm mình trong làn nước biển trong xanh và tận hưởng không gian yên bình.", imageUrl: "https://i.imgur.com/b9i9k6o.jpg"},
             { name: "Dinh Độc Lập", address: "Quận 1, TP. Hồ Chí Minh", tag: "Chứng nhân Lịch sử", description: "Tham quan công trình kiến trúc ghi dấu ấn sâu đậm trong lịch sử Việt Nam, nơi diễn ra sự kiện thống nhất đất nước.", imageUrl: "https://i.imgur.com/0vUnV5G.jpg"},
-            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam.", imageUrl: "https://i.imgur.com/g8S226J.jpg" },
+            { name: "Địa đạo Củ Chi", address: "Huyện Củ Chi, TP. Hồ Chí Minh", tag: "Di tích Lịch sử", description: "Khám phá hệ thống phòng thủ dưới lòng đất, một minh chứng cho sự kiên cường và sáng tạo của quân dân Việt Nam.", imageUrl: "https://i.imgur.com/zW1zL7p.jpg" },
             { name: "Bánh mì Huỳnh Hoa", address: "Quận 1, TP. Hồ Chí Minh", tag: "Ẩm thực đường phố", description: "Thưởng thức ổ bánh mì trứ danh Sài Gòn, nổi tiếng với phần nhân đầy đặn, pate béo ngậy và hương vị đậm đà khó quên.", imageUrl: "https://i.imgur.com/C3fE43t.jpg"}
         ];
         
@@ -363,53 +360,50 @@
 
         let map, allMarkers = [], markerClusterGroup;
 
-        function initializeLeafletMap() {
-            // Define Vietnam bounds
-            const vietnamBounds = L.latLngBounds(
-                L.latLng(8.19, 102.14), // Southwest
-                L.latLng(23.39, 109.46)  // Northeast
-            );
+        function initializeApp() {
+            initializeLeafletMap();
+            const nameInput = document.getElementById('name-search-input');
+            const cityFilter = document.getElementById('city-filter');
+            const categoryFilter = document.getElementById('category-filter');
+            let searchTimeout;
+            const handleFilterChange = () => { 
+                clearTimeout(searchTimeout); 
+                searchTimeout = setTimeout(filterAndRender, 300); 
+            };
+            nameInput.addEventListener('input', handleFilterChange);
+            cityFilter.addEventListener('change', handleFilterChange);
+            categoryFilter.addEventListener('change', handleFilterChange);
+        }
 
+        function initializeLeafletMap() {
+            const vietnamBounds = L.latLngBounds(L.latLng(8.19, 102.14), L.latLng(23.39, 109.46));
             map = L.map('leaflet-map', {
                 maxBounds: vietnamBounds,
-                maxBoundsViscosity: 1.0 // Makes the bounds rigid
+                maxBoundsViscosity: 1.0
             }).setView([16.0, 107.5], 6);
-
-            map.setMinZoom(6); // Prevent zooming out too far
-
+            map.setMinZoom(6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>',
             }).addTo(map);
-            
-            // Initialize the marker cluster group
             markerClusterGroup = L.markerClusterGroup();
-
             createAllMarkers();
-            renderFilteredMarkers(locations); 
-            
-            map.addLayer(markerClusterGroup); // Add the cluster group to the map
-
+            renderFilteredMarkers(locations);
+            map.addLayer(markerClusterGroup);
             populateCityFilter();
         }
         
         function createAllMarkers() {
             allMarkers = locations.map(loc => {
-                let iconClass = 'marker-tourist'; // Default color
-                if (loc.mainCategory === 'Quán ăn') {
-                    iconClass = 'marker-restaurant';
-                } else if (loc.mainCategory === 'Quán cà phê') {
-                    iconClass = 'marker-cafe';
-                }
+                let iconClass = 'marker-tourist';
+                if (loc.mainCategory === 'Quán ăn') iconClass = 'marker-restaurant';
+                else if (loc.mainCategory === 'Quán cà phê') iconClass = 'marker-cafe';
                 
                 const customIcon = L.divIcon({
                     className: `custom-div-icon ${iconClass}`,
-                    html: ``, // You can add initials or icons here if you want
                     iconSize: [24, 24],
                     iconAnchor: [12, 12]
                 });
-
                 const marker = L.marker([loc.lat, loc.lng], { icon: customIcon });
-
                 const popupContent = `<div class="p-1 font-inter"><p class="font-bold text-base text-indigo-700">${loc.name}</p><p class="text-xs text-gray-600">${loc.address}</p><p class="text-xs mt-1 text-gray-500 italic">${loc.detailedType}</p></div>`;
                 marker.bindPopup(popupContent, { maxWidth: 300 });
                 marker.locationData = loc;
@@ -434,7 +428,6 @@
             const selectedCategory = document.getElementById('category-filter').value;
 
             let filteredLocations = locations;
-
             if (nameSearchTerm || selectedCity || selectedCategory) {
                  filteredLocations = locations.filter(loc => {
                     const matchesName = !nameSearchTerm || loc.name.toLowerCase().includes(nameSearchTerm) || loc.address.toLowerCase().includes(nameSearchTerm);
@@ -443,19 +436,21 @@
                     return matchesName && matchesCity && matchesCategory;
                 });
             }
-            
             renderFilteredMarkers(filteredLocations);
         }
 
         function renderFilteredMarkers(locationsToShow) {
             markerClusterGroup.clearLayers();
             const markersToShow = locationsToShow.map(loc => allMarkers.find(m => m.locationData.id === loc.id));
-            markerClusterGroup.addLayers(markersToShow.filter(m => m)); // Add only valid markers
-
-            // Zoom logic
+            markerClusterGroup.addLayers(markersToShow.filter(m => m));
+            
             if (locationsToShow.length > 0 && locationsToShow.length < locations.length) {
                 const bounds = L.latLngBounds(locationsToShow.map(loc => [loc.lat, loc.lng]));
-                map.fitBounds(bounds, {padding: [50, 50], maxZoom: 14});
+                // Use the cluster group's bounds for a better fit
+                const clusterBounds = markerClusterGroup.getBounds();
+                if (clusterBounds.isValid()) {
+                    map.fitBounds(clusterBounds, {padding: [50, 50], maxZoom: 14});
+                }
             }
         }
         
@@ -498,10 +493,12 @@
                 next() {
                     this.currentIndex = (this.currentIndex >= featuredLocations.length - this.itemsPerScreen) ? 0 : this.currentIndex + 1;
                     this.scrollToCurrent();
+                    this.resetAutoplay();
                 },
                 prev() {
                     this.currentIndex = (this.currentIndex <= 0) ? featuredLocations.length - this.itemsPerScreen : this.currentIndex - 1;
                     this.scrollToCurrent();
+                    this.resetAutoplay();
                 },
                 startAutoplay() {
                     this.interval = setInterval(() => { this.next(); }, 7000);
@@ -511,21 +508,6 @@
                     this.startAutoplay();
                 }
             }
-        }
-
-        function initializeApp() {
-            initializeLeafletMap();
-            const nameInput = document.getElementById('name-search-input');
-            const cityFilter = document.getElementById('city-filter');
-            const categoryFilter = document.getElementById('category-filter');
-            let searchTimeout;
-            const handleFilterChange = () => { 
-                clearTimeout(searchTimeout); 
-                searchTimeout = setTimeout(filterAndRender, 300); 
-            };
-            nameInput.addEventListener('input', handleFilterChange);
-            cityFilter.addEventListener('change', handleFilterChange);
-            categoryFilter.addEventListener('change', handleFilterChange);
         }
 
         window.onload = initializeApp;
